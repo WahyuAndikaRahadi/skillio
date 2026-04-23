@@ -21,9 +21,13 @@ export async function POST(req) {
 
     return NextResponse.json({ questions });
   } catch (error) {
-    console.error("Quiz generation error:", error);
+    console.error("Quiz generation error detail:", {
+      message: error.message,
+      stack: error.stack,
+      phase: req.phase
+    });
     return NextResponse.json(
-      { message: "Terjadi kesalahan saat membuat soal AI" },
+      { message: "Terjadi kesalahan saat membuat soal AI", error: error.message },
       { status: 500 }
     );
   }

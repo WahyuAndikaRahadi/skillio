@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { Sparkles, ArrowRight, BrainCircuit } from "lucide-react";
+import { Sparkles, ArrowRight, BrainCircuit, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-const EmptyState = ({ userName }) => {
+const EmptyState = ({ userName, hasProgress }) => {
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 md:py-20">
       <motion.div
@@ -22,10 +22,10 @@ const EmptyState = ({ userName }) => {
         transition={{ delay: 0.1 }}
       >
         <h1 className="text-3xl md:text-5xl font-black text-dark-blue mb-4">
-          Halo, {userName || "Sobat Skillio"}! 👋
+          Selamat Datang, {userName || "Pengguna Skillio"}! 👋
         </h1>
         <p className="text-lg text-dark-blue/60 font-medium max-w-lg mx-auto mb-12">
-          Perjalanan karier impianmu belum dimulai. Yuk, biarkan AI kami membantumu menemukan bidang yang paling cocok dengan dirimu!
+          Perjalanan karier profesional Anda dimulai di sini. Mari izinkan AI kami membantu Anda menemukan bidang yang paling sesuai dengan potensi diri Anda.
         </p>
       </motion.div>
 
@@ -40,10 +40,24 @@ const EmptyState = ({ userName }) => {
           href="/quiz"
           className="relative flex items-center gap-3 bg-primary-blue text-white px-10 py-5 rounded-[24px] font-black text-xl hover:bg-accent-blue transition-all shadow-xl shadow-primary-blue/20 active:scale-[0.98]"
         >
-          <Sparkles className="w-6 h-6" />
-          Mulai Quiz Penentuan
+          {hasProgress ? (
+            <>
+              <Play className="w-6 h-6 fill-current" />
+              Lanjutkan Kuis Anda
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-6 h-6" />
+              Mulai Kuis Penentuan
+            </>
+          )}
           <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
         </Link>
+        {hasProgress && (
+           <p className="mt-4 text-primary-blue font-black text-sm animate-pulse">
+             Ada kuis yang sedang berjalan!
+           </p>
+        )}
       </motion.div>
 
       {/* Decorative background element */}

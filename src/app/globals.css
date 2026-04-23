@@ -11,6 +11,13 @@
   --color-skillio-900: #0d2133;
   --color-mist: #f7fafc;
   --color-ink: #0f172a;
+  
+  /* Intuitive Aliases */
+  --color-primary-blue: var(--color-skillio-500);
+  --color-dark-blue: var(--color-skillio-900);
+  --color-accent-blue: var(--color-skillio-600);
+  --color-light-blue: var(--color-skillio-50);
+  
   --font-sans: var(--font-sans), sans-serif;
   --font-display: var(--font-display), sans-serif;
 }

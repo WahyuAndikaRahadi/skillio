@@ -22,11 +22,14 @@ const menuItems = [
   { name: "Badge", href: "/badges", icon: <Trophy size={20} /> },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isMobile = false }) => {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 h-screen fixed left-0 top-0 bg-white border-r border-light-blue hidden lg:flex flex-col p-6 z-40">
+    <aside className={cn(
+      "w-72 h-screen bg-white border-r border-light-blue flex flex-col p-6 z-40",
+      !isMobile ? "fixed left-0 top-0 hidden lg:flex" : "flex"
+    )}>
       <div className="mb-10">
         <Link href="/" className="flex items-center gap-2 group">
           <div className="bg-primary-blue p-2 rounded-xl group-hover:rotate-12 transition-transform">

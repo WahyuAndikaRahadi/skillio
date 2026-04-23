@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }) {
               exit={{ x: -300 }}
               className="fixed left-0 top-0 bottom-0 w-72 bg-white z-50 lg:hidden shadow-2xl"
             >
-               <Sidebar />
+               <Sidebar isMobile={true} />
                <button 
                  onClick={() => setIsSidebarOpen(false)}
                  className="absolute top-6 right-6 p-2 text-dark-blue hover:bg-light-blue rounded-xl"
