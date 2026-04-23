@@ -56,12 +56,18 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <button className="text-sm font-bold text-primary-blue hover:text-accent-blue transition-colors px-4 py-2">
+          <Link 
+            href="/auth/login"
+            className="text-sm font-bold text-primary-blue hover:text-accent-blue transition-colors px-4 py-2"
+          >
             Masuk
-          </button>
-          <button className="bg-primary-blue text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-accent-blue transition-all shadow-lg shadow-primary-blue/20">
+          </Link>
+          <Link 
+            href="/auth/register"
+            className="bg-primary-blue text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-accent-blue transition-all shadow-lg shadow-primary-blue/20"
+          >
             Mulai Sekarang
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -93,12 +99,20 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="flex flex-col gap-3 mt-4">
-              <button className="w-full py-3 font-semibold text-primary-blue border border-primary-blue rounded-xl">
+              <Link 
+                href="/auth/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full py-3 font-semibold text-primary-blue border border-primary-blue rounded-xl text-center"
+              >
                 Masuk
-              </button>
-              <button className="w-full py-3 font-bold text-white bg-primary-blue rounded-xl">
+              </Link>
+              <Link 
+                href="/auth/register"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full py-3 font-bold text-white bg-primary-blue rounded-xl text-center"
+              >
                 Mulai Sekarang
-              </button>
+              </Link>
             </div>
           </motion.div>
         )}

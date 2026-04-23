@@ -7,18 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String?
+  password        String?
+  image           String?
+  role            String    @default("user")
+  is_pro          Boolean   @default(false)
+  emailVerified   DateTime?
+  accounts        Account[]
+  sessions        Session[]
+  
+  // Relations
+  roadmaps        UserRoadmap[]
+  streak          Streak?
+  badges          UserBadge[]
+  quiz_results    UserQuizResult[]
+  posts           CommunityPost[]
+  comments        PostComment[]
+  likes           PostLike[]
+  ai_mentor_logs  AiMentorLog[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
 model Account {
   id                 String  @id @default(cuid())
   userId             String
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String? @db.Text
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -34,19 +60,6 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  role          String    @default("user")
-  accounts      Account[]
-  sessions      Session[]
-  achievements  Achievement[]
-  roadmaps      UserRoadmap[]
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -55,49 +68,201 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Achievement {
-  id        String   @id @default(cuid())
-  userId    String
-  title     String
-  type      String   // badge, certificate, etc.
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Category {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String
+  icon         String?
+  is_generated Boolean  @default(false)
+  
+  quizzes      QuizQuestion[]
+  roadmap      Roadmap?
+  user_roadmaps UserRoadmap[]
+  posts        CommunityPost[]
+
+  createdAt    DateTime @default(now())
 }
 
-model Career {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  roadmaps    Roadmap[]
+model QuizQuestion {
+  id             String   @id @default(cuid())
+  category_id    String
+  phase          Int      // 1, 2, atau 3
+  order_number   Int
+  question_text  String
+  options        Json     // array 4 pilihan jawaban
+  correct_option String?  // untuk fase 3
+  
+  category       Category @relation(fields: [category_id], references: [id])
+
+  createdAt      DateTime @default(now())
 }
 
 model Roadmap {
-  id          String   @id @default(cuid())
-  careerId    String
-  title       String
-  description String
-  days        Int      @default(30)
-  career      Career   @relation(fields: [careerId], references: [id])
-  tasks       Task[]
-  userRoadmaps UserRoadmap[]
+  id           String   @id @default(cuid())
+  category_id  String   @unique
+  title        String
+  description  String
+  
+  category     Category @relation(fields: [category_id], references: [id])
+  days         RoadmapDay[]
+  user_roadmaps UserRoadmap[]
+
+  createdAt    DateTime @default(now())
 }
 
-model Task {
-  id        String   @id @default(cuid())
-  roadmapId String
-  day       Int
-  title     String
-  content   String
-  roadmap   Roadmap  @relation(fields: [roadmapId], references: [id])
+model RoadmapDay {
+  id           String   @id @default(cuid())
+  roadmap_id   String
+  day_number   Int
+  title        String
+  material     String   @db.Text
+  
+  roadmap      Roadmap  @relation(fields: [roadmap_id], references: [id])
+  tasks        DayTask[]
+  quizzes      DayQuiz[]
+
+  createdAt    DateTime @default(now())
+}
+
+model DayTask {
+  id           String   @id @default(cuid())
+  day_id       String
+  order_number Int
+  task_text    String
+  how_to       String   @db.Text
+  
+  day          RoadmapDay @relation(fields: [day_id], references: [id])
+}
+
+model DayQuiz {
+  id             String   @id @default(cuid())
+  day_id         String
+  order_number   Int
+  question_text  String
+  options        Json
+  correct_option String
+  explanation    String   @db.Text
+  
+  day            RoadmapDay @relation(fields: [day_id], references: [id])
 }
 
 model UserRoadmap {
+  id           String   @id @default(cuid())
+  user_id      String
+  roadmap_id   String
+  category_id  String
+  status       String   @default("active") // active / completed / paused
+  current_day  Int      @default(1)
+  started_at   DateTime @default(now())
+  completed_at DateTime?
+  
+  user         User     @relation(fields: [user_id], references: [id])
+  roadmap      Roadmap  @relation(fields: [roadmap_id], references: [id])
+  category     Category @relation(fields: [category_id], references: [id])
+  progress     UserDayProgress[]
+}
+
+model UserDayProgress {
+  id              String   @id @default(cuid())
+  user_roadmap_id String
+  day_number      Int
+  tasks_completed Boolean  @default(false)
+  quiz_passed     Boolean  @default(false)
+  quiz_score      Int?
+  proof_card_url  String?
+  completed_at    DateTime?
+  
+  user_roadmap    UserRoadmap @relation(fields: [user_roadmap_id], references: [id])
+}
+
+model Streak {
+  id              String   @id @default(cuid())
+  user_id         String   @unique
+  current_streak  Int      @default(0)
+  longest_streak  Int      @default(0)
+  last_active     DateTime @default(now())
+  
+  user            User     @relation(fields: [user_id], references: [id])
+}
+
+model Badge {
+  id           String   @id @default(cuid())
+  name         String
+  description  String
+  image_url    String
+  type         String   // completion / streak / special
+  requirement  Json
+  
+  users        UserBadge[]
+}
+
+model UserBadge {
   id        String   @id @default(cuid())
-  userId    String
-  roadmapId String
-  progress  Int      @default(0)
-  startDate DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-  roadmap   Roadmap  @relation(fields: [roadmapId], references: [id])
+  user_id   String
+  badge_id  String
+  earned_at DateTime @default(now())
+  is_shared Boolean  @default(false)
+  
+  user      User     @relation(fields: [user_id], references: [id])
+  badge     Badge    @relation(fields: [badge_id], references: [id])
+}
+
+model UserQuizResult {
+  id         String   @id @default(cuid())
+  user_id    String
+  phase      Int
+  answers    Json
+  ai_summary String   @db.Text
+  createdAt  DateTime @default(now())
+  
+  user       User     @relation(fields: [user_id], references: [id])
+}
+
+model CommunityPost {
+  id           String   @id @default(cuid())
+  user_id      String
+  category_id  String?
+  content      String   @db.Text
+  image_url    String?
+  type         String   // progress / question / achievement
+  likes_count  Int      @default(0)
+  createdAt    DateTime @default(now())
+  
+  user         User     @relation(fields: [user_id], references: [id])
+  category     Category? @relation(fields: [category_id], references: [id])
+  comments     PostComment[]
+  likes        PostLike[]
+}
+
+model PostComment {
+  id        String   @id @default(cuid())
+  post_id   String
+  user_id   String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  
+  post      CommunityPost @relation(fields: [post_id], references: [id])
+  user      User          @relation(fields: [user_id], references: [id])
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  post_id   String
+  user_id   String
+  createdAt DateTime @default(now())
+  
+  post      CommunityPost @relation(fields: [post_id], references: [id])
+  user      User          @relation(fields: [user_id], references: [id])
+
+  @@unique([post_id, user_id])
+}
+
+model AiMentorLog {
+  id      String   @id @default(cuid())
+  user_id String
+  date    DateTime @db.Date
+  count   Int      @default(0)
+  
+  user    User     @relation(fields: [user_id], references: [id])
 }
