@@ -1,15 +1,17 @@
-import { Plus_Jakarta_Sans, Syne } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/providers/SessionProvider";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-inter",
+  display: "swap",
 });
 
-const syne = Syne({
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-outfit",
+  display: "swap",
 });
 
 export const metadata = {
@@ -20,7 +22,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <body className={`${plusJakartaSans.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased`}>
         <AuthProvider>
           {children}
         </AuthProvider>

@@ -37,47 +37,50 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="px-5 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-12 flex flex-col gap-5 lg:mb-16 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl space-y-4">
-            <p className="section-kicker">How It Works</p>
-            <h2 className="font-display text-3xl leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
-              Bukan sekadar belajar online. Ini alur yang memindahkan kamu dari
-              bingung ke terarah.
+    <section id="how-it-works" className="relative border-y border-slate-100 bg-white/40 px-5 py-32 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl space-y-4">
+            <p className="section-kicker">Alur Belajar</p>
+            <h2 className="font-display text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
+              Dari kebingungan arah hidup <br />
+              menjadi <span className="text-skillio-500">progres yang nyata.</span>
             </h2>
           </div>
-          <div className="rounded-[24px] border border-white/70 bg-white/70 p-5 text-sm leading-7 text-slate-600 shadow-[0_18px_50px_rgba(16,68,140,0.08)] backdrop-blur lg:max-w-sm">
-            Setiap tahap dibuat untuk menekan friksi: lebih sedikit overthinking,
-            lebih banyak langkah konkret yang bisa diselesaikan hari ini juga.
+          <div className="max-w-md text-sm leading-relaxed text-slate-500 lg:text-base">
+            Sistem kami dirancang untuk menghilangkan hambatan belajar. 
+            Fokus pada aksi nyata, bukan sekadar teori yang membosankan.
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map(({ icon: Icon, title, desc, accent }, index) => (
-            <article
-              key={title}
-              className="blueprint-panel group rounded-[30px] p-6 sm:p-7"
-            >
-              <div className="mb-6 flex items-center justify-between gap-4">
-                <div
-                  className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${accent} text-white shadow-[0_16px_40px_rgba(15,91,216,0.22)] transition duration-300 group-hover:scale-105 group-hover:rotate-3`}
-                >
-                  <Icon className="h-6 w-6" />
+            <div key={title} className="group relative">
+              {/* Connector Line (Desktop) */}
+              {index < steps.length - 1 && (
+                <div className="absolute right-[-1.5rem] top-10 hidden h-px w-8 bg-slate-200 lg:block" />
+              )}
+              
+              <article className="h-full rounded-[2.5rem] border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300">
+                <div className="mb-8 flex items-center justify-between">
+                  <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${accent} text-white shadow-lg shadow-current/10`}>
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <span className="font-display text-sm font-black text-slate-300">
+                    Step {String(index + 1).padStart(2, "0")}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-                  <Sparkles className="h-3.5 w-3.5 text-skillio-500" />
-                  Step {String(index + 1).padStart(2, "0")}
-                </div>
-              </div>
 
-              <h3 className="mb-4 text-2xl font-semibold leading-tight text-slate-950">
-                {title}
-              </h3>
-              <p className="max-w-xl text-sm leading-7 text-slate-600 sm:text-[15px]">
-                {desc}
-              </p>
-            </article>
+                <div className="space-y-4">
+                  <h3 className="font-display text-xl font-bold leading-tight text-slate-900">
+                    {title}
+                  </h3>
+                  <p className="text-sm tracking-wide leading-relaxed text-slate-500">
+                    {desc}
+                  </p>
+                </div>
+              </article>
+            </div>
           ))}
         </div>
       </div>

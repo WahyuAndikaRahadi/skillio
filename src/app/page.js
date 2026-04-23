@@ -1,5 +1,6 @@
 import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/home/HeroSection";
+import AboutSection from "@/components/home/AboutSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import RoadmapGenerationTimeline from "@/components/home/RoadmapGenerationTimeline";
 import HowItWorks from "@/components/home/HowItWorks";
@@ -12,6 +13,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-grow">
         <HeroSection />
+        <AboutSection />
         <FeaturesSection />
         <RoadmapGenerationTimeline />
         <HowItWorks />
