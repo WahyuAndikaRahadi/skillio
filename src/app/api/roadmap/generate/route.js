@@ -11,19 +11,54 @@ export async function POST(req) {
     const { career } = await req.json();
     if (!career) return NextResponse.json({ message: "Career is required" }, { status: 400 });
 
-    // 1. Generate from AI
+    const slug = career.toLowerCase().replace(/ /g, "-");
+
+    // 1. SMART REUSE: Check if a similar Roadmap already exists
+    // We check for exact title match or same slug category
+    const existingRoadmap = await prisma.roadmap.findFirst({
+      where: {
+        OR: [
+          { title: { contains: career, mode: "insensitive" } },
+          { category: { slug: slug } }
+        ]
+      },
+      include: { category: true }
+    });
+
+    if (existingRoadmap) {
+      console.log(`♻️ Reusing existing roadmap for: ${career}`);
+      
+      // Link this existing roadmap to the current user
+      const userRoadmap = await prisma.userRoadmap.create({
+        data: {
+          user_id: session.user.id,
+          roadmap_id: existingRoadmap.id,
+          category_id: existingRoadmap.category_id,
+          status: "active",
+        }
+      });
+
+      return NextResponse.json({ 
+        message: "Roadmap reused successfully", 
+        result: userRoadmap,
+        is_reused: true 
+      });
+    }
+
+    // 2. GENERATE NEW: Only if no roadmap exists
+    console.log(`✨ Generating NEW roadmap for: ${career}`);
     const roadmapData = await generateFullRoadmap(career);
 
-    // 2. Prepare Nested Data matching the Schema exactly
+    // Prepare Nested Data
     const daysData = roadmapData.days.map((day) => ({
       day_number: day.day,
       title: day.title,
-      material: day.description, // Map 'description' from AI to 'material' in Schema
+      material: day.description,
       tasks: {
         create: day.tasks.map((task, idx) => ({ 
           order_number: idx + 1,
           task_text: task,
-          how_to: `Panduan untuk: ${task}` // Placeholder
+          how_to: `Panduan untuk: ${task}` 
         }))
       },
       quizzes: {
@@ -37,10 +72,7 @@ export async function POST(req) {
       }
     }));
 
-    // 3. Execution
-    
-    // Step A: Get/Create Category using findFirst (since name is not unique)
-    const slug = career.toLowerCase().replace(/ /g, "-");
+    // Step A: Category
     let category = await prisma.category.findFirst({ 
       where: { OR: [{ name: career }, { slug: slug }] } 
     });
@@ -56,8 +88,8 @@ export async function POST(req) {
       });
     }
 
-    // Step B: Create Roadmap + Days + Tasks + Quiz (Nested)
-    const roadmap = await prisma.roadmap.create({
+    // Step B: Create Roadmap
+    const newRoadmap = await prisma.roadmap.create({
       data: {
         category_id: category.id,
         title: `Kuasai ${career} dalam 30 Hari`,
@@ -72,13 +104,17 @@ export async function POST(req) {
     const result = await prisma.userRoadmap.create({
       data: {
         user_id: session.user.id,
-        roadmap_id: roadmap.id,
+        roadmap_id: newRoadmap.id,
         category_id: category.id,
         status: "active",
       }
     });
 
-    return NextResponse.json({ message: "Roadmap generated successfully", result });
+    return NextResponse.json({ 
+      message: "Roadmap generated successfully", 
+      result,
+      is_reused: false 
+    });
   } catch (error) {
     console.error("Roadmap generation error:", error);
     return NextResponse.json({ 

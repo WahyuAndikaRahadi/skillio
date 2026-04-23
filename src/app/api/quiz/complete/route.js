@@ -101,7 +101,41 @@ export async function POST(req) {
     // 5. Invalidate Redis
     await redis.set(`user_stats:${session.user.id}`, null);
 
-    return NextResponse.json({ message: "Quiz completed!" });
+    // 6. Check for Badges (Background/Parallel)
+    const { checkAndAwardBadges } = await import("@/lib/badges");
+    const newBadges = await checkAndAwardBadges(session.user.id, "perfect_score", { score });
+    
+    // Also check streak and xp
+    const updatedUser = await prisma.user.findUnique({
+       where: { id: session.user.id },
+       include: { streak: true }
+    });
+    
+    await checkAndAwardBadges(session.user.id, "streak_count", { streak: updatedUser.streak?.current_streak });
+    await checkAndAwardBadges(session.user.id, "xp_count", { xp: updatedUser.xp });
+
+    // 7. Auto-post to Social Feed (Optional: Only if passed)
+    if (score >= 80) {
+      try {
+        const { pusherServer } = await import("@/lib/pusher");
+        const autoPost = await prisma.communityPost.create({
+          data: {
+            user_id: session.user.id,
+            content: `Berhasil menyelesaikan materi hari ke-${day_number} dengan skor ${score}! 🚀🔥`,
+            type: "achievement",
+          },
+          include: { user: { select: { name: true, image: true } } }
+        });
+        await pusherServer.trigger("community-feed", "new-post", autoPost);
+      } catch (postError) {
+        console.error("Auto-post failed:", postError);
+      }
+    }
+
+    return NextResponse.json({ 
+      message: "Quiz completed!", 
+      earnedBadges: newBadges 
+    });
   } catch (error) {
     console.error("Quiz complete error:", error);
     return NextResponse.json({ message: "Error" }, { status: 500 });

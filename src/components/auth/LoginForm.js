@@ -104,6 +104,11 @@ const LoginForm = () => {
             placeholder="••••••••"
           />
           {errors.password && <p className="mt-1 text-xs text-red-500 font-bold ml-1">{errors.password.message}</p>}
+          <div className="text-right mt-2">
+            <Link href="/auth/forgot-password" size="sm" className="text-xs font-bold text-primary-blue hover:underline">
+              Lupa Password?
+            </Link>
+          </div>
         </div>
 
         <button

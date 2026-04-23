@@ -39,13 +39,24 @@ const extractJson = (text) => {
 };
 
 export const generateQuizQuestions = async (context, phase) => {
+  let phaseInstruction = "";
+  if (phase === 1) {
+    phaseInstruction = "Fase 1: Kepribadian & Gaya Hidup. Buat pertanyaan UMUM tentang preferensi kerja (indoor/outdoor), cara berpikir (logika/kreatif), dan minat dasar. JANGAN menanyakan hal teknis atau spesifik bidang tertentu.";
+  } else if (phase === 2) {
+    phaseInstruction = "Fase 2: Eksplorasi Bidang Luas. Berdasarkan jawaban sebelumnya, buat pertanyaan untuk mengidentifikasi kategori besar (Teknologi, Kesehatan, Seni, Bisnis, dsb).";
+  } else {
+    phaseInstruction = "Fase 3: Spesialisasi Karier. Fokus pada detail teknis dan minat mendalam untuk menentukan 1-3 karier yang paling cocok.";
+  }
+
   const prompt = `
-    Role: Pakar Karier Skillio.
-    Konteks: "${context}"
-    Tugas: Buat 10 pertanyaan kuis Fase ${phase}.
-    Format JSON: Array of { "question_text": "...", "options": ["A", "B", "C", "D"], "correct_option": "..." (null for phase 2) }.
-    Bahasa: Indonesia Profesional (Anda).
-    Penting: HANYA OUTPUT JSON.
+    Role: Pakar Psikologi & Karier Skillio.
+    Instruksi Fase: ${phaseInstruction}
+    Konteks Jawaban Sebelumnya: "${context || "Baru mulai"}"
+    
+    Tugas: Buat 10 pertanyaan pilihan ganda yang menarik dan tidak membosankan.
+    Format JSON: Array of { "question_text": "...", "options": ["A", "B", "C", "D"], "correct_option": null }.
+    Penting: Karena ini tes minat, "correct_option" selalu null. Gunakan Bahasa Indonesia yang ramah dan inspiratif.
+    HANYA OUTPUT JSON.
   `;
 
   const result = await model.generateContent(prompt);

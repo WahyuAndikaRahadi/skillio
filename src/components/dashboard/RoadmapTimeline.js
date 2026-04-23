@@ -14,6 +14,50 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap }) => {
   const [activeDay, setActiveDay] = useState(userRoadmap.current_day || 1);
   const [progress, setProgress] = useState(userRoadmap.progress || []);
   const [isToggling, setIsToggling] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(null);
+  
+  // Lockout Logic: 24 Hours from last completed day
+  const getLastCompletionTime = () => {
+    const sortedProgress = [...progress].sort((a, b) => b.day_number - a.day_number);
+    const lastCompleted = sortedProgress.find(p => p.quiz_passed);
+    return lastCompleted?.completed_at ? new Date(lastCompleted.completed_at) : null;
+  };
+
+  const checkLockout = (dayNum) => {
+    if (dayNum <= userRoadmap.current_day) return { isLocked: false };
+    if (dayNum > userRoadmap.current_day + 1) return { isLocked: true, reason: "Buka hari sebelumnya dulu" };
+
+    const lastCompletedAt = getLastCompletionTime();
+    if (!lastCompletedAt) return { isLocked: false };
+
+    const unlockAt = new Date(lastCompletedAt.getTime() + 24 * 60 * 60 * 1000);
+    const now = new Date();
+    
+    if (now < unlockAt) {
+      return { isLocked: true, reason: "Locked (Timer)", unlockAt };
+    }
+    return { isLocked: false };
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const lock = checkLockout(userRoadmap.current_day + 1);
+      if (lock.unlockAt) {
+        const diff = lock.unlockAt - new Date();
+        if (diff > 0) {
+          const hours = Math.floor(diff / (1000 * 60 * 60));
+          const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const secs = Math.floor((diff % (1000 * 60)) / 1000);
+          setTimeLeft(`${hours}j ${mins}m ${secs}d`);
+        } else {
+          setTimeLeft(null);
+        }
+      } else {
+        setTimeLeft(null);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [progress, userRoadmap.current_day]);
   
   // AI Expansion States
   const [expandedContent, setExpandedContent] = useState({});
@@ -139,7 +183,8 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap }) => {
           {days.map((day) => {
             const dayProg = getDayProgress(day.day_number);
             const isCompleted = dayProg.quiz_passed;
-            const isLocked = day.day_number > userRoadmap.current_day;
+            const lockStatus = checkLockout(day.day_number);
+            const isLocked = lockStatus.isLocked;
             const isActive = activeDay === day.day_number;
 
             return (
@@ -147,7 +192,7 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap }) => {
                 key={day.id}
                 onClick={() => !isLocked && setActiveDay(day.day_number)}
                 className={cn(
-                  "w-full flex items-center gap-4 p-4 rounded-2xl transition-all border-2 group",
+                  "w-full flex items-center gap-4 p-4 rounded-2xl transition-all border-2 group relative overflow-hidden",
                   isActive 
                     ? "border-primary-blue bg-light-blue/20" 
                     : isLocked 
@@ -165,12 +210,17 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap }) => {
                 )}>
                   {isCompleted ? <CheckCircle2 size={20} /> : day.day_number}
                 </div>
-                <div className="text-left">
+                <div className="text-left flex-1">
                   <p className="text-[10px] font-bold text-dark-blue/40 uppercase tracking-widest">Hari {day.day_number}</p>
-                  <p className="text-sm font-black text-dark-blue truncate max-w-[150px]">{day.title}</p>
+                  <p className="text-sm font-black text-dark-blue truncate max-w-[120px]">{day.title}</p>
                 </div>
                 {isLocked ? (
-                  <Lock size={14} className="ml-auto text-dark-blue/20" />
+                  <div className="flex flex-col items-end">
+                    <Lock size={14} className="text-dark-blue/20" />
+                    {lockStatus.reason === "Locked (Timer)" && timeLeft && (
+                      <span className="text-[9px] font-black text-primary-blue mt-1 animate-pulse">{timeLeft}</span>
+                    )}
+                  </div>
                 ) : (
                   <ChevronRight size={16} className={cn("ml-auto transition-transform", isActive ? "text-primary-blue translate-x-1" : "text-dark-blue/20")} />
                 )}
@@ -186,8 +236,30 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap }) => {
           key={activeDay}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-[40px] border border-light-blue p-6 md:p-12 shadow-sm"
+          className="bg-white rounded-[40px] border border-light-blue p-6 md:p-12 shadow-sm relative"
         >
+          {/* Lockout Overlay */}
+          {checkLockout(activeDay).isLocked && (
+            <div className="absolute inset-0 z-50 bg-white/80 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center rounded-[40px]">
+               <div className="w-24 h-24 bg-primary-blue/10 text-primary-blue rounded-full flex items-center justify-center mb-6">
+                  <Lock size={40} />
+               </div>
+               <h2 className="text-3xl font-black text-dark-blue mb-2">Materi Masih Terkunci</h2>
+               <p className="text-dark-blue/60 font-medium max-w-sm mb-8">
+                 {checkLockout(activeDay).reason === "Locked (Timer)" 
+                   ? "Anda sudah menyelesaikan misi hari ini! Silakan beristirahat agar materi meresap sempurna." 
+                   : "Selesaikan misi hari sebelumnya untuk membuka hari ini."}
+               </p>
+               
+               {checkLockout(activeDay).reason === "Locked (Timer)" && timeLeft && (
+                 <div className="bg-primary-blue text-white px-8 py-4 rounded-3xl shadow-xl shadow-primary-blue/20">
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-70">Terbuka Dalam</p>
+                    <p className="text-3xl font-black">{timeLeft}</p>
+                 </div>
+               )}
+            </div>
+          )}
+
           <div className="flex flex-wrap justify-between items-start gap-4 mb-8">
             <div>
               <span className="bg-primary-blue/10 text-primary-blue px-4 py-1 rounded-full text-xs font-black uppercase mb-4 inline-block tracking-widest">
