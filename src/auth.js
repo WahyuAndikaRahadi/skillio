@@ -12,6 +12,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     Credentials({
       name: "Credentials",
@@ -31,6 +32,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const isValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isValid) return null;
+
+        if (!user.emailVerified) {
+          throw new Error("Email belum diverifikasi");
+        }
 
         return user;
       },

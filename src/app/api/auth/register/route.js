@@ -28,17 +28,42 @@ export async function POST(req) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // 1. Create user (but unverified)
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
+        emailVerified: null, // Ensure it is null
       },
     });
 
+    // 2. Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    // 3. Save OTP to VerificationToken
+    await prisma.verificationToken.create({
+      data: {
+        identifier: email,
+        token: otp,
+        expires,
+      }
+    });
+
+    // 4. Send Real Email via SMTP
+    try {
+      const { sendVerificationEmail } = await import("@/lib/mail");
+      await sendVerificationEmail(email, otp);
+      console.log(`✅ Email sent successfully to ${email}`);
+    } catch (mailError) {
+      console.error("❌ Failed to send email:", mailError);
+      // We still return success because the user and token were created
+      // But in a real app, you might want to show a warning
+    }
+
     return NextResponse.json(
-      { message: "Registrasi berhasil", userId: user.id },
+      { message: "Registrasi berhasil. Silakan cek email untuk kode verifikasi.", email },
       { status: 201 }
     );
   } catch (error) {
