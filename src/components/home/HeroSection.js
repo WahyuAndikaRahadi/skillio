@@ -1,118 +1,189 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Star } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  BrainCircuit,
+  ChartNoAxesCombined,
+  Sparkles,
+} from "lucide-react";
 
-const HeroSection = () => {
+const credibility = [
+  "Tes minat berbasis AI",
+  "Roadmap harian 30 hari",
+  "AI Mentor yang kontekstual",
+];
+
+const snapshots = [
+  { label: "User match rate", value: "96%" },
+  { label: "Rata-rata streak aktif", value: "21 hari" },
+  { label: "Kartu capaian dibagikan", value: "18K+" },
+];
+
+export default function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-      {/* Background Ornaments */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-blue/5 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-blue/5 rounded-full blur-3xl -z-10 -translate-x-1/2 translate-y-1/2" />
+    <section className="relative overflow-hidden px-5 pb-14 pt-28 sm:px-6 sm:pt-32 lg:px-8 lg:pb-24">
+      <div className="hero-orb left-[-6rem] top-24 h-44 w-44 bg-cyan-200/45 sm:h-60 sm:w-60" />
+      <div className="hero-orb right-[-4rem] top-16 h-52 w-52 bg-skillio-300/35 sm:h-72 sm:w-72" />
+      <div className="soft-ring right-[8%] top-28 h-40 w-40 sm:h-56 sm:w-56" />
+      <div className="soft-ring bottom-16 left-[6%] h-28 w-28 sm:h-36 sm:w-36" />
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="inline-flex items-center gap-2 bg-light-blue text-primary-blue px-4 py-2 rounded-full text-sm font-bold mb-6">
-            <Star className="w-4 h-4 fill-primary-blue" />
-            <span>Masa Depanmu Dimulai Di Sini</span>
+      <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.04fr_0.96fr] lg:items-center">
+        <div className="fade-up space-y-8">
+          <div className="section-kicker">Career clarity for Gen Z</div>
+
+          <div className="space-y-5">
+            <h1 className="max-w-3xl font-display text-[2.75rem] leading-[0.94] text-slate-950 sm:text-6xl lg:text-[5.4rem]">
+              Bingung arah hidup?
+              <span className="mt-2 block text-skillio-500">
+                Ubah jadi progres 30 hari.
+              </span>
+            </h1>
+            <p className="max-w-xl text-base leading-8 text-slate-600 sm:text-lg">
+              Skillio membantu anak muda Indonesia menemukan bidang yang paling
+              sesuai, lalu menjalani perjalanan belajar harian yang terstruktur,
+              realistis, dan bisa dibuktikan ke dunia.
+            </p>
           </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black text-dark-blue mb-6 leading-[1.1]">
-            Ubah Bingung Jadi <span className="text-primary-blue">Aksi Nyata</span> dalam 30 Hari.
-          </h1>
-          
-          <p className="text-lg text-dark-blue/70 mb-10 leading-relaxed max-w-xl font-medium">
-            Skillio menggunakan AI untuk membantumu menemukan karier yang paling cocok, lalu membimbingmu langkah-demi-langkah hingga benar-benar menguasainya.
-          </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <button className="group w-full sm:w-auto bg-primary-blue text-white px-8 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-accent-blue transition-all shadow-xl shadow-primary-blue/30 active:scale-95">
-              Mulai Petualanganmu
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <div className="flex items-center gap-4 text-sm font-bold text-dark-blue/60">
-              <div className="flex -space-x-2">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-light-blue flex items-center justify-center text-[10px] overflow-hidden">
-                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <a
+              href="#features"
+              className="shine-line inline-flex items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#2b6ea6,#1f547e)] px-6 py-4 text-sm font-semibold text-white shadow-[0_18px_50px_rgba(31,84,126,0.24)]"
+            >
+              Mulai eksplor perjalananmu
+              <ArrowRight className="h-4 w-4" />
+            </a>
+            <a
+              href="#how-it-works"
+              className="inline-flex items-center justify-center rounded-full border border-skillio-200 bg-white/70 px-6 py-4 text-sm font-semibold text-slate-700 backdrop-blur hover:border-skillio-300 hover:text-skillio-600"
+            >
+              Lihat cara kerjanya
+            </a>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            {credibility.map((item) => (
+              <div
+                key={item}
+                className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm text-slate-700 shadow-[0_8px_30px_rgba(31,84,126,0.08)] backdrop-blur"
+              >
+                <BadgeCheck className="h-4 w-4 text-skillio-500" />
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="fade-up relative" style={{ animationDelay: "140ms" }}>
+          <div className="blueprint-panel rounded-[30px] p-4 sm:p-5">
+            <div className="rounded-[26px] bg-[linear-gradient(160deg,#16334a_0%,#1f547e_48%,#68b9b2_100%)] p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.28)] sm:p-7">
+              <div className="mb-8 flex items-start justify-between gap-4">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.28em] text-white/65">
+                    Skillio Compass
+                  </p>
+                  <h2 className="max-w-xs font-display text-3xl leading-none sm:text-4xl">
+                    Belajar yang punya arah, ritme, dan bukti.
+                  </h2>
+                </div>
+                <div className="glass rounded-2xl px-3 py-2 text-right text-[11px] font-semibold text-slate-800">
+                  12.000+ learner aktif
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                {snapshots.map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur"
+                  >
+                    <p className="text-[11px] uppercase tracking-[0.22em] text-white/60">
+                      {item.label}
+                    </p>
+                    <p className="mt-3 text-2xl font-semibold">{item.value}</p>
                   </div>
                 ))}
               </div>
-              <span>12,000+ Anak Muda Bergabung</span>
-            </div>
-          </div>
 
-          <div className="mt-12 flex flex-wrap gap-6">
-            <div className="flex items-center gap-2 text-foreground/80 font-semibold">
-              <CheckCircle2 className="w-5 h-5 text-primary-blue" />
-              <span>Personalisasi AI</span>
-            </div>
-            <div className="flex items-center gap-2 text-foreground/80 font-semibold">
-              <CheckCircle2 className="w-5 h-5 text-primary-blue" />
-              <span>30 Hari Roadmap</span>
-            </div>
-            <div className="flex items-center gap-2 text-foreground/80 font-semibold">
-              <CheckCircle2 className="w-5 h-5 text-primary-blue" />
-              <span>Bukti Nyata</span>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="relative"
-        >
-          {/* Main Visual Placeholder */}
-          <div className="relative z-10 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl bg-white aspect-square max-w-[500px] mx-auto group">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary-blue/20 to-transparent" />
-            <img 
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" 
-              alt="Anak Muda Belajar" 
-              className="w-full h-full object-cover grayscale-[0.2] group-hover:scale-105 transition-transform duration-700"
-            />
-            
-            {/* Floating Card UI */}
-            <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4 }}
-              className="absolute top-10 -right-4 md:-right-10 glass p-5 rounded-2xl shadow-xl max-w-[200px]"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-primary-blue flex items-center justify-center text-white font-bold">
-                  98%
+              <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+                <div className="rounded-[24px] border border-white/18 bg-slate-950/18 p-5 backdrop-blur">
+                  <div className="mb-5 flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/12">
+                      <BrainCircuit className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-white/60">
+                        Hari 01
+                      </p>
+                      <p className="text-sm font-semibold">
+                        AI menemukan pola kecocokanmu
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-3 rounded-[22px] bg-white/10 p-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white/70">UX Research</span>
+                      <span className="font-semibold">98%</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-white/15">
+                      <div className="h-full w-[98%] rounded-full bg-white" />
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-white/70">Product Design</span>
+                      <span className="font-semibold">92%</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-white/15">
+                      <div className="h-full w-[92%] rounded-full bg-teal-200" />
+                    </div>
+                  </div>
                 </div>
-                <div className="text-xs font-bold leading-tight">Match Rate Karier Kamu</div>
-              </div>
-              <div className="h-2 w-full bg-light-blue rounded-full overflow-hidden">
-                <div className="h-full w-[98%] bg-primary-blue rounded-full" />
-              </div>
-            </motion.div>
 
-            <motion.div 
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 3, delay: 0.5 }}
-              className="absolute bottom-10 -left-4 md:-left-10 glass p-5 rounded-2xl shadow-xl max-w-[180px]"
-            >
-              <div className="text-[10px] font-bold text-primary-blue uppercase mb-2">Roadmap Hari Ke-12</div>
-              <div className="text-sm font-black mb-3">Belajar Dasar UI/UX Design</div>
-              <button className="text-[10px] font-bold bg-primary-blue text-white w-full py-2 rounded-lg">Lanjutkan</button>
-            </motion.div>
+                <div className="space-y-4">
+                  <div className="float-gentle rounded-[24px] border border-white/20 bg-white/14 p-5 backdrop-blur">
+                    <div className="mb-3 flex items-center justify-between">
+                      <span className="text-xs uppercase tracking-[0.24em] text-white/60">
+                        Mentor
+                      </span>
+                      <Sparkles className="h-4 w-4 text-teal-100" />
+                    </div>
+                    <p className="text-sm leading-7 text-white/88">
+                      &ldquo;Kamu cocok di jalur UI/UX karena kuat di empati
+                      visual dan struktur berpikir.&rdquo;
+                    </p>
+                  </div>
+
+                  <div className="float-slow rounded-[24px] border border-white/20 bg-white/88 p-5 text-slate-900 shadow-[0_18px_60px_rgba(13,33,51,0.16)]">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-skillio-100 text-skillio-600">
+                        <ChartNoAxesCombined className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                          Progress
+                        </p>
+                        <p className="text-sm font-semibold">Roadmap hari ke-12</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3 text-sm text-slate-600">
+                      <div className="flex items-center justify-between">
+                        <span>Belajar design system</span>
+                        <span className="font-semibold text-slate-900">Selesai</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Tantangan redesign landing page</span>
+                        <span className="rounded-full bg-skillio-100 px-2.5 py-1 text-xs font-semibold text-skillio-700">
+                          Berjalan
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          
-          {/* Decorative shapes */}
-          <div className="absolute -bottom-6 -right-6 w-32 h-32 border-4 border-primary-blue rounded-full -z-10 animate-pulse" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-primary-blue/10 rounded-full -z-20" />
-        </motion.div>
+        </div>
       </div>
     </section>
   );
-};
-
-export default HeroSection;
+}

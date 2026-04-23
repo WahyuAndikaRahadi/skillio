@@ -1,117 +1,230 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Code, Palette, BarChart, Camera, Megaphone, Globe } from "lucide-react";
+import ClientFeedback from "@/components/ui/testimonial";
+import {
+  ArrowUpRight,
+  BadgeCheck,
+  BriefcaseBusiness,
+  ChartColumn,
+  Code2,
+  Megaphone,
+  PencilRuler,
+  Video,
+} from "lucide-react";
 
 const categories = [
-  { name: "UI/UX Designer", icon: <Palette />, jobs: "2,400+ Lowongan" },
-  { name: "Web Developer", icon: <Code />, jobs: "4,100+ Lowongan" },
-  { name: "Data Analyst", icon: <BarChart />, jobs: "1,800+ Lowongan" },
-  { name: "Content Creator", icon: <Camera />, jobs: "3,200+ Lowongan" },
-  { name: "Digital Marketer", icon: <Megaphone />, jobs: "2,900+ Lowongan" },
-  { name: "Product Manager", icon: <Globe />, jobs: "1,200+ Lowongan" },
-];
-
-const testimonials = [
   {
-    name: "Aditya Pratama",
-    role: "UI/UX Designer at TechID",
-    text: "Sebelum Skillio, saya bingung mau mulai dari mana. Roadmap 30 harinya sangat membantu saya membangun portofolio dari nol.",
-    avatar: "https://i.pravatar.cc/150?u=aditya",
+    name: "UI/UX Design",
+    icon: PencilRuler,
+    detail: "Cocok untuk yang kuat di empati, visual, dan alur berpikir pengguna.",
+    vibe: "Visual thinker",
+    focus: "Riset, wireframe, design system",
+    demand: "High demand",
+    accent:
+      "bg-[radial-gradient(circle_at_top_left,rgba(104,185,178,0.28),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.96),rgba(243,247,251,0.92))]",
+    iconBg: "bg-[linear-gradient(135deg,#2b6ea6,#68b9b2)]",
+    featured: true,
   },
   {
-    name: "Sarah Wijaya",
-    role: "Front-end Developer",
-    text: "Fitur AI Mentornya gila sih. Tiap saya stuck di materi harian, dia selalu kasih jawaban yang masuk akal dan mudah dimengerti.",
-    avatar: "https://i.pravatar.cc/150?u=sarah",
+    name: "Web Development",
+    icon: Code2,
+    detail: "Untuk kamu yang suka membangun, memecahkan masalah, dan melihat hasil secara konkret.",
+    vibe: "Builder mindset",
+    focus: "Frontend, backend, deployment",
+    demand: "Portfolio friendly",
+    accent: "bg-white/88",
+    iconBg: "bg-[linear-gradient(135deg,#173d5c,#2b6ea6)]",
+  },
+  {
+    name: "Digital Marketing",
+    icon: Megaphone,
+    detail: "Belajar strategi, konten, dan eksperimen yang dekat dengan dunia nyata bisnis.",
+    vibe: "Growth oriented",
+    focus: "Campaign, funnel, content",
+    demand: "Fast-moving field",
+    accent: "bg-white/88",
+    iconBg: "bg-[linear-gradient(135deg,#1f547e,#68b9b2)]",
+  },
+  {
+    name: "Data & Analytics",
+    icon: ChartColumn,
+    detail: "Pas untuk yang suka pola, logika, dan mengubah angka menjadi keputusan.",
+    vibe: "Logic driven",
+    focus: "Insight, dashboard, analysis",
+    demand: "Decision-making skill",
+    accent: "bg-white/88",
+    iconBg: "bg-[linear-gradient(135deg,#102233,#2b6ea6)]",
+  },
+  {
+    name: "Content Creation",
+    icon: Video,
+    detail: "Bangun gaya, ritme, dan sistem produksi konten yang relevan dengan audiensmu.",
+    vibe: "Creative engine",
+    focus: "Script, editing, consistency",
+    demand: "Social-ready output",
+    accent: "bg-white/88",
+    iconBg: "bg-[linear-gradient(135deg,#2b6ea6,#7ac8bf)]",
+  },
+  {
+    name: "Product Thinking",
+    icon: BriefcaseBusiness,
+    detail: "Gabungkan riset, prioritas, dan eksekusi untuk membentuk produk yang dipakai banyak orang.",
+    vibe: "Strategic lens",
+    focus: "Problem framing, roadmap, prioritization",
+    demand: "Leadership track",
+    accent: "bg-white/88",
+    iconBg: "bg-[linear-gradient(135deg,#173d5c,#68b9b2)]",
   },
 ];
 
-const CategoriesAndTestimonials = () => {
+export default function CategoriesAndTestimonials() {
   return (
-    <div className="bg-light-blue/20">
-      {/* Categories Section */}
-      <section id="categories" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:row justify-between items-end gap-6 mb-16">
-            <div className="max-w-xl">
-              <h2 className="text-sm font-black text-primary-blue uppercase tracking-widest mb-4">Pilih Jalurmu</h2>
-              <h3 className="text-4xl font-black text-dark-blue">Karier Apa yang Ingin Kamu <span className="text-primary-blue">Taklukkan</span>?</h3>
-            </div>
-            <button className="text-primary-blue font-bold flex items-center gap-2 hover:gap-3 transition-all">
-              Lihat Semua Bidang
-              <span className="text-xl">→</span>
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((cat, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -10 }}
-                className="bg-white p-8 rounded-[32px] border border-light-blue hover:border-primary-blue transition-all group shadow-sm hover:shadow-xl hover:shadow-primary-blue/5"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-light-blue text-primary-blue flex items-center justify-center mb-6 group-hover:bg-primary-blue group-hover:text-white transition-colors">
-                  {cat.icon}
-                </div>
-                <h4 className="text-xl font-black text-dark-blue mb-2">{cat.name}</h4>
-                <p className="text-sm text-dark-blue/50 font-bold">{cat.jobs}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-24 px-6 bg-white overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-light-blue/20 to-transparent" />
-        
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-             <h2 className="text-sm font-black text-primary-blue uppercase tracking-widest mb-4">Kisah Sukses</h2>
-             <h3 className="text-4xl font-black text-dark-blue">Mereka yang Sudah <span className="text-primary-blue">Berhasil</span></h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {testimonials.map((testi, i) => (
-              <div key={i} className="bg-light-blue/30 p-10 rounded-[40px] relative">
-                <div className="absolute top-8 right-10 text-primary-blue/20">
-                   <svg width="60" height="45" viewBox="0 0 60 45" fill="currentColor">
-                     <path d="M16.6667 0L23.3333 11.25V45H0V11.25L10 0H16.6667ZM53.3333 0L60 11.25V45H36.6667V11.25L46.6667 0H53.3333Z" />
-                   </svg>
-                </div>
-                <p className="text-lg font-medium text-dark-blue/80 mb-8 leading-relaxed italic">
-                  "{testi.text}"
-                </p>
-                <div className="flex items-center gap-4">
-                  <img src={testi.avatar} alt={testi.name} className="w-14 h-14 rounded-full border-2 border-white shadow-lg" />
-                  <div>
-                    <h4 className="font-black text-dark-blue">{testi.name}</h4>
-                    <p className="text-sm font-bold text-primary-blue">{testi.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA Section */}
-          <div className="mt-24 bg-primary-blue rounded-[40px] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-primary-blue/30">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="relative z-10">
-              <h3 className="text-3xl md:text-5xl font-black text-white mb-6">Siap Menemukan Karier <br /> Impianmu?</h3>
-              <p className="text-white/80 font-medium mb-10 max-w-xl mx-auto">
-                Jangan biarkan waktu terbuang percuma. Mulai 30 hari perjalanan belajarmu hari ini bersama Skillio.
+    <>
+      <section id="categories" className="px-5 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+            <div className="max-w-3xl space-y-4">
+              <p className="section-kicker">Kategori</p>
+              <h2 className="font-display text-3xl leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
+                Pilih medan belajar yang terasa klik dengan cara berpikirmu.
+              </h2>
+              <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+                Setiap kategori dirancang bukan cuma sebagai topik belajar,
+                tapi sebagai jalur berkembang. Kamu bisa mulai dari yang paling
+                relevan, lalu membangun bukti kemampuan sedikit demi sedikit.
               </p>
-              <button className="bg-white text-primary-blue px-10 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-transform shadow-xl active:scale-95">
-                Daftar Sekarang - Gratis!
-              </button>
             </div>
+
+            <div className="blueprint-panel rounded-[28px] p-5 sm:p-6">
+              <div className="relative z-10 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="rounded-full bg-skillio-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-skillio-700">
+                    Discovery lens
+                  </span>
+                  <span className="text-sm font-semibold text-slate-500">
+                    6 jalur utama
+                  </span>
+                </div>
+                <p className="text-sm leading-7 text-slate-600">
+                  Biar tidak terasa seperti daftar kursus yang generik, tiap
+                  card menonjolkan karakter bidang, fokus belajarnya, dan rasa
+                  progres yang akan dibangun.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {categories.map(
+              ({ name, icon: Icon, detail, vibe, focus, demand, accent, iconBg, featured }) => (
+                <article
+                  key={name}
+                  className={`group relative overflow-hidden rounded-[30px] border border-white/75 p-6 shadow-[0_18px_60px_rgba(31,84,126,0.08)] backdrop-blur transition duration-300 hover:-translate-y-1.5 hover:shadow-[0_28px_90px_rgba(31,84,126,0.14)] sm:p-7 ${
+                    featured ? "md:col-span-2 xl:col-span-1" : ""
+                  } ${accent}`}
+                >
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-skillio-300 to-transparent opacity-80" />
+                  <div className="absolute -right-10 top-8 h-28 w-28 rounded-full bg-skillio-100/40 blur-3xl transition duration-300 group-hover:scale-125" />
+
+                  <div className="relative z-10 flex h-full flex-col">
+                    <div className="mb-6 flex items-start justify-between gap-4">
+                      <div className="space-y-3">
+                        <div className={`flex h-15 w-15 items-center justify-center rounded-[22px] text-white shadow-[0_16px_40px_rgba(31,84,126,0.22)] ${iconBg}`}>
+                          <Icon className="h-6 w-6" />
+                        </div>
+                        <span className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          <BadgeCheck className="h-3.5 w-3.5 text-teal-500" />
+                          {vibe}
+                        </span>
+                      </div>
+
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200/80 bg-white/72 text-slate-500 transition duration-300 group-hover:text-skillio-600">
+                        <ArrowUpRight className="h-4 w-4 transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      </div>
+                    </div>
+
+                    <div className="mb-5 space-y-3">
+                      <h3 className="text-2xl font-semibold text-slate-950">
+                        {name}
+                      </h3>
+                      <p className="text-sm leading-7 text-slate-600 sm:text-[15px]">
+                        {detail}
+                      </p>
+                    </div>
+
+                    <div className="mt-auto space-y-3">
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-2xl border border-white/80 bg-white/74 p-4">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Fokus
+                          </p>
+                          <p className="mt-2 text-sm leading-6 text-slate-700">
+                            {focus}
+                          </p>
+                        </div>
+                        <div className="rounded-2xl border border-white/80 bg-slate-950/[0.03] p-4">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                            Nilai
+                          </p>
+                          <p className="mt-2 text-sm leading-6 text-slate-700">
+                            {demand}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white/68 px-4 py-3">
+                        <span className="text-sm font-medium text-slate-600">
+                          Cocok untuk jalur belajar 30 hari
+                        </span>
+                        <span className="rounded-full bg-skillio-50 px-2.5 py-1 text-xs font-semibold text-skillio-700">
+                          Explore
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              )
+            )}
           </div>
         </div>
       </section>
-    </div>
-  );
-};
 
-export default CategoriesAndTestimonials;
+      <section className="px-5 py-20 sm:px-6 lg:px-8">
+        <ClientFeedback />
+      </section>
+
+      <section className="px-5 pb-20 sm:px-6 lg:px-8 lg:pb-24">
+        <div className="mx-auto max-w-6xl rounded-[36px] bg-[linear-gradient(135deg,#102233_0%,#1f547e_52%,#68b9b2_100%)] px-6 py-10 text-white shadow-[0_30px_120px_rgba(13,33,51,0.28)] sm:px-8 sm:py-12 lg:flex lg:items-end lg:justify-between lg:gap-8 lg:px-10">
+          <div className="max-w-2xl">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-white/65">
+              Start your 30-day reset
+            </p>
+            <h2 className="font-display text-3xl leading-tight sm:text-4xl lg:text-5xl">
+              Saatnya berhenti bingung dan mulai punya arah yang bisa kamu
+              jalani setiap hari.
+            </h2>
+            <p className="mt-4 max-w-xl text-sm leading-7 text-white/74 sm:text-base">
+              Temukan bidang yang cocok, mulai roadmap 30 hari, dan bangun
+              portofolio progres yang benar-benar terasa milikmu.
+            </p>
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:mt-0">
+            <a
+              href="#"
+              className="inline-flex items-center justify-center rounded-full bg-white px-6 py-4 text-sm font-semibold text-skillio-700 shadow-[0_16px_40px_rgba(255,255,255,0.16)]"
+            >
+              Daftar gratis sekarang
+            </a>
+            <a
+              href="#categories"
+              className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/8 px-6 py-4 text-sm font-semibold text-white/90 backdrop-blur"
+            >
+              Lihat kategori bidang
+            </a>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

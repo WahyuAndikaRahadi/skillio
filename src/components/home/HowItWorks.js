@@ -1,68 +1,86 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import { MessageSquareText, MapPin, Trophy } from "lucide-react";
+import {
+  Brain,
+  Compass,
+  FolderKanban,
+  Sparkles,
+  Trophy,
+} from "lucide-react";
 
 const steps = [
   {
-    icon: <MessageSquareText className="w-8 h-8" />,
-    title: "AI Personal Discovery",
-    desc: "Jawab 30 pertanyaan cerdas. AI kami akan membedah potensimu dan menemukan karier yang 100% cocok dengan kepribadianmu.",
-    color: "bg-primary-blue",
+    icon: Brain,
+    title: "Jawab 30 pertanyaan yang makin tajam",
+    desc: "Skillio membaca preferensi, pola belajar, dan arah minatmu dengan pertanyaan yang terasa personal, bukan formulir generik.",
+    accent: "from-skillio-500 to-sky-300",
   },
   {
-    icon: <MapPin className="w-8 h-8" />,
-    title: "30-Day Master Roadmap",
-    desc: "Dapatkan jadwal harian yang terstruktur. Tidak ada materi kosong, hanya aksi nyata yang membuatmu ahli dalam satu bulan.",
-    color: "bg-dark-blue",
+    icon: Compass,
+    title: "Dapatkan bidang yang paling masuk akal",
+    desc: "Begitu kecocokan terbaca, kamu langsung masuk ke jalur yang sesuai dengan kemampuan dan target perkembanganmu.",
+    accent: "from-skillio-600 to-skillio-500",
   },
   {
-    icon: <Trophy className="w-8 h-8" />,
-    title: "Real Proof & Badges",
-    desc: "Selesaikan tantangan harian dan kumpulkan badge. Bangun Skill Tree sebagai portofolio visual yang bisa kamu banggakan.",
-    color: "bg-primary-blue",
+    icon: FolderKanban,
+    title: "Jalani roadmap 30 hari yang terstruktur",
+    desc: "Setiap hari sudah berisi materi, tugas nyata, dan quiz untuk menjaga pemahaman tetap nempel dan progres terus maju.",
+    accent: "from-cyan-400 to-skillio-500",
+  },
+  {
+    icon: Trophy,
+    title: "Bangun bukti kemampuanmu secara publik",
+    desc: "Progress harian berubah jadi kartu capaian, badge, streak, dan skill tree yang bisa kamu bagikan sebagai portofolio hidup.",
+    accent: "from-skillio-700 to-skillio-500",
   },
 ];
 
-const HowItWorks = () => {
+export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-24 px-6 bg-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20">
-          <h2 className="text-sm font-black text-primary-blue uppercase tracking-widest mb-4">Sistem Kami</h2>
-          <h3 className="text-4xl md:text-5xl font-black text-dark-blue">Bagaimana Skillio Mengubah Hidupmu?</h3>
+    <section id="how-it-works" className="px-5 py-20 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 flex flex-col gap-5 lg:mb-16 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl space-y-4">
+            <p className="section-kicker">How It Works</p>
+            <h2 className="font-display text-3xl leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
+              Bukan sekadar belajar online. Ini alur yang memindahkan kamu dari
+              bingung ke terarah.
+            </h2>
+          </div>
+          <div className="rounded-[24px] border border-white/70 bg-white/70 p-5 text-sm leading-7 text-slate-600 shadow-[0_18px_50px_rgba(16,68,140,0.08)] backdrop-blur lg:max-w-sm">
+            Setiap tahap dibuat untuk menekan friksi: lebih sedikit overthinking,
+            lebih banyak langkah konkret yang bisa diselesaikan hari ini juga.
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-          {/* Connector Line (Desktop) */}
-          <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-light-blue -z-10 -translate-y-[80px]" />
-
-          {steps.map((step, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
-              viewport={{ once: true }}
-              className="flex flex-col items-center text-center group"
+        <div className="grid gap-4 md:grid-cols-2">
+          {steps.map(({ icon: Icon, title, desc, accent }, index) => (
+            <article
+              key={title}
+              className="blueprint-panel group rounded-[30px] p-6 sm:p-7"
             >
-              <div className={`${step.color} w-20 h-20 rounded-3xl flex items-center justify-center text-white mb-8 shadow-xl shadow-primary-blue/20 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500`}>
-                {step.icon}
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <div
+                  className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${accent} text-white shadow-[0_16px_40px_rgba(15,91,216,0.22)] transition duration-300 group-hover:scale-105 group-hover:rotate-3`}
+                >
+                  <Icon className="h-6 w-6" />
+                </div>
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+                  <Sparkles className="h-3.5 w-3.5 text-skillio-500" />
+                  Step {String(index + 1).padStart(2, "0")}
+                </div>
               </div>
-              <div className="bg-light-blue w-8 h-8 rounded-full flex items-center justify-center text-primary-blue font-black mb-6 border-4 border-white">
-                {index + 1}
-              </div>
-              <h4 className="text-2xl font-black text-dark-blue mb-4">{step.title}</h4>
-              <p className="text-dark-blue/60 leading-relaxed font-medium">
-                {step.desc}
+
+              <h3 className="mb-4 text-2xl font-semibold leading-tight text-slate-950">
+                {title}
+              </h3>
+              <p className="max-w-xl text-sm leading-7 text-slate-600 sm:text-[15px]">
+                {desc}
               </p>
-            </motion.div>
+            </article>
           ))}
         </div>
       </div>
     </section>
   );
-};
-
-export default HowItWorks;
+}

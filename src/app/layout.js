@@ -1,10 +1,15 @@
-import { Outfit } from "next/font/google";
+import { Plus_Jakarta_Sans, Syne } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/providers/SessionProvider";
 
-const outfit = Outfit({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-sans",
+});
+
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-display",
 });
 
 export const metadata = {
@@ -15,7 +20,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
-      <body className={`${outfit.variable} font-sans antialiased`}>
+      <body className={`${plusJakartaSans.variable} font-sans antialiased`}>
         <AuthProvider>
           {children}
         </AuthProvider>
