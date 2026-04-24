@@ -38,7 +38,7 @@ const steps = [
 export default function HowItWorks() {
   return (
     <section id="how-it-works" className="relative border-y border-slate-100 bg-white/40 px-5 py-32 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-6xl">
         <div className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl space-y-4">
             <p className="section-kicker">Alur Belajar</p>

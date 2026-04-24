@@ -100,11 +100,7 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
         className="flex gap-6 whitespace-nowrap py-4"
       >
         {[...items, ...items].map((item, idx) => {
-          const initials = item.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase();
+          const seed = encodeURIComponent(item.name);
 
           return (
             <div
@@ -129,12 +125,12 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
                 </div>
 
                 <div className="flex items-center gap-3 border-t border-current/10 pt-4 sm:gap-4 sm:pt-6">
-                  <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-current/20 font-display text-sm font-bold sm:h-12 sm:w-12 sm:text-base ${
-                      item.textColor === "text-white" ? "bg-white/10" : "bg-slate-50"
-                    }`}
-                  >
-                    {initials}
+                  <div className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border-2 border-current/20 bg-white sm:h-12 sm:w-12">
+                    <img 
+                      src={`https://api.dicebear.com/9.x/thumbs/svg?seed=${seed}&backgroundColor=transparent`}
+                      alt={`Avatar ${item.name}`}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                   <div className="whitespace-normal">
                     <h4 className="font-display text-sm font-bold sm:text-base">

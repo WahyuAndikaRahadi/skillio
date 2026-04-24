@@ -78,7 +78,7 @@ const roadmapMoments = [
 export default function RoadmapGenerationTimeline() {
   return (
     <section id="roadmap-generation" className="relative px-5 py-24 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-6xl">
         <div className="mb-12 flex flex-col gap-5 lg:mb-16 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl space-y-4">
             <p className="section-kicker">Proses Skillio</p>

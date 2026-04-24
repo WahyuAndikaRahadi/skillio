@@ -37,7 +37,7 @@ export default function HeroSection() {
         <div className="absolute bottom-[-10%] left-[-5%] h-[500px] w-[500px] rounded-full bg-teal-50/50 blur-[100px]" />
       </div>
 
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-6xl">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
           <div className="flex flex-col items-center space-y-8 text-center lg:items-start lg:text-left">
             <div className="fade-up section-kicker mx-auto lg:mx-0">Temukan Jalanmu Bersama Skillio</div>

@@ -57,7 +57,7 @@ const features = [
 export default function FeaturesSection() {
   return (
     <section id="features" className="relative px-5 py-24 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-6xl">
         <div className="mb-16 flex flex-col items-center text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-skillio-50 px-4 py-1.5 text-sm font-bold text-skillio-600">
             Kenapa Skillio?

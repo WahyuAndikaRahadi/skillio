@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
 
 const allDigitalFields = [
   "Pengembangan Web Frontend",
@@ -95,9 +94,8 @@ function FieldMarqueeRow({ items, direction = "left", duration = 40 }) {
         {[...items, ...items].map((item, idx) => (
           <div
             key={`${item.name}-${idx}`}
-            className={`flex shrink-0 items-center gap-3 rounded-full border px-5 py-3 shadow-sm transition-colors hover:shadow-md ${item.colorClass}`}
+            className={`flex shrink-0 items-center justify-center rounded-full border px-6 py-3 shadow-sm transition-colors hover:shadow-md ${item.colorClass}`}
           >
-            <CheckCircle2 className="h-4 w-4 shrink-0 opacity-50" />
             <span className="text-sm font-semibold">
               {item.name}
             </span>
@@ -111,7 +109,7 @@ function FieldMarqueeRow({ items, direction = "left", duration = 40 }) {
 export default function DigitalFieldsSection() {
   return (
     <section id="digital-fields" className="relative overflow-hidden border-y border-slate-100 bg-slate-50/50 py-24">
-      <div className="mx-auto mb-16 max-w-7xl px-5 text-center sm:px-6 lg:px-8">
+      <div className="mx-auto mb-16 max-w-6xl px-5 text-center sm:px-6 lg:px-8">
         <p className="section-kicker mx-auto">Katalog Bidang</p>
         <h2 className="font-display text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
           Eksklusif Hanya Untuk <br className="hidden sm:block" />
