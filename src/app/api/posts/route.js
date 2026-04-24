@@ -11,9 +11,22 @@ export async function GET(req) {
     const posts = await prisma.communityPost.findMany({
       where: categoryId ? { category_id: categoryId } : {},
       include: {
-        user: { select: { name: true, image: true } },
-        comments: { include: { user: { select: { name: true } } } },
-        likes: true,
+        user: { select: { id: true, name: true, image: true } },
+        comments: { 
+          where: { parent_id: null }, // Only top-level
+          include: { 
+            user: { select: { name: true, image: true } },
+            replies: {
+              include: {
+                user: { select: { name: true, image: true } }
+              }
+            }
+          },
+          orderBy: { createdAt: 'asc' }
+        },
+        likes: {
+          select: { user_id: true }
+        },
       },
       orderBy: { createdAt: "desc" },
     });
