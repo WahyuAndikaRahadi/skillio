@@ -14,7 +14,10 @@ const navLinks = [
   { name: "FAQ", href: "#faq" },
 ];
 
+import { useSession } from "next-auth/react";
+
 const Navbar = () => {
+  const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -38,7 +41,7 @@ const Navbar = () => {
         )}
       >
         {/* Logo Section */}
-        <Link href="/" className="group flex items-center gap-2.5 px-2">
+        <Link href={session ? "/dashboard" : "/"} className="group flex items-center gap-2.5 px-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 transition-all duration-300 group-hover:rotate-6 group-hover:bg-skillio-700">
             <Sparkles className="h-4.5 w-4.5" />
           </div>
@@ -53,7 +56,7 @@ const Navbar = () => {
             {navLinks.map((link) => (
               <Link
                 key={link.name}
-                href={link.href}
+                href={session && link.href === "/" ? "/dashboard" : link.href}
                 className="relative z-10 px-5 py-2 text-sm font-bold text-slate-600 transition-colors hover:text-skillio-600"
               >
                 {link.name}
@@ -64,12 +67,21 @@ const Navbar = () => {
 
         {/* Desktop Actions */}
         <div className="hidden items-center gap-2 md:flex">
-          <Link
-            href="/auth/login"
-            className="rounded-full bg-skillio-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-skillio-500/20 transition-all hover:bg-skillio-700 active:scale-95"
-          >
-            Masuk
-          </Link>
+          {session ? (
+            <Link
+              href="/dashboard"
+              className="rounded-full bg-skillio-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-skillio-500/20 transition-all hover:bg-skillio-700 active:scale-95"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/auth/login"
+              className="rounded-full bg-skillio-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-skillio-500/20 transition-all hover:bg-skillio-700 active:scale-95"
+            >
+              Masuk
+            </Link>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -122,13 +134,23 @@ const Navbar = () => {
                   transition={{ delay: 0.3 }}
                   className="mt-4 flex flex-col gap-2 border-t border-slate-50 pt-4"
                 >
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex h-12 items-center justify-center rounded-2xl bg-skillio-600 text-sm font-bold text-white shadow-lg shadow-skillio-500/20 transition-colors hover:bg-skillio-700 active:scale-95"
-                  >
-                    Masuk
-                  </Link>
+                  {session ? (
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex h-12 items-center justify-center rounded-2xl bg-skillio-600 text-sm font-bold text-white shadow-lg shadow-skillio-500/20 transition-colors hover:bg-skillio-700 active:scale-95"
+                    >
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/auth/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex h-12 items-center justify-center rounded-2xl bg-skillio-600 text-sm font-bold text-white shadow-lg shadow-skillio-500/20 transition-colors hover:bg-skillio-700 active:scale-95"
+                    >
+                      Masuk
+                    </Link>
+                  )}
                 </motion.div>
               </div>
             </motion.div>

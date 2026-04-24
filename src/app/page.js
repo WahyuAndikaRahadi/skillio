@@ -7,6 +7,7 @@ import RoadmapGenerationTimeline from "@/components/home/RoadmapGenerationTimeli
 import FaqSection from "@/components/home/FaqSection";
 import CategoriesAndTestimonials from "@/components/home/CategoriesAndTestimonials";
 import Footer from "@/components/layout/Footer";
+import LandingAiWidget from "@/components/home/LandingAiWidget";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
         <CategoriesAndTestimonials />
       </main>
       <Footer />
+      <LandingAiWidget />
     </div>
   );
 }
