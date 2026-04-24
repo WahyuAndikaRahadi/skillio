@@ -324,6 +324,8 @@ model GroupMessage {
   user_id    String
   content    String   @db.Text
   image_url  String?
+  file_url   String?
+  file_name  String?
   createdAt  DateTime @default(now())
   
   group      CommunityGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)

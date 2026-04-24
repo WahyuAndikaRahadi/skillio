@@ -29,12 +29,15 @@ export async function POST(req) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 1. Create user (but unverified)
+    const defaultImage = `https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(name)}&backgroundColor=0a5a97,0d76c6,12a1ef`;
+    
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
         emailVerified: null, // Ensure it is null
+        image: defaultImage,
       },
     });
 

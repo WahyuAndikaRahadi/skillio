@@ -20,6 +20,7 @@ import {
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { UploadButton } from "@/lib/uploadthing";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
@@ -81,11 +82,28 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
-            <button className="absolute -bottom-2 -right-2 p-3 bg-white text-primary-blue rounded-2xl shadow-xl hover:scale-110 transition-transform">
-               <Edit3 size={20} />
-            </button>
+            <div className="absolute -bottom-2 -right-2 bg-white rounded-2xl shadow-xl hover:scale-105 transition-transform overflow-hidden group/upload flex items-center justify-center w-12 h-12">
+               <div className="absolute inset-0 flex items-center justify-center text-primary-blue pointer-events-none">
+                 <Edit3 size={20} />
+               </div>
+               <div className="opacity-0 w-[200%] h-[200%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center scale-[3]">
+                 <UploadButton
+                   endpoint="imageUploader"
+                   onClientUploadComplete={async (res) => {
+                     if (res && res[0]) {
+                       const newUrl = res[0].url;
+                       await fetch("/api/user/update-image", {
+                         method: "POST",
+                         headers: { "Content-Type": "application/json" },
+                         body: JSON.stringify({ imageUrl: newUrl })
+                       });
+                       window.location.reload();
+                     }
+                   }}
+                 />
+               </div>
+            </div>
           </div>
-
           <div className="flex-1 text-center md:text-left text-white">
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
               <h1 className="text-3xl md:text-5xl font-black">{session?.user?.name || "Pengguna Skillio"}</h1>

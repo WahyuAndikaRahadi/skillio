@@ -11,13 +11,19 @@ import {
   Users,
   Info,
   ChevronRight,
-  MessageSquare
+  MessageSquare,
+  Paperclip,
+  Image as ImageIcon,
+  FileText,
+  X,
+  Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { pusherClient } from "@/lib/pusher-client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { UploadButton } from "@/lib/uploadthing";
 import { useRouter } from "next/navigation";
 
 export default function GroupChatPage({ params }) {
@@ -28,6 +34,10 @@ export default function GroupChatPage({ params }) {
   const [group, setGroup] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [showAttachments, setShowAttachments] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [onlineCount, setOnlineCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -112,9 +122,18 @@ export default function GroupChatPage({ params }) {
       await fetch(`/api/community/groups/${groupId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: newMessage })
+        body: JSON.stringify({ 
+          content: newMessage,
+          imageUrl: imageUrl || null,
+          fileUrl: fileUrl || null,
+          fileName: fileName || null
+        })
       });
       setNewMessage("");
+      setImageUrl("");
+      setFileUrl("");
+      setFileName("");
+      setShowAttachments(false);
     } catch (err) {
       console.error("Gagal kirim pesan");
     } finally {
@@ -184,8 +203,32 @@ export default function GroupChatPage({ params }) {
                         "max-w-[75%] md:max-w-[60%] p-5 rounded-[28px] shadow-sm",
                         isMe ? "bg-primary-blue text-white rounded-tr-none shadow-primary-blue/10" : "bg-white text-dark-blue rounded-tl-none border border-slate-100"
                       )}>
-                         {!isMe && <p className="text-[10px] font-black text-primary-blue mb-1 uppercase tracking-tighter">{msg.user.name}</p>}
-                         <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
+                         {!isMe && <p className="text-[10px] font-black text-primary-blue mb-2 uppercase tracking-tighter">{msg.user.name}</p>}
+                         
+                         {msg.image_url && (
+                           <div className="mb-3 rounded-2xl overflow-hidden border-2 border-white/20">
+                             <img src={msg.image_url} alt="Attachment" className="w-full h-auto max-h-[300px] object-cover" />
+                           </div>
+                         )}
+
+                         {msg.file_url && (
+                           <a 
+                             href={msg.file_url} 
+                             target="_blank" 
+                             rel="noopener noreferrer"
+                             className="flex items-center gap-3 p-3 mb-3 rounded-xl bg-black/10 hover:bg-black/20 transition-colors"
+                           >
+                             <div className="p-2 bg-white/20 rounded-lg shrink-0">
+                               <FileText size={16} />
+                             </div>
+                             <div className="flex-1 min-w-0">
+                               <p className="text-xs font-bold truncate">{msg.file_name || "Document File"}</p>
+                             </div>
+                             <Download size={14} className="shrink-0" />
+                           </a>
+                         )}
+
+                         {msg.content && <p className="text-sm font-medium leading-relaxed">{msg.content}</p>}
                       </div>
                       <span className="text-[9px] font-bold text-slate-300 mt-2 uppercase tracking-widest px-2">
                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -197,8 +240,85 @@ export default function GroupChatPage({ params }) {
           </div>
 
           {/* Footer Input */}
-          <div className="p-8 bg-white border-t border-slate-50">
+          <div className="p-6 bg-white border-t border-slate-50">
+             
+             <AnimatePresence>
+               {showAttachments && (
+                 <motion.div 
+                   initial={{ opacity: 0, y: 10, height: 0 }}
+                   animate={{ opacity: 1, y: 0, height: "auto" }}
+                   exit={{ opacity: 0, y: 10, height: 0 }}
+                   className="mb-4 p-4 bg-slate-50 rounded-3xl border border-slate-100 overflow-hidden"
+                 >
+                   <div className="flex flex-col gap-4">
+                     {/* Previews */}
+                     {(imageUrl || fileUrl) && (
+                       <div className="flex gap-4 p-4 bg-white rounded-2xl border border-slate-100">
+                         {imageUrl && (
+                           <div className="relative w-24 h-24 rounded-xl overflow-hidden shadow-sm">
+                             <img src={imageUrl} alt="preview" className="w-full h-full object-cover" />
+                             <button type="button" onClick={() => setImageUrl("")} className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full"><X size={12}/></button>
+                           </div>
+                         )}
+                         {fileUrl && (
+                           <div className="relative flex items-center gap-3 p-3 bg-slate-50 rounded-xl flex-1 border border-slate-100">
+                             <div className="w-10 h-10 bg-primary-blue/10 text-primary-blue rounded-lg flex items-center justify-center"><FileText size={20}/></div>
+                             <div className="flex-1 min-w-0">
+                               <p className="text-sm font-bold text-dark-blue truncate">{fileName}</p>
+                               <p className="text-[10px] font-medium text-slate-400">Siap dikirim</p>
+                             </div>
+                             <button type="button" onClick={() => {setFileUrl(""); setFileName("");}} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><X size={16}/></button>
+                           </div>
+                         )}
+                       </div>
+                     )}
+
+                     {/* Uploaders */}
+                     {!imageUrl && !fileUrl && (
+                       <div className="grid grid-cols-2 gap-4">
+                         <div className="border-2 border-dashed border-slate-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                           <ImageIcon size={24} className="text-slate-300 mb-2" />
+                           <h5 className="text-xs font-black text-dark-blue mb-2">Upload Gambar</h5>
+                           <UploadButton
+                             endpoint="imageUploader"
+                             onClientUploadComplete={(res) => {
+                               if (res && res[0]) setImageUrl(res[0].url);
+                             }}
+                             appearance={{ button: "text-[10px] px-4 py-2 bg-primary-blue h-8" }}
+                           />
+                         </div>
+                         <div className="border-2 border-dashed border-slate-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
+                           <FileText size={24} className="text-slate-300 mb-2" />
+                           <h5 className="text-xs font-black text-dark-blue mb-2">Upload Dokumen</h5>
+                           <UploadButton
+                             endpoint="documentUploader"
+                             onClientUploadComplete={(res) => {
+                               if (res && res[0]) {
+                                 setFileUrl(res[0].url);
+                                 setFileName(res[0].name);
+                               }
+                             }}
+                             appearance={{ button: "text-[10px] px-4 py-2 bg-slate-800 h-8" }}
+                           />
+                         </div>
+                       </div>
+                     )}
+                   </div>
+                 </motion.div>
+               )}
+             </AnimatePresence>
+
              <form onSubmit={handleSendMessage} className="flex gap-4">
+                <button 
+                  type="button"
+                  onClick={() => setShowAttachments(!showAttachments)}
+                  className={cn(
+                    "w-14 h-14 rounded-[24px] flex items-center justify-center transition-all shrink-0",
+                    showAttachments || imageUrl || fileUrl ? "bg-primary-blue text-white shadow-lg shadow-primary-blue/30" : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                  )}
+                >
+                  <Paperclip size={20} />
+                </button>
                 <div className="relative flex-1">
                    <input 
                      value={newMessage}
@@ -208,7 +328,7 @@ export default function GroupChatPage({ params }) {
                    />
                    <button 
                      type="submit"
-                     disabled={!newMessage.trim() || isSending}
+                     disabled={(!newMessage.trim() && !imageUrl && !fileUrl) || isSending}
                      className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-primary-blue text-white rounded-2xl flex items-center justify-center shadow-xl shadow-primary-blue/30 active:scale-90 transition-all disabled:opacity-50"
                    >
                      {isSending ? <Loader2 size={20} className="animate-spin" /> : <Send size={24} />}

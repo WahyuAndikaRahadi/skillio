@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { pusherClient } from "@/lib/pusher-client";
 import { useSession } from "next-auth/react";
+import { UploadButton } from "@/lib/uploadthing";
 
 const CommentItem = ({ comment, postId, onReply }) => {
   return (
@@ -153,8 +154,17 @@ const PostCard = ({ post, currentUserId }) => {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[40px] border border-light-blue shadow-sm hover:shadow-xl hover:border-primary-blue/20 transition-all overflow-hidden mb-8"
+      className={cn(
+        "bg-white rounded-[40px] border shadow-sm hover:shadow-xl transition-all overflow-hidden mb-8 relative",
+        post.type === "question" ? "border-orange-200 hover:border-orange-300" : "border-light-blue hover:border-primary-blue/20"
+      )}
     >
+      {post.type === "question" && (
+        <div className="absolute top-0 right-8 bg-orange-100 text-orange-600 px-4 py-1.5 rounded-b-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-1 shadow-sm">
+          <HelpCircle size={12} />
+          Pertanyaan
+        </div>
+      )}
       <div className="p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -296,6 +306,7 @@ export default function SocialFeed({ categoryId }) {
   const { data: session } = useSession();
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState("");
+  const [postType, setPostType] = useState("progress");
   const [imageUrl, setImageUrl] = useState("");
   const [showImageInput, setShowImageInput] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -339,7 +350,7 @@ export default function SocialFeed({ categoryId }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           content: newPost, 
-          type: "question", 
+          type: postType, 
           categoryId,
           imageUrl: imageUrl || null
         })
@@ -348,6 +359,7 @@ export default function SocialFeed({ categoryId }) {
         setNewPost("");
         setImageUrl("");
         setShowImageInput(false);
+        setPostType("progress");
       }
     } catch (err) {
       console.error("Gagal posting");
@@ -383,20 +395,32 @@ export default function SocialFeed({ categoryId }) {
                        exit={{ opacity: 0, scale: 0.9 }}
                        className="relative"
                      >
-                        <input 
-                          type="text"
-                          value={imageUrl}
-                          onChange={(e) => setImageUrl(e.target.value)}
-                          placeholder="Masukkan URL Gambar (jpg, png, gif)..."
-                          className="w-full px-4 py-3 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 text-sm font-medium focus:border-primary-blue transition-all"
-                        />
-                        {imageUrl && (
+                        {!imageUrl ? (
+                          <div className="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center hover:bg-slate-50 transition-colors">
+                            <UploadButton
+                              endpoint="imageUploader"
+                              onClientUploadComplete={(res) => {
+                                console.log("Files: ", res);
+                                if (res && res[0]) {
+                                  setImageUrl(res[0].url);
+                                }
+                              }}
+                              onUploadError={(error) => {
+                                alert(`Upload ERROR! ${error.message}`);
+                              }}
+                              appearance={{
+                                button: "bg-primary-blue text-white font-bold px-6 py-2 rounded-xl text-sm w-auto",
+                                allowedContent: "text-xs text-slate-400 mt-2"
+                              }}
+                            />
+                          </div>
+                        ) : (
                           <div className="mt-4 relative rounded-2xl overflow-hidden h-32 border-2 border-slate-100">
                              <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
                              <button 
                                type="button"
                                onClick={() => setImageUrl("")}
-                               className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full"
+                               className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-red-500 transition-colors"
                              >
                                <X size={14} />
                              </button>
@@ -420,7 +444,14 @@ export default function SocialFeed({ categoryId }) {
                    <ImageIcon size={20} />
                    <span>Gambar</span>
                 </button>
-                <button type="button" className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 font-bold text-sm hover:bg-slate-50 hover:text-dark-blue transition-all">
+                <button 
+                  type="button" 
+                  onClick={() => setPostType(prev => prev === "question" ? "progress" : "question")}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all",
+                    postType === "question" ? "bg-orange-50 text-orange-500" : "text-slate-400 hover:bg-slate-50 hover:text-dark-blue"
+                  )}
+                >
                    <HelpCircle size={20} />
                    <span>Tanya</span>
                 </button>
