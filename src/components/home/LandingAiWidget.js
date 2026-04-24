@@ -39,6 +39,12 @@ export default function LandingAiWidget() {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
+    // Prepare history to send
+    const historyToSend = messages.map(m => ({
+      role: m.role,
+      content: m.content
+    }));
+
     const userMessage = { role: "user", content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput("");
@@ -49,7 +55,10 @@ export default function LandingAiWidget() {
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage.content })
+        body: JSON.stringify({ 
+          message: userMessage.content,
+          history: historyToSend 
+        })
       });
       const data = await res.json();
       if (res.ok) {
@@ -169,7 +178,7 @@ export default function LandingAiWidget() {
               setShowTooltip(false);
             }}
           >
-            Psst... Mau curhat soal karir? 👀
+            Tanya Skillio AI
           </motion.div>
         )}
       </AnimatePresence>
