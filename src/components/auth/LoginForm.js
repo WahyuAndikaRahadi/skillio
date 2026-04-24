@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Sparkles, Loader2, Github, Mail } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -17,8 +17,20 @@ const loginSchema = z.object({
 
 const LoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlError = searchParams?.get("error");
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Handle NextAuth URL errors
+  React.useEffect(() => {
+    if (urlError === "OAuthAccountNotLinked") {
+      setError("Email ini sudah terdaftar. Silakan masuk menggunakan Email dan Password Anda.");
+    } else if (urlError) {
+      setError("Terjadi kesalahan saat otentikasi. Silakan coba lagi.");
+    }
+  }, [urlError]);
 
   const {
     register,

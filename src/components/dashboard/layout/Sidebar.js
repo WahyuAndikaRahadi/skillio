@@ -11,7 +11,8 @@ import {
   Sparkles, 
   LogOut,
   Globe,
-  Map
+  Map,
+  Bot
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
@@ -19,6 +20,7 @@ import { signOut } from "next-auth/react";
 const menuItems = [
   { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} /> },
   { name: "Roadmap Belajar", href: "/roadmap", icon: <Map size={20} /> },
+  { name: "AI Mentor", href: "/ai", icon: <Bot size={20} /> },
   { name: "Social Feed", href: "/feed", icon: <Globe size={20} /> },
   { name: "Komunitas", href: "/community", icon: <Users size={20} /> },
   { name: "Profil", href: "/profile", icon: <User size={20} /> },

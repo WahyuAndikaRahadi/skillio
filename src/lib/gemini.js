@@ -64,6 +64,15 @@ export const generateQuizQuestions = async (context, phase) => {
   return extractJson(response.text());
 };
 
+const PREDEFINED_CAREERS = `
+Teknologi & Pengembangan: Pengembangan Web Frontend, Pengembangan Web Backend, Pengembangan Aplikasi Mobile Android, Pengembangan Aplikasi Mobile iOS, Pengembangan Fullstack, Rekayasa Perangkat Lunak, Pengujian & Jaminan Kualitas Perangkat Lunak, Keamanan Siber, Jaringan & Infrastruktur, Komputasi Awan, Pengembangan Game, Pemrograman Tertanam & Internet of Things.
+Data & Kecerdasan Buatan: Analisis Data, Ilmu Data, Rekayasa Data, Kecerdasan Buatan & Pembelajaran Mesin, Prompt Engineering & AI Tools, Visualisasi Data, Riset & Eksperimen Pengguna, Otomasi & No-Code Development.
+Desain & Kreativitas: Desain UI/UX, Desain Grafis, Desain Produk Digital, Desain Gerak & Animasi, Desain Karakter & Ilustrasi, Desain 3D & Pemodelan, Desain Antarmuka Game, Tipografi & Identitas Visual, Desain Presentasi & Infografis, Desain Augmented Reality & Virtual Reality.
+Konten & Media Digital: Pembuatan Konten & Kreator Digital, Penulisan Kreatif & Copywriting, Penulisan Teknis & Dokumentasi, Produksi Podcast, Produksi & Pengeditan Video, Fotografi Digital, Manajemen Media Sosial, Penyiaran & Streaming Digital.
+Bisnis & Pemasaran Digital: Pemasaran Digital, Optimasi Mesin Pencari, Periklanan Digital & Manajemen Iklan, Manajemen Produk Digital, Pertumbuhan & Pemasaran Berbasis Data, Perdagangan Elektronik & Toko Online, Afiliasi & Monetisasi Digital, Hubungan Masyarakat Digital, Kewirausahaan Digital & Rintisan Teknologi.
+Keuangan & Legalitas Digital: Keuangan Pribadi & Investasi Digital, Hukum & Regulasi Teknologi Digital, Kepatuhan & Tata Kelola Data.
+`;
+
 export const analyzeCareerRecommendation = async (allAnswers) => {
   const context = allAnswers
     .map((a) => `Fase ${a.phase} | T: ${a.question} -> J: ${a.answer}`)
@@ -73,11 +82,15 @@ export const analyzeCareerRecommendation = async (allAnswers) => {
     Role: Konsultan Karier Skillio.
     Analisis 30 jawaban ini: "${context}"
     Tugas: Berikan 3 rekomendasi karier.
+    
+    ATURAN SANGAT PENTING: Anda HARUS dan HANYA BOLEH memilih rekomendasi karier dari daftar 50 bidang digital berikut ini. DILARANG KERAS memberikan karir di luar daftar ini:
+    ${PREDEFINED_CAREERS}
+
     Format JSON:
     {
       "summary": "...",
       "recommendations": [
-        { "career": "...", "match": 90, "reason": "..." }
+        { "career": "Nama Karir Persis Sesuai Daftar", "match": 90, "reason": "..." }
       ]
     }
     Bahasa: Indonesia Profesional (Anda).

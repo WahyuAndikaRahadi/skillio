@@ -42,7 +42,7 @@ export default function DashboardLayout({ children }) {
         )}
       </AnimatePresence>
 
-      <div className="lg:ml-72 flex flex-col min-h-screen">
+      <div className="lg:ml-72 flex flex-col min-h-screen relative">
         <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
         
         <main className="flex-grow pt-28 pb-12 px-6 md:px-10 max-w-7xl mx-auto w-full">
