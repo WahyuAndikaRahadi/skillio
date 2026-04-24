@@ -67,18 +67,22 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="w-full max-w-md p-8 bg-white rounded-[32px] shadow-2xl shadow-primary-blue/10 border border-light-blue">
-      <div className="text-center mb-8">
-        <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-          <div className="bg-primary-blue p-2 rounded-xl group-hover:rotate-12 transition-transform">
-            <Sparkles className="w-6 h-6 text-white" />
+    <div className="w-full">
+      {/* Mobile Logo */}
+      <div className="mb-10 lg:hidden">
+        <Link href="/" className="inline-flex items-center gap-3 group">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 group-hover:rotate-12 transition-transform">
+            <Sparkles className="h-5 w-5" />
           </div>
-          <span className="text-2xl font-black tracking-tighter text-primary-blue">
-            SKILLIO
+          <span className="font-display text-xl font-bold tracking-tight text-slate-900">
+            Skillio
           </span>
         </Link>
-        <h1 className="text-2xl font-black text-dark-blue">Selamat Datang Kembali</h1>
-        <p className="text-dark-blue/60 font-medium">Masuk untuk melanjutkan perjalananmu</p>
+      </div>
+
+      <div className="mb-8">
+        <h1 className="font-display text-3xl font-bold text-slate-900">Selamat Datang</h1>
+        <p className="text-slate-500 mt-2 font-medium">Masuk untuk melanjutkan progres belajarmu.</p>
       </div>
 
       {error && (
@@ -89,12 +93,12 @@ const LoginForm = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
-          <label className="block text-sm font-bold text-dark-blue mb-2 ml-1">Email</label>
+          <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Email</label>
           <input
             {...register("email")}
             className={cn(
-              "w-full px-5 py-4 rounded-2xl bg-light-blue/30 border-2 border-transparent focus:border-primary-blue focus:bg-white outline-none transition-all font-medium",
-              errors.email && "border-red-500 bg-red-50"
+              "w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+              errors.email && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
             )}
             placeholder="nama@email.com"
           />
@@ -102,31 +106,28 @@ const LoginForm = () => {
         </div>
 
         <div>
-          <div className="flex justify-between items-center mb-2 ml-1">
-            <label className="text-sm font-bold text-dark-blue">Password</label>
-            <Link href="#" className="text-xs font-bold text-primary-blue hover:underline">Lupa Password?</Link>
-          </div>
+          <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Password</label>
           <input
             {...register("password")}
             type="password"
             className={cn(
-              "w-full px-5 py-4 rounded-2xl bg-light-blue/30 border-2 border-transparent focus:border-primary-blue focus:bg-white outline-none transition-all font-medium",
-              errors.password && "border-red-500 bg-red-50"
+              "w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+              errors.password && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
             )}
             placeholder="••••••••"
           />
-          {errors.password && <p className="mt-1 text-xs text-red-500 font-bold ml-1">{errors.password.message}</p>}
-          <div className="text-right mt-2">
-            <Link href="/auth/forgot-password" size="sm" className="text-xs font-bold text-primary-blue hover:underline">
-              Lupa Password?
-            </Link>
+          <div className="mt-2 flex items-center justify-between px-1">
+            <div className="flex-1">
+              {errors.password && <p className="text-xs text-red-500 font-bold">{errors.password.message}</p>}
+            </div>
+            <Link href="/auth/forgot-password" className="text-sm font-bold text-skillio-600 hover:text-skillio-700 hover:underline transition-colors">Lupa Password?</Link>
           </div>
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-primary-blue text-white py-4 rounded-2xl font-black text-lg hover:bg-accent-blue transition-all shadow-xl shadow-primary-blue/20 active:scale-[0.98] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-2"
+          className="w-full bg-skillio-600 text-white py-4 rounded-2xl font-bold text-base hover:bg-skillio-700 transition-all shadow-lg shadow-skillio-500/20 active:scale-[0.98] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-2"
         >
           {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Masuk Sekarang"}
         </button>
@@ -134,24 +135,24 @@ const LoginForm = () => {
 
       <div className="mt-8 relative text-center">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-light-blue"></div>
+          <div className="w-full border-t border-slate-200"></div>
         </div>
-        <span className="relative px-4 bg-white text-xs font-bold text-dark-blue/40 uppercase tracking-widest">Atau masuk dengan</span>
+        <span className="relative px-4 bg-white text-xs font-bold text-slate-400 uppercase tracking-widest">Atau masuk dengan</span>
       </div>
 
       <div className="mt-8">
         <button
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl border-2 border-light-blue font-bold text-dark-blue hover:bg-light-blue/20 transition-all active:scale-[0.98]"
+          className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl border border-slate-200 font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98]"
         >
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
           Lanjutkan dengan Google
         </button>
       </div>
 
-      <p className="mt-8 text-center text-sm font-bold text-dark-blue/60">
+      <p className="mt-8 text-center text-sm font-bold text-slate-500">
         Belum punya akun?{" "}
-        <Link href="/auth/register" className="text-primary-blue hover:underline">Daftar Gratis</Link>
+        <Link href="/auth/register" className="text-skillio-600 hover:underline">Daftar Gratis</Link>
       </p>
     </div>
   );

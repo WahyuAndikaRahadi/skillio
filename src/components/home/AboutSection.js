@@ -1,17 +1,21 @@
 "use client";
 
-import { Heart, Target, Zap } from "lucide-react";
+import Image from "next/image";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="relative border-y border-slate-100 bg-white/40 px-5 py-24 sm:px-6 lg:px-8">
+    <section id="about" className="relative px-5 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-          {/* Image Placeholder (Left) */}
-          <div className="order-first flex aspect-[4/3] w-full items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-slate-50/50 text-slate-400">
-            <div className="text-center">
-              <p className="font-semibold">Tempat Gambar</p>
-              <p className="text-sm">Silakan ganti dengan gambar Anda</p>
+          {/* Image (Left) */}
+          <div className="order-first flex items-center justify-center">
+            <div className="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-[2rem] sm:max-w-[320px] lg:max-w-[380px]">
+              <Image
+                src="/images/about.png"
+                alt="Tentang Skillio"
+                fill
+                className="object-cover object-center"
+              />
             </div>
           </div>
 
@@ -23,7 +27,7 @@ export default function AboutSection() {
               <span className="text-skillio-500">Tidak Terbuang.</span>
             </h2>
             <p className="text-lg leading-relaxed text-slate-600">
-              Skillio lahir dari kegelisahan melihat banyak anak muda Indonesia yang merasa "tersesat" dalam menentukan arah karir. Kami membangun sistem yang tidak hanya memberi materi, tapi memberikan kejelasan.
+             Skillio hadir dari kegelisahan melihat banyak anak muda Indonesia yang merasa “tersesat” dalam menentukan arah karier. Banyak yang belajar tanpa tujuan jelas dan hanya mengikuti tren. Karena itu, Skillio tidak hanya menyediakan materi, tetapi juga membantu menemukan arah yang tepat melalui sistem yang terstruktur dan relevan, agar setiap langkah lebih terarah dan bermakna.
             </p>
           </div>
         </div>

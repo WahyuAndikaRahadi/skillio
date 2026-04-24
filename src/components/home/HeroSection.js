@@ -65,12 +65,6 @@ export default function HeroSection() {
                 Mulai Eksplorasi
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </a>
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center justify-center rounded-2xl border-2 border-slate-200 bg-white/80 px-8 py-4 text-base font-bold text-slate-700 backdrop-blur-sm transition-all hover:border-skillio-200 hover:bg-skillio-50"
-              >
-                Lihat Cara Kerja
-              </a>
             </div>
 
             <div className="fade-up flex flex-wrap justify-center gap-x-6 gap-y-3 lg:justify-start">

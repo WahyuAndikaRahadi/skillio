@@ -11,7 +11,7 @@ const navLinks = [
   { name: "Fitur", href: "#features" },
   { name: "Bidang", href: "#digital-fields" },
   { name: "Roadmap", href: "#roadmap-generation" },
-  { name: "Cara Kerja", href: "#how-it-works" },
+  { name: "FAQ", href: "#faq" },
 ];
 
 const Navbar = () => {
@@ -66,16 +66,9 @@ const Navbar = () => {
         <div className="hidden items-center gap-2 md:flex">
           <Link
             href="/auth/login"
-            className="rounded-full px-5 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
+            className="rounded-full bg-skillio-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-skillio-500/20 transition-all hover:bg-skillio-700 active:scale-95"
           >
             Masuk
-          </Link>
-          <Link
-            href="/auth/register"
-            className="group relative inline-flex h-10 items-center justify-center overflow-hidden rounded-full bg-slate-900 px-6 text-sm font-bold text-white transition-all hover:bg-skillio-600 active:scale-95"
-          >
-            <span className="relative z-10">Daftar</span>
-            <div className="absolute inset-0 z-0 translate-y-full bg-gradient-to-r from-skillio-600 to-skillio-500 transition-transform duration-300 group-hover:translate-y-0" />
           </Link>
         </div>
 
@@ -132,16 +125,9 @@ const Navbar = () => {
                   <Link
                     href="/auth/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex h-12 items-center justify-center rounded-2xl bg-slate-100 text-sm font-bold text-slate-700 transition-colors"
+                    className="flex h-12 items-center justify-center rounded-2xl bg-skillio-600 text-sm font-bold text-white shadow-lg shadow-skillio-500/20 transition-colors hover:bg-skillio-700 active:scale-95"
                   >
                     Masuk
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex h-12 items-center justify-center rounded-2xl bg-skillio-600 text-sm font-bold text-white shadow-lg shadow-skillio-500/20"
-                  >
-                    Daftar
                   </Link>
                 </motion.div>
               </div>

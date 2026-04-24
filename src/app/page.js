@@ -4,7 +4,7 @@ import AboutSection from "@/components/home/AboutSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import DigitalFieldsSection from "@/components/home/DigitalFieldsSection";
 import RoadmapGenerationTimeline from "@/components/home/RoadmapGenerationTimeline";
-import HowItWorks from "@/components/home/HowItWorks";
+import FaqSection from "@/components/home/FaqSection";
 import CategoriesAndTestimonials from "@/components/home/CategoriesAndTestimonials";
 import Footer from "@/components/layout/Footer";
 
@@ -18,7 +18,7 @@ export default function Home() {
         <FeaturesSection />
         <DigitalFieldsSection />
         <RoadmapGenerationTimeline />
-        <HowItWorks />
+        <FaqSection />
         <CategoriesAndTestimonials />
       </main>
       <Footer />

@@ -100,15 +100,26 @@ const RegisterForm = () => {
 
   if (step === "verify") {
     return (
-      <div className="w-full max-w-md p-8 bg-white rounded-[32px] shadow-2xl shadow-primary-blue/10 border border-light-blue">
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-primary-blue/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-primary-blue">
+      <div className="w-full">
+        <div className="mb-10 lg:hidden">
+          <Link href="/" className="inline-flex items-center gap-3 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 group-hover:rotate-12 transition-transform">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <span className="font-display text-xl font-bold tracking-tight text-slate-900">
+              Skillio
+            </span>
+          </Link>
+        </div>
+
+        <div className="mb-8">
+          <div className="w-16 h-16 bg-skillio-50 text-skillio-600 rounded-2xl flex items-center justify-center mb-6">
              <Mail size={32} />
           </div>
-          <h1 className="text-2xl font-black text-dark-blue mb-2">Verifikasi Email</h1>
-          <p className="text-dark-blue/60 font-medium">
+          <h1 className="font-display text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h1>
+          <p className="text-slate-500 font-medium">
             Kami telah mengirimkan kode 6 digit ke <br/>
-            <span className="text-primary-blue font-bold">{registeredEmail}</span>
+            <span className="text-skillio-600 font-bold">{registeredEmail}</span>
           </p>
         </div>
 
@@ -120,7 +131,7 @@ const RegisterForm = () => {
 
         <form onSubmit={onVerifyOtp} className="space-y-6">
           <div>
-            <label className="block text-sm font-black text-dark-blue/40 uppercase tracking-widest mb-3 text-center">
+            <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">
               Masukkan Kode OTP
             </label>
             <input
@@ -128,7 +139,7 @@ const RegisterForm = () => {
               maxLength={6}
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-              className="w-full text-center text-4xl font-black tracking-[0.5em] py-5 rounded-2xl bg-light-blue/30 border-2 border-transparent focus:border-primary-blue focus:bg-white outline-none transition-all text-dark-blue"
+              className="w-full text-center text-4xl font-black tracking-[0.5em] py-5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all text-slate-900"
               placeholder="000000"
               required
             />
@@ -137,7 +148,7 @@ const RegisterForm = () => {
           <button
             type="submit"
             disabled={isLoading || otp.length !== 6}
-            className="w-full bg-primary-blue text-white py-5 rounded-2xl font-black text-lg hover:bg-accent-blue transition-all shadow-xl shadow-primary-blue/20 active:scale-[0.98] disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2"
+            className="w-full bg-skillio-600 text-white py-4 rounded-2xl font-bold text-base hover:bg-skillio-700 transition-all shadow-lg shadow-skillio-500/20 active:scale-[0.98] disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
               <>
@@ -148,40 +159,43 @@ const RegisterForm = () => {
           </button>
         </form>
 
-        <p className="mt-8 text-center text-sm font-bold text-dark-blue/40">
-          Tidak menerima kode? <button className="text-primary-blue hover:underline">Kirim Ulang</button>
+        <p className="mt-8 text-center text-sm font-bold text-slate-500">
+          Tidak menerima kode? <button className="text-skillio-600 hover:underline">Kirim Ulang</button>
         </p>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-md p-8 bg-white rounded-[32px] shadow-2xl shadow-primary-blue/10 border border-light-blue">
-      <div className="text-center mb-8">
-        <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-          <div className="bg-primary-blue p-2 rounded-xl group-hover:rotate-12 transition-transform">
-            <Sparkles className="w-6 h-6 text-white" />
+    <div className="w-full">
+      <div className="mb-10 lg:hidden">
+        <Link href="/" className="inline-flex items-center gap-3 group">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 group-hover:rotate-12 transition-transform">
+            <Sparkles className="h-5 w-5" />
           </div>
-          <span className="text-2xl font-black tracking-tighter text-primary-blue uppercase">
-            SKILLIO
+          <span className="font-display text-xl font-bold tracking-tight text-slate-900">
+            Skillio
           </span>
         </Link>
-        <h1 className="text-2xl font-black text-dark-blue">Daftar Akun Baru</h1>
-        <p className="text-dark-blue/60 font-medium">Temukan potensimu sekarang</p>
+      </div>
+
+      <div className="mb-8">
+        <h1 className="font-display text-3xl font-bold text-slate-900">Daftar Akun Baru</h1>
+        <p className="text-slate-500 mt-2 font-medium">Temukan potensimu sekarang</p>
       </div>
 
       <button
         onClick={handleGoogleLogin}
-        className="w-full flex items-center justify-center gap-3 py-4 border-2 border-slate-100 rounded-2xl font-bold text-dark-blue hover:bg-slate-50 hover:border-slate-200 transition-all active:scale-[0.98]"
+        className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl border border-slate-200 font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98]"
       >
         <FcGoogle size={24} />
         Daftar dengan Google
       </button>
 
       <div className="my-8 flex items-center gap-4">
-        <div className="h-[1px] flex-grow bg-slate-100"></div>
-        <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Atau via Email</span>
-        <div className="h-[1px] flex-grow bg-slate-100"></div>
+        <div className="h-[1px] flex-grow bg-slate-200"></div>
+        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Atau via Email</span>
+        <div className="h-[1px] flex-grow bg-slate-200"></div>
       </div>
 
       {error && (
@@ -192,12 +206,12 @@ const RegisterForm = () => {
 
       <form onSubmit={handleSubmit(onSubmitRegister)} className="space-y-4">
         <div>
-          <label className="block text-sm font-bold text-dark-blue mb-1 ml-1">Nama Lengkap</label>
+          <label className="block text-sm font-bold text-slate-700 mb-1 ml-1">Nama Lengkap</label>
           <input
             {...register("name")}
             className={cn(
-              "w-full px-5 py-3.5 rounded-2xl bg-light-blue/30 border-2 border-transparent focus:border-primary-blue focus:bg-white outline-none transition-all font-medium",
-              errors.name && "border-red-500 bg-red-50"
+              "w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+              errors.name && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
             )}
             placeholder="John Doe"
           />
@@ -205,12 +219,12 @@ const RegisterForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-dark-blue mb-1 ml-1">Email</label>
+          <label className="block text-sm font-bold text-slate-700 mb-1 ml-1">Email</label>
           <input
             {...register("email")}
             className={cn(
-              "w-full px-5 py-3.5 rounded-2xl bg-light-blue/30 border-2 border-transparent focus:border-primary-blue focus:bg-white outline-none transition-all font-medium",
-              errors.email && "border-red-500 bg-red-50"
+              "w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+              errors.email && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
             )}
             placeholder="nama@email.com"
           />
@@ -218,13 +232,13 @@ const RegisterForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-dark-blue mb-1 ml-1">Password</label>
+          <label className="block text-sm font-bold text-slate-700 mb-1 ml-1">Password</label>
           <input
             {...register("password")}
             type="password"
             className={cn(
-              "w-full px-5 py-3.5 rounded-2xl bg-light-blue/30 border-2 border-transparent focus:border-primary-blue focus:bg-white outline-none transition-all font-medium",
-              errors.password && "border-red-500 bg-red-50"
+              "w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+              errors.password && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
             )}
             placeholder="••••••••"
           />
@@ -232,13 +246,13 @@ const RegisterForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-dark-blue mb-1 ml-1">Konfirmasi Password</label>
+          <label className="block text-sm font-bold text-slate-700 mb-1 ml-1">Konfirmasi Password</label>
           <input
             {...register("confirmPassword")}
             type="password"
             className={cn(
-              "w-full px-5 py-3.5 rounded-2xl bg-light-blue/30 border-2 border-transparent focus:border-primary-blue focus:bg-white outline-none transition-all font-medium",
-              errors.confirmPassword && "border-red-500 bg-red-50"
+              "w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+              errors.confirmPassword && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
             )}
             placeholder="••••••••"
           />
@@ -248,15 +262,15 @@ const RegisterForm = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-primary-blue text-white py-4 mt-4 rounded-2xl font-black text-lg hover:bg-accent-blue transition-all shadow-xl shadow-primary-blue/20 active:scale-[0.98] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-2"
+          className="w-full bg-skillio-600 text-white py-4 mt-4 rounded-2xl font-bold text-base hover:bg-skillio-700 transition-all shadow-lg shadow-skillio-500/20 active:scale-[0.98] disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-2"
         >
           {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Buat Akun Sekarang"}
         </button>
       </form>
 
-      <div className="mt-8 text-center text-sm font-bold text-dark-blue/60">
+      <div className="mt-8 text-center text-sm font-bold text-slate-500">
         Sudah punya akun?{" "}
-        <Link href="/auth/login" className="text-primary-blue hover:underline">Masuk Di Sini</Link>
+        <Link href="/auth/login" className="text-skillio-600 hover:underline">Masuk Di Sini</Link>
       </div>
     </div>
   );
