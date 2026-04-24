@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 const navLinks = [
   { name: "Beranda", href: "/" },
   { name: "Fitur", href: "#features" },
+  { name: "Bidang", href: "#digital-fields" },
   { name: "Roadmap", href: "#roadmap-generation" },
   { name: "Cara Kerja", href: "#how-it-works" },
 ];

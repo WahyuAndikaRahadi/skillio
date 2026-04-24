@@ -82,8 +82,9 @@ export default function RoadmapGenerationTimeline() {
         <div className="mb-12 flex flex-col gap-5 lg:mb-16 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl space-y-4">
             <p className="section-kicker">Proses Skillio</p>
-            <h2 className="font-display text-3xl leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
-              Cara Skillio mengubah potensimu jadi roadmap belajar 30 hari.
+            <h2 className="font-display text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
+              Cara Skillio mengubah potensimu <br />
+              jadi <span className="text-skillio-500">roadmap belajar 30 hari.</span>
             </h2>
           </div>
           <div className="rounded-[24px] border border-white/70 bg-white/72 p-5 text-sm leading-7 text-slate-600 shadow-[0_18px_50px_rgba(31,84,126,0.08)] backdrop-blur lg:max-w-sm">

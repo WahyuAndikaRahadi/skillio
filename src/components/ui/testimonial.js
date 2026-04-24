@@ -99,38 +99,56 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
         }}
         className="flex gap-6 whitespace-nowrap py-4"
       >
-        {[...items, ...items].map((item, idx) => (
-          <div
-            key={`${item.name}-${idx}`}
-            className={`w-[350px] shrink-0 rounded-[2rem] border border-slate-100 p-8 shadow-sm sm:w-[450px] ${item.color} ${item.textColor}`}
-          >
-            <div className="flex h-full flex-col justify-between gap-8">
-              <div className="space-y-4">
-                <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${item.textColor === "text-white" ? "bg-white/10 text-white/80" : "bg-slate-100 text-slate-500"}`}>
-                  <item.icon className="h-3 w-3" />
-                  {item.badge}
-                </div>
-                <p className="whitespace-normal text-base font-medium leading-relaxed italic sm:text-lg">
-                  &ldquo;{item.quote}&rdquo;
-                </p>
-              </div>
+        {[...items, ...items].map((item, idx) => {
+          const initials = item.name
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase();
 
-              <div className="flex items-center gap-4 border-t border-current/10 pt-6">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  width={50}
-                  height={50}
-                  className="h-12 w-12 rounded-full border-2 border-current/20 object-cover"
-                />
-                <div className="whitespace-normal">
-                  <h4 className="font-display text-base font-bold">{item.name}</h4>
-                  <p className="text-xs opacity-70">{item.role} &middot; {item.company}</p>
+          return (
+            <div
+              key={`${item.name}-${idx}`}
+              className={`w-[280px] shrink-0 rounded-[1.5rem] border border-slate-100 p-6 shadow-sm sm:w-[450px] sm:rounded-[2rem] sm:p-8 ${item.color} ${item.textColor}`}
+            >
+              <div className="flex h-full flex-col justify-between gap-6 sm:gap-8">
+                <div className="space-y-3 sm:space-y-4">
+                  <div
+                    className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
+                      item.textColor === "text-white"
+                        ? "bg-white/10 text-white/80"
+                        : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    <item.icon className="h-3 w-3" />
+                    {item.badge}
+                  </div>
+                  <p className="whitespace-normal text-sm font-medium leading-relaxed italic sm:text-lg">
+                    &ldquo;{item.quote}&rdquo;
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 border-t border-current/10 pt-4 sm:gap-4 sm:pt-6">
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-current/20 font-display text-sm font-bold sm:h-12 sm:w-12 sm:text-base ${
+                      item.textColor === "text-white" ? "bg-white/10" : "bg-slate-50"
+                    }`}
+                  >
+                    {initials}
+                  </div>
+                  <div className="whitespace-normal">
+                    <h4 className="font-display text-sm font-bold sm:text-base">
+                      {item.name}
+                    </h4>
+                    <p className="text-[10px] opacity-70 sm:text-xs">
+                      {item.role} &middot; {item.company}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </motion.div>
     </div>
   );
@@ -138,7 +156,7 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
 
 function ClientFeedback() {
   return (
-    <section className="relative w-full overflow-hidden bg-transparent py-10">
+    <section id="testimonials" className="relative w-full overflow-hidden bg-transparent py-10">
       <div className="mx-auto mb-0 max-w-4xl px-5 text-center">
         <h2 className="font-display text-3xl font-bold leading-tight text-slate-900 sm:text-5xl">
           Apa kata mereka yang sudah <br />

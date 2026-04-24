@@ -2,6 +2,7 @@ import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/home/HeroSection";
 import AboutSection from "@/components/home/AboutSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
+import DigitalFieldsSection from "@/components/home/DigitalFieldsSection";
 import RoadmapGenerationTimeline from "@/components/home/RoadmapGenerationTimeline";
 import HowItWorks from "@/components/home/HowItWorks";
 import CategoriesAndTestimonials from "@/components/home/CategoriesAndTestimonials";
@@ -15,6 +16,7 @@ export default function Home() {
         <HeroSection />
         <AboutSection />
         <FeaturesSection />
+        <DigitalFieldsSection />
         <RoadmapGenerationTimeline />
         <HowItWorks />
         <CategoriesAndTestimonials />

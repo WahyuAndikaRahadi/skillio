@@ -15,21 +15,17 @@ const credibility = [
 
 export default function HeroSection() {
   const HeroImage = ({ className }) => (
-    <div className={`fade-up relative ${className}`} style={{ animationDelay: "150ms" }}>
-      <div className="relative z-10 mx-auto aspect-square max-w-[280px] overflow-hidden rounded-full border-8 border-slate-100 bg-slate-50 shadow-2xl sm:max-w-[400px] sm:border-[12px] lg:max-w-[500px]">
+    <div className={`fade-up relative mix-blend-multiply ${className}`} style={{ animationDelay: "150ms" }}>
+      <div className="relative z-10 mx-auto max-w-[280px] sm:max-w-[400px] lg:max-w-[500px]">
         <Image
           src="/images/karir.jpg"
-          alt="Skillio Learning Journey"
+          alt="Skillio"
           width={1000}
           height={1000}
-          className="h-full w-full object-cover brightness-[0.96] transition-transform duration-700 hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-700 hover:scale-105 contrast-[1.05]"
           priority
         />
       </div>
-      
-      {/* Background Decorations */}
-      <div className="absolute -right-8 -top-8 -z-10 h-32 w-32 rounded-full bg-teal-200/30 blur-2xl" />
-      <div className="absolute -bottom-10 -right-10 -z-10 h-64 w-64 rounded-full bg-skillio-200/20 blur-3xl" />
     </div>
   );
 
@@ -43,13 +39,13 @@ export default function HeroSection() {
 
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-          <div className="fade-up space-y-8">
-            <div className="section-kicker">Temukan Jalanmu Bersama Skillio</div>
+          <div className="flex flex-col items-center space-y-8 text-center lg:items-start lg:text-left">
+            <div className="fade-up section-kicker mx-auto lg:mx-0">Temukan Jalanmu Bersama Skillio</div>
 
             {/* Image for Mobile only - between Kicker and Title */}
-            <HeroImage className="lg:hidden my-6" />
+            <HeroImage className="my-6 lg:hidden" />
 
-            <div className="space-y-6">
+            <div className="fade-up space-y-6">
               <h1 className="font-display text-3xl font-bold leading-[1.1] text-slate-950 sm:text-4xl lg:text-5xl">
                 Bingung arah karir? <br />
                 <span className="text-skillio-500">Ubah jadi progres nyata.</span>
@@ -61,7 +57,7 @@ export default function HeroSection() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="fade-up flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
               <a
                 href="#start"
                 className="shine-line group inline-flex items-center justify-center gap-2 rounded-2xl bg-skillio-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-skillio-500/20 transition-all hover:bg-skillio-700 hover:shadow-skillio-500/30"
@@ -77,7 +73,7 @@ export default function HeroSection() {
               </a>
             </div>
 
-            <div className="flex flex-wrap gap-x-6 gap-y-3">
+            <div className="fade-up flex flex-wrap justify-center gap-x-6 gap-y-3 lg:justify-start">
               {credibility.map((item) => (
                 <div
                   key={item}

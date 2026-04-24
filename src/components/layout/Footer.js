@@ -67,8 +67,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="#categories" className="hover:text-skillio-600">
-                  Kategori bidang
+                <Link href="#digital-fields" className="hover:text-skillio-600">
+                  Katalog bidang
                 </Link>
               </li>
               <li>
