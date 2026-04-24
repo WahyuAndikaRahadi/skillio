@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import GroupList from "@/components/community/GroupList";
+import SocialFeed from "@/components/community/SocialFeed";
 import { 
-  Users, 
-  Search, 
-  Plus, 
+  Globe, 
+  TrendingUp, 
+  Hash, 
+  ChevronRight, 
   Sparkles,
-  ChevronRight,
-  Filter
+  Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function CommunityPage() {
+export default function FeedPage() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -29,22 +29,13 @@ export default function CommunityPage() {
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col lg:flex-row gap-10">
         
-        {/* Sidebar Filters */}
+        {/* Left Sidebar - Filters */}
         <div className="lg:w-80 space-y-8 shrink-0">
           <div className="bg-white rounded-[40px] border border-light-blue p-8 shadow-sm">
              <h3 className="text-xl font-black text-dark-blue mb-6 flex items-center gap-3">
-                <Filter className="text-primary-blue" size={20} /> Cari Grup
+                <Globe className="text-primary-blue" size={20} /> Feed Global
              </h3>
              
-             <div className="relative mb-8">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Nama grup..."
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary-blue/20 text-sm font-medium transition-all"
-                />
-             </div>
-
              <div className="space-y-2">
                 <button 
                   onClick={() => setSelectedCategory(null)}
@@ -53,8 +44,10 @@ export default function CommunityPage() {
                     !selectedCategory ? "bg-primary-blue/10 text-primary-blue" : "text-slate-500 hover:bg-slate-50"
                   )}
                 >
-                   <span>Semua Bidang</span>
-                   {!selectedCategory && <ChevronRight size={16} />}
+                   <div className="flex items-center gap-3">
+                      <TrendingUp size={18} />
+                      <span>Semua Progres</span>
+                   </div>
                 </button>
 
                 {categories.map((cat) => (
@@ -66,7 +59,10 @@ export default function CommunityPage() {
                       selectedCategory === cat.id ? "bg-primary-blue/10 text-primary-blue" : "text-slate-500 hover:bg-slate-50"
                     )}
                   >
-                     <span className="truncate">{cat.name}</span>
+                     <div className="flex items-center gap-3">
+                        <Hash size={16} />
+                        <span className="truncate">{cat.name}</span>
+                     </div>
                      {selectedCategory === cat.id && <ChevronRight size={16} />}
                   </button>
                 ))}
@@ -76,24 +72,21 @@ export default function CommunityPage() {
           <div className="bg-gradient-to-br from-dark-blue to-primary-blue rounded-[40px] p-8 text-white relative overflow-hidden shadow-xl shadow-primary-blue/20">
              <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
              <Sparkles className="mb-4 text-white/50" />
-             <h4 className="text-lg font-black mb-2 leading-tight">Bangun Komunitasmu</h4>
+             <h4 className="text-lg font-black mb-2 leading-tight">Rayakan Pencapaianmu</h4>
              <p className="text-xs text-white/70 font-medium mb-6 leading-relaxed">
-                Jadilah admin dan pimpin perjalanan belajar teman-temanmu.
+                Setiap hari yang kamu selesaikan adalah langkah nyata menuju masa depan.
              </p>
-             <button className="w-full py-4 bg-white text-primary-blue rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
-                <Plus size={14} /> Buat Grup
-             </button>
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Main Feed */}
         <div className="flex-1">
           <div className="mb-10">
-             <h1 className="text-4xl font-black text-dark-blue mb-2">Grup Komunitas</h1>
-             <p className="text-slate-400 font-medium italic">Temukan tempat belajar dan diskusi yang lebih privat.</p>
+             <h1 className="text-4xl font-black text-dark-blue mb-2">Social Feed</h1>
+             <p className="text-slate-400 font-medium italic">Lihat bagaimana pejuang masa depan lainnya beraksi hari ini.</p>
           </div>
           
-          <GroupList categoryId={selectedCategory} />
+          <SocialFeed categoryId={selectedCategory} />
         </div>
 
       </div>

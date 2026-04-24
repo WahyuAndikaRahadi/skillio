@@ -1,10 +1,17 @@
-import PusherClient from "pusher-js";
+import Pusher from "pusher-js";
 
 // Client-side Pusher (for Frontend)
-// We use a singleton pattern to ensure only one connection is made
-export const pusherClient = new PusherClient(
-  process.env.NEXT_PUBLIC_PUSHER_KEY, 
-  {
-    cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
-  }
-);
+// We ensure it only initializes on the client to avoid SSR errors
+let pusherInstance = null;
+
+if (typeof window !== "undefined") {
+  pusherInstance = new Pusher(
+    process.env.NEXT_PUBLIC_PUSHER_KEY, 
+    {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+      authEndpoint: "/api/pusher/auth",
+    }
+  );
+}
+
+export const pusherClient = pusherInstance;
