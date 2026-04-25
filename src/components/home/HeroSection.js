@@ -18,7 +18,7 @@ export default function HeroSection() {
     <div className={`fade-up relative mix-blend-multiply ${className}`} style={{ animationDelay: "150ms" }}>
       <div className="relative z-10 mx-auto max-w-[280px] sm:max-w-[400px] lg:max-w-[500px]">
         <Image
-          src="/images/karir.jpg"
+          src="/images/karir.png"
           alt="Skillio"
           width={1000}
           height={1000}
@@ -50,16 +50,16 @@ export default function HeroSection() {
                 Bingung arah karir? <br />
                 <span className="text-skillio-500">Ubah jadi progres nyata.</span>
               </h1>
-              
+
               <p className="max-w-xl text-lg leading-relaxed text-slate-600 sm:text-xl">
-                Skillio membantu anak muda Indonesia menemukan bidang yang paling sesuai, 
+                Skillio membantu anak muda Indonesia menemukan bidang yang paling sesuai,
                 lalu memberikan roadmap 30 hari yang terstruktur untuk benar-benar menguasainya.
               </p>
             </div>
 
             <div className="fade-up flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
               <a
-                href="#start"
+                href="/auth/login"
                 className="shine-line group inline-flex items-center justify-center gap-2 rounded-2xl bg-skillio-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-skillio-500/20 transition-all hover:bg-skillio-700 hover:shadow-skillio-500/30"
               >
                 Mulai Eksplorasi

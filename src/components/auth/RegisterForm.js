@@ -6,9 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Sparkles, Loader2, Mail, ArrowRight, ShieldCheck } from "lucide-react";
+import { Loader2, Mail, ArrowRight, ShieldCheck } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const registerSchema = z.object({
@@ -69,7 +70,7 @@ const RegisterForm = () => {
   const onVerifyOtp = async (e) => {
     e.preventDefault();
     if (otp.length !== 6) return;
-    
+
     setIsLoading(true);
     setError("");
     try {
@@ -103,8 +104,14 @@ const RegisterForm = () => {
       <div className="w-full">
         <div className="mb-10 lg:hidden">
           <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 group-hover:rotate-12 transition-transform">
-              <Sparkles className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20 group-hover:scale-110 transition-transform">
+              <Image
+                src="/images/skillio-logo.png"
+                alt="Skillio Logo"
+                width={40}
+                height={40}
+                className="h-full w-full object-contain"
+              />
             </div>
             <span className="font-display text-xl font-bold tracking-tight text-slate-900">
               Skillio
@@ -114,11 +121,11 @@ const RegisterForm = () => {
 
         <div className="mb-8">
           <div className="w-16 h-16 bg-skillio-50 text-skillio-600 rounded-2xl flex items-center justify-center mb-6">
-             <Mail size={32} />
+            <Mail size={32} />
           </div>
           <h1 className="font-display text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h1>
           <p className="text-slate-500 font-medium">
-            Kami telah mengirimkan kode 6 digit ke <br/>
+            Kami telah mengirimkan kode 6 digit ke <br />
             <span className="text-skillio-600 font-bold">{registeredEmail}</span>
           </p>
         </div>
@@ -170,8 +177,14 @@ const RegisterForm = () => {
     <div className="w-full">
       <div className="mb-10 lg:hidden">
         <Link href="/" className="inline-flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 group-hover:rotate-12 transition-transform">
-            <Sparkles className="h-5 w-5" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20 group-hover:scale-110 transition-transform">
+            <Image
+              src="/images/skillio-logo.png"
+              alt="Skillio Logo"
+              width={40}
+              height={40}
+              className="h-full w-full object-contain"
+            />
           </div>
           <span className="font-display text-xl font-bold tracking-tight text-slate-900">
             Skillio

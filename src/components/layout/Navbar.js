@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Menu, Sparkles, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const navLinks = [
@@ -42,8 +43,15 @@ const Navbar = () => {
       >
         {/* Logo Section */}
         <Link href={session ? "/dashboard" : "/"} className="group flex items-center gap-2.5 px-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 transition-all duration-300 group-hover:rotate-6 group-hover:bg-skillio-700">
-            <Sparkles className="h-4.5 w-4.5" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110">
+            <Image
+              src="/images/skillio-logo.png"
+              alt="Skillio Logo"
+              width={40}
+              height={40}
+              className="h-full w-full object-contain"
+              priority
+            />
           </div>
           <span className="font-display text-xl font-bold tracking-tight text-slate-900">
             Skillio

@@ -6,8 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Sparkles, Loader2, Github, Mail } from "lucide-react";
+import { Loader2, Github, Mail } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
@@ -19,7 +20,7 @@ const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlError = searchParams?.get("error");
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -71,8 +72,14 @@ const LoginForm = () => {
       {/* Mobile Logo */}
       <div className="mb-10 lg:hidden">
         <Link href="/" className="inline-flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 group-hover:rotate-12 transition-transform">
-            <Sparkles className="h-5 w-5" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20 group-hover:scale-110 transition-transform">
+            <Image
+              src="/images/skillio-logo.png"
+              alt="Skillio Logo"
+              width={40}
+              height={40}
+              className="h-full w-full object-contain"
+            />
           </div>
           <span className="font-display text-xl font-bold tracking-tight text-slate-900">
             Skillio

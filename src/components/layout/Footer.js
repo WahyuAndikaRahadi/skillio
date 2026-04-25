@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
-import { Sparkles } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -10,8 +10,14 @@ const Footer = () => {
         <div className="flex flex-col gap-12 lg:flex-row lg:justify-between lg:gap-16">
           <div className="max-w-sm">
             <Link href="/" className="mb-6 flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-skillio-600 to-skillio-800 text-white shadow-lg shadow-skillio-600/20">
-                <Sparkles className="h-6 w-6" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl ">
+                <Image
+                  src="/images/skillio-logo.png"
+                  alt="Skillio Logo"
+                  width={56}
+                  height={56}
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div>
                 <p className="font-display text-2xl font-bold tracking-tight text-slate-950">

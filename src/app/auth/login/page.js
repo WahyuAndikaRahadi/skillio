@@ -2,6 +2,8 @@ import LoginForm from "@/components/auth/LoginForm";
 import { Suspense } from "react";
 import Link from "next/link";
 import { Sparkles, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+
 
 export default function LoginPage() {
   return (
@@ -19,16 +21,22 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <div className="max-w-md">
+        <div className="max-w-md ">
           <Link href="/" className="flex items-center gap-3 mb-8 w-fit">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20">
-              <Sparkles className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20">
+              <Image
+                src="/images/skillio-logo.png"
+                alt="Skillio Logo"
+                width={40}
+                height={40}
+                className="h-full w-full object-contain"
+              />
             </div>
             <span className="font-display text-2xl font-bold tracking-tight text-slate-900">
               Skillio
             </span>
           </Link>
-          
+
           <h1 className="font-display text-4xl font-bold leading-tight text-slate-900 mb-6">
             Langkah pertamamu menuju <span className="text-skillio-600">karir digital.</span>
           </h1>

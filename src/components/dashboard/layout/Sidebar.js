@@ -3,12 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Users, 
-  User, 
-  Trophy, 
-  Sparkles, 
+import Image from "next/image";
+import {
+  LayoutDashboard,
+  Users,
+  User,
+  Trophy,
   LogOut,
   Globe,
   Map,
@@ -36,9 +36,15 @@ const Sidebar = ({ isMobile = false }) => {
       !isMobile ? "fixed left-0 top-0 hidden lg:flex" : "flex"
     )}>
       <div className="mb-10">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-primary-blue p-2 rounded-xl group-hover:rotate-12 transition-transform">
-            <Sparkles className="w-6 h-6 text-white" />
+        <Link href="/dashboard" className="flex items-center gap-2 group">
+          <div className=" p-2 rounded-xl group-hover:rotate-12 transition-transform">
+            <Image
+              src="/images/skillio-logo.png"
+              alt="Skillio Logo"
+              width={30}
+              height={30}
+              className="h-full w-full object-contain"
+            />
           </div>
           <span className="text-2xl font-black tracking-tighter text-primary-blue uppercase">
             SKILLIO
@@ -55,8 +61,8 @@ const Sidebar = ({ isMobile = false }) => {
               href={item.href}
               className={cn(
                 "flex items-center justify-between p-4 rounded-2xl font-bold transition-all group",
-                isActive 
-                  ? "bg-primary-blue text-white shadow-lg shadow-primary-blue/20" 
+                isActive
+                  ? "bg-primary-blue text-white shadow-lg shadow-primary-blue/20"
                   : "text-dark-blue/60 hover:bg-light-blue hover:text-primary-blue"
               )}
             >
@@ -70,7 +76,7 @@ const Sidebar = ({ isMobile = false }) => {
       </nav>
 
       <div className="pt-6 border-t border-light-blue">
-        <button 
+        <button
           onClick={() => signOut({ callbackUrl: "/" })}
           className="flex items-center gap-3 p-4 w-full rounded-2xl font-bold text-red-500 hover:bg-red-50 transition-all"
         >

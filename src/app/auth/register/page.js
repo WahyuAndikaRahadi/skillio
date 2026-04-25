@@ -1,6 +1,7 @@
 import RegisterForm from "@/components/auth/RegisterForm";
 import Link from "next/link";
-import { Sparkles, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 
 export default function RegisterPage() {
   return (
@@ -20,8 +21,14 @@ export default function RegisterPage() {
 
         <div className="max-w-md">
           <Link href="/" className="flex items-center gap-3 mb-8 w-fit">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20">
-              <Sparkles className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20">
+              <Image
+                src="/images/skillio-logo.png"
+                alt="Skillio Logo"
+                width={40}
+                height={40}
+                className="h-full w-full object-contain"
+              />
             </div>
             <span className="font-display text-2xl font-bold tracking-tight text-slate-900">
               Skillio

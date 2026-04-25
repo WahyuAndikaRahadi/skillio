@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Sparkles, 
-  Loader2, 
-  Mail, 
-  ArrowRight, 
+import Image from "next/image";
+import {
+  Loader2,
+  Mail,
+  ArrowRight,
   CheckCircle2,
   ArrowLeft
 } from "lucide-react";
@@ -91,8 +91,14 @@ export default function ForgotPasswordPage() {
 
         <div className="max-w-md">
           <Link href="/" className="flex items-center gap-3 mb-8 w-fit">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20">
-              <Sparkles className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20">
+              <Image
+                src="/images/skillio-logo.png"
+                alt="Skillio Logo"
+                width={40}
+                height={40}
+                className="h-full w-full object-contain"
+              />
             </div>
             <span className="font-display text-2xl font-bold tracking-tight text-slate-900">
               Skillio
@@ -118,8 +124,14 @@ export default function ForgotPasswordPage() {
           {/* Mobile Logo */}
           <div className="mb-10 lg:hidden">
             <Link href="/" className="inline-flex items-center gap-3 group mb-8">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-skillio-600 text-white shadow-lg shadow-skillio-500/20 group-hover:rotate-12 transition-transform">
-                <Sparkles className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20 group-hover:scale-110 transition-transform">
+                <Image
+                  src="/images/skillio-logo.png"
+                  alt="Skillio Logo"
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-contain"
+                />
               </div>
               <span className="font-display text-xl font-bold tracking-tight text-slate-900">
                 Skillio
@@ -143,12 +155,12 @@ export default function ForgotPasswordPage() {
 
           <AnimatePresence mode="wait">
             {step === "email" && (
-              <motion.form 
+              <motion.form
                 key="email"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                onSubmit={handleRequestOtp} 
+                onSubmit={handleRequestOtp}
                 className="space-y-6"
               >
                 <div>
@@ -178,12 +190,12 @@ export default function ForgotPasswordPage() {
             )}
 
             {step === "otp" && (
-              <motion.form 
+              <motion.form
                 key="otp"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                onSubmit={handleVerifyOtp} 
+                onSubmit={handleVerifyOtp}
                 className="space-y-6"
               >
                 <div>
@@ -214,12 +226,12 @@ export default function ForgotPasswordPage() {
             )}
 
             {step === "reset" && (
-              <motion.form 
+              <motion.form
                 key="reset"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                onSubmit={handleResetPassword} 
+                onSubmit={handleResetPassword}
                 className="space-y-6"
               >
                 <div>
