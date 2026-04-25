@@ -39,6 +39,30 @@ html {
 
 * {
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(43, 110, 166, 0.3) transparent;
+}
+
+/* Global Webkit Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(43, 110, 166, 0.2);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(43, 110, 166, 0.5);
+  background-clip: content-box;
 }
 
 body {
@@ -187,6 +211,63 @@ body::before {
     );
     transform: translateX(-120%);
     animation: sweep 7s linear infinite;
+  }
+
+  /* Minimal Prose for Markdown */
+  .prose {
+    color: inherit;
+    font-size: inherit;
+  }
+  .prose p {
+    margin-bottom: 0.75rem;
+  }
+  .prose p:last-child {
+    margin-bottom: 0;
+  }
+  .prose ul, .prose ol {
+    margin: 0.5rem 0;
+    padding-left: 1.25rem;
+  }
+  .prose li {
+    margin-bottom: 0.25rem;
+  }
+  .prose strong {
+    font-weight: 700;
+  }
+  .prose h1, .prose h2, .prose h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .prose h1 { font-size: 1.25rem; }
+  .prose h2 { font-size: 1.15rem; }
+  .prose h3 { font-size: 1.05rem; }
+
+  /* Custom Scrollbar Utility */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(43, 110, 166, 0.4);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(43, 110, 166, 0.7);
+  }
+
+  /* Firefox support */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(43, 110, 166, 0.4) transparent;
   }
 }
 

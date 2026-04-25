@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bot, User, Send, Loader2, Sparkles, Plus, File, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
+import { useAppStore } from "@/store/useAppStore";
 
 export default function AiMentorPage() {
   const [messages, setMessages] = useState([
@@ -12,6 +13,7 @@ export default function AiMentorPage() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { isImmersiveMode } = useAppStore();
   
   // File Upload State
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -160,7 +162,10 @@ export default function AiMentorPage() {
 
   return (
     <div 
-      className="h-[calc(100vh-120px)] flex flex-col -mx-6 md:-mx-10 -mb-12 mt-[-40px] bg-slate-50 relative overflow-hidden pb-12 px-6 md:px-10  mx-auto pt-6"
+      className={cn(
+        "fixed left-0 right-0 bottom-0 flex flex-col bg-slate-50 overflow-hidden z-10 transition-all duration-500",
+        !isImmersiveMode ? "top-20 lg:left-72" : "top-12 lg:left-0"
+      )}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -190,8 +195,8 @@ export default function AiMentorPage() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-6 md:px-10 py-8 custom-scrollbar relative z-10">
-        <div className="max-w-4xl mx-auto">
+      <div className="flex-1 overflow-y-auto px-4 md:px-0 py-8 custom-scrollbar relative z-10">
+        <div className="max-w-4xl mx-auto px-4">
           
           {/* Header inside scrollable area */}
           <div className="mb-12 flex flex-col items-center justify-center text-center space-y-4 pt-6">
@@ -209,7 +214,7 @@ export default function AiMentorPage() {
             </div>
           </div>
 
-          <div className="space-y-6 pb-40">
+          <div className="space-y-6 pb-10">
             {messages.map((msg, idx) => (
               <motion.div 
                 initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -289,7 +294,7 @@ export default function AiMentorPage() {
       </div>
 
       {/* Floating Input Area */}
-      <div className="absolute bottom-4 left-0 right-0 px-6 sm:px-10 pointer-events-none z-20">
+      <div className="bg-white/50 backdrop-blur-sm border-t border-slate-200/60 p-4 sm:p-6 relative z-20">
         <div className="max-w-4xl mx-auto pointer-events-auto relative">
           
           {/* Multiple File Preview Bubbles */}

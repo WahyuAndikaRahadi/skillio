@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Send, Bot, User, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ReactMarkdown from "react-markdown";
 
 export default function AiWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -109,7 +110,13 @@ export default function AiWidget() {
                       ? "bg-dark-blue text-white rounded-tr-sm" 
                       : "bg-white text-dark-blue border border-slate-100 rounded-tl-sm"
                   )}>
-                    {msg.content}
+                    {msg.role === "ai" ? (
+                      <div className="prose max-w-none">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
                   </div>
                 </div>
               ))}

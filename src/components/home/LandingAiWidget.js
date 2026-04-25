@@ -6,6 +6,7 @@ import { Sparkles, MessageCircle, X, ArrowRight, Send, Loader2 } from "lucide-re
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import ReactMarkdown from "react-markdown";
 
 export default function LandingAiWidget() {
   const { data: session } = useSession();
@@ -114,7 +115,13 @@ export default function LandingAiWidget() {
                       ? "bg-skillio-600 text-white rounded-tr-none" 
                       : "bg-white text-slate-700 rounded-tl-none border border-slate-100 font-medium"
                   )}>
-                    {msg.content}
+                    {msg.role === "ai" ? (
+                      <div className="prose max-w-none">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
                   </div>
                 </div>
               ))}

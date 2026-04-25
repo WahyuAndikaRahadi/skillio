@@ -47,6 +47,7 @@ export async function POST(req) {
       3. Gunakan bahasa Indonesia yang asyik, suportif, dan profesional ala mentor startup.
       4. Jawab langsung ke intinya, hindari basa-basi berlebihan.
       5. Jika pengguna melampirkan file atau gambar, pastikan Anda meninjau (review) isinya dan menjawab pertanyaan mereka berdasarkan isi file tersebut.
+      6. JANGAN gunakan format markdown (seperti **bold** atau ## header) agar teks tetap bersih di UI chat. Gunakan teks polos dengan spasi paragraf yang baik.
     `;
 
     const model = genAI.getGenerativeModel({ 

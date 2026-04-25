@@ -9,27 +9,26 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex bg-white">
       {/* Left Column - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden border-r border-slate-100">
-        <div className="absolute inset-0 bg-white -z-20" />
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden bg-slate-50 border-r border-slate-100">
         <div className="absolute top-[-10%] right-[-10%] h-[700px] w-[700px] rounded-full bg-skillio-100/60 blur-[120px] -z-10" />
-        <div className="absolute bottom-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-teal-100/60 blur-[120px] -z-10" />
-        <div className="absolute top-[40%] left-[20%] h-[500px] w-[500px] rounded-full bg-sky-100/50 blur-[100px] -z-10" />
-
+        <div className="absolute bottom-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-teal-50/60 blur-[120px] -z-10" />
+        <div className="absolute top-[40%] left-[20%] h-[500px] w-[500px] rounded-full bg-sky-50/50 blur-[100px] -z-10" />
+        
         <div>
           <Link href="/" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 font-medium transition-colors">
             <ArrowLeft className="h-4 w-4" /> Kembali ke Beranda
           </Link>
         </div>
 
-        <div className="max-w-md ">
-          <Link href="/" className="flex items-center gap-3 mb-8 w-fit">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20">
+        <div className="max-w-md relative z-10">
+          <Link href="/" className="flex items-center gap-3 mb-10 w-fit group">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-xl shadow-skillio-500/10 transition-all group-hover:scale-110">
               <Image
                 src="/images/skillio-logo.png"
                 alt="Skillio Logo"
-                width={40}
-                height={40}
-                className="h-full w-full object-contain"
+                width={48}
+                height={48}
+                className="h-7 w-7 object-contain"
               />
             </div>
             <span className="font-display text-2xl font-bold tracking-tight text-slate-900">
@@ -37,10 +36,10 @@ export default function LoginPage() {
             </span>
           </Link>
 
-          <h1 className="font-display text-4xl font-bold leading-tight text-slate-900 mb-6">
-            Langkah pertamamu menuju <span className="text-skillio-600">karir digital.</span>
+          <h1 className="font-display text-5xl font-bold leading-tight text-slate-950 mb-6 tracking-tight">
+            Langkah pertamamu menuju <span className="text-skillio-500">karir digital.</span>
           </h1>
-          <p className="text-lg text-slate-600 leading-relaxed">
+          <p className="text-xl text-slate-600 leading-relaxed font-medium">
             Masuk dan lanjutkan roadmap 30 harimu. Ribuan anak muda Indonesia telah membuktikan potensinya bersama Skillio.
           </p>
         </div>

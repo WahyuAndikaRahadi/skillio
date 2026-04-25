@@ -160,6 +160,7 @@ export const generateFullRoadmap = async (career) => {
     1. WAJIB 30 HARI LENGKAP (Day 1 s/d Day 30).
     2. Materi ringkas tapi jelas.
     3. HANYA OUTPUT JSON.
+    4. Setiap hari WAJIB memiliki minimal 5 pertanyaan kuis yang menantang.
   `;
 
   let retryCount = 0;

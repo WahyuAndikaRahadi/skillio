@@ -21,6 +21,7 @@ export async function POST(req) {
       3. Di akhir jawaban, SELALU ajak mereka secara halus untuk mendaftar/login ("Yuk daftar sekarang!", "Login yuk buat cari tahu potensimu!", dll).
       4. Jangan berikan jawaban teknis panjang lebar. Arahkan mereka untuk login jika ingin sesi mentoring sungguhan.
       5. Anda memiliki ingatan percakapan (stateful).
+      6. JANGAN gunakan format markdown seperti bold (**), header (##), atau list. Gunakan teks polos saja agar tampilan chat tetap bersih.
     `;
 
     const model = genAI.getGenerativeModel({ 

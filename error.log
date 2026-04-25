@@ -1,19 +1,9 @@
-PrismaClientKnownRequestError: 
-Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].userRoadmap.findFirst()` invocation in
-C:\Users\Bagus\Documents\Coding\skillio\.next\dev\server\chunks\[root-of-the-server]__0bb2by6._.js:247:177
-
-  244     });
-  245 }
-  246 // Get user's roadmap to provide context to the AI
-→ 247 const userRoadmap = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].userRoadmap.findFirst(
-Can't reach database server at `ep-aged-snow-am4shkfi-pooler.c-5.us-east-1.aws.neon.tech:5432`
-
-Please make sure your database server is running at `ep-aged-snow-am4shkfi-pooler.c-5.us-east-1.aws.neon.tech:5432`.
-    at ei.handleRequestError (C:\Users\Bagus\Documents\Coding\skillio\node_modules\@prisma\client\runtime\library.js:121:7268)
-    at ei.handleAndLogRequestError (C:\Users\Bagus\Documents\Coding\skillio\node_modules\@prisma\client\runtime\library.js:121:6593)
-    at ei.request (C:\Users\Bagus\Documents\Coding\skillio\node_modules\@prisma\client\runtime\library.js:121:6300)
-    at async a (C:\Users\Bagus\Documents\Coding\skillio\node_modules\@prisma\client\runtime\library.js:130:9551)
-    at async POST (C:\Users\Bagus\Documents\Coding\skillio\.next\dev\server\chunks\[root-of-the-server]__0bb2by6._.js:247:29)
+Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent: [503 Service Unavailable] This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+    at handleResponseNotOk (C:\Users\Bagus\Documents\Coding\skillio\.next\dev\server\chunks\[root-of-the-server]__0_.klwb._.js:433:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async makeRequest (C:\Users\Bagus\Documents\Coding\skillio\.next\dev\server\chunks\[root-of-the-server]__0_.klwb._.js:405:9)
+    at async generateContent (C:\Users\Bagus\Documents\Coding\skillio\.next\dev\server\chunks\[root-of-the-server]__0_.klwb._.js:847:22)
+    at async POST (C:\Users\Bagus\Documents\Coding\skillio\.next\dev\server\chunks\[root-of-the-server]__0bb2by6._.js:355:24)
     at async AppRouteRouteModule.do (C:\Users\Bagus\Documents\Coding\skillio\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js:5:40115)
     at async AppRouteRouteModule.handle (C:\Users\Bagus\Documents\Coding\skillio\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.dev.js:5:47321)
     at async responseGenerator (C:\Users\Bagus\Documents\Coding\skillio\.next\dev\server\chunks\node_modules_next_0ljcy69._.js:18455:38)

@@ -162,7 +162,12 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
 
   useEffect(() => {
     if (selectedDay) {
-      if (!expandedContent[selectedDay.day_number] && !isExpanding) {
+      // Jika ekspansi sudah ada di JSON (dari cache server), langsung gunakan
+      if (selectedDay.expansion && !expandedContent[selectedDay.day_number]) {
+        setExpandedContent(prev => ({ ...prev, [selectedDay.day_number]: selectedDay.expansion }));
+      } 
+      // Jika belum ada di JSON dan belum ada di state lokal, baru panggil API
+      else if (!expandedContent[selectedDay.day_number] && !isExpanding) {
         handleExpandMaterial();
       }
     }
@@ -226,6 +231,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
+          user_roadmap_id: userRoadmap.id,
           day_number: selectedDay.day_number, 
           title: selectedDay.title, 
           material: selectedDay.material 
@@ -279,6 +285,21 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
     } else {
       setQuizFinished(true);
       const finalScore = Math.round((score / quizzes.length) * 100);
+      
+      // Optimistic Update: Langsung tandai hijau dan buka hari berikutnya
+      const now = new Date().toISOString();
+      setProgress(prev => {
+        const updated = [...prev];
+        const idx = updated.findIndex(p => p.day_number === selectedDay.day_number);
+        if (idx !== -1) {
+          updated[idx] = { ...updated[idx], quiz_passed: true, completed_at: now };
+        } else {
+          updated.push({ day_number: selectedDay.day_number, quiz_passed: true, completed_at: now, completed_tasks: [] });
+        }
+        return updated;
+      });
+      setCurrentDay(prev => prev + 1);
+
       setSavingResult(true);
       try {
         const res = await fetch("/api/quiz/complete", {
@@ -290,22 +311,9 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
             score: finalScore 
           })
         });
-        const data = await res.json();
-        if (res.ok) {
-           // Update local progress and current day to show completed and start the 24h timer
-           setProgress(prev => {
-              const updated = [...prev];
-              const idx = updated.findIndex(p => p.day_number === selectedDay.day_number);
-              const now = new Date().toISOString();
-              if (idx !== -1) {
-                updated[idx] = { ...updated[idx], quiz_passed: true, completed_at: now };
-              } else {
-                updated.push({ day_number: selectedDay.day_number, quiz_passed: true, completed_at: now, completed_tasks: [] });
-              }
-              return updated;
-           });
-           // Majukan hari secara lokal
-           setCurrentDay(prev => prev + 1);
+        // Jika gagal, baru kita handle (opsional: revert state, tapi biasanya sukses)
+        if (!res.ok) {
+           console.error("Gagal sinkronisasi ke server");
         }
       } catch (err) {
         console.error("Gagal simpan kuis");
@@ -490,7 +498,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
            </div>
         </div>
 
-        <div className="max-w-7xl mx-auto w-full flex-grow flex flex-col justify-start py-4">
+        <div className="max-w-7xl mx-auto w-full flex-grow flex flex-col justify-start pt-4 pb-32">
           <AnimatePresence mode="wait">
             {currentSlide === 0 && (
               <motion.div key="theory" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
@@ -521,9 +529,9 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                              );
                           } else if (expandedContent[selectedDay.day_number]) {
                             return (
-                               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                                   <div className="lg:col-span-8">
-                                     <div className="max-h-[350px] md:max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
+                                     <div className="max-h-[500px] md:max-h-[600px] overflow-y-auto pr-4 custom-scrollbar">
                                         <p className="text-slate-700 leading-relaxed font-medium text-base md:text-lg whitespace-pre-wrap">
                                            {cleanAiText(expandedContent[selectedDay.day_number].explanation)}
                                         </p>
