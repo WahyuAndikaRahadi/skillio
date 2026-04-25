@@ -52,8 +52,8 @@ export default function DashboardLayout({ children }) {
         {!isImmersiveMode && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         
         <main className={cn(
-          "flex-grow pb-12 px-6 md:px-10 max-w-7xl mx-auto w-full transition-all duration-500",
-          !isImmersiveMode ? "pt-28" : "pt-12"
+          "flex-grow  w-full transition-all duration-500",
+          !isImmersiveMode ? "pt-20" : "pt-12"
         )}>
           {children}
         </main>

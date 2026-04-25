@@ -1,17 +1,20 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Flame, Bell, Search, Menu, Sparkles, Check, CheckCircle2, Info } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { Flame, Bell, Search, Menu, Sparkles, Check, CheckCircle2, Info, User, Trophy, LogOut } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const TopBar = ({ onMenuClick }) => {
   const { data: session } = useSession();
   const [stats, setStats] = useState({ xp: 0, streak: 0 });
   const [notifications, setNotifications] = useState([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const notifRef = useRef(null);
+  const profileRef = useRef(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -46,6 +49,9 @@ const TopBar = ({ onMenuClick }) => {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
         setIsNotifOpen(false);
       }
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileDropdownOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -74,28 +80,19 @@ const TopBar = ({ onMenuClick }) => {
     <header className="h-20 bg-white/80 backdrop-blur-md border-b border-light-blue fixed top-0 right-0 left-0 lg:left-72 z-30 px-6">
       <div className="h-full flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={onMenuClick}
             className="lg:hidden p-2 text-dark-blue hover:bg-light-blue rounded-xl transition-colors"
           >
             <Menu size={24} />
           </button>
-          
-          <div className="relative hidden md:block">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-blue/30 w-4 h-4" />
-            <input 
-              type="text" 
-              placeholder="Cari materi atau kategori..." 
-              className="pl-11 pr-6 py-2.5 bg-light-blue/30 border-transparent focus:border-primary-blue focus:bg-white border-2 outline-none rounded-xl w-72 text-sm font-medium transition-all"
-            />
-          </div>
         </div>
 
         <div className="flex items-center gap-3 md:gap-6">
           <div className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-xl border shadow-sm transition-all duration-500 hidden sm:flex",
-            stats.streak > 0 
-              ? "bg-orange-50 text-orange-600 border-orange-100" 
+            stats.streak > 0
+              ? "bg-orange-50 text-orange-600 border-orange-100"
               : "bg-slate-50 text-slate-400 border-slate-100"
           )}>
             <Flame size={20} className={cn(stats.streak > 0 && "fill-orange-600")} />
@@ -109,7 +106,7 @@ const TopBar = ({ onMenuClick }) => {
 
           {/* Notifications */}
           <div className="relative" ref={notifRef}>
-            <button 
+            <button
               onClick={() => setIsNotifOpen(!isNotifOpen)}
               className="relative p-2 text-dark-blue/60 hover:bg-light-blue hover:text-dark-blue rounded-xl transition-colors"
             >
@@ -131,7 +128,7 @@ const TopBar = ({ onMenuClick }) => {
                   <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <h3 className="font-black text-dark-blue">Notifikasi</h3>
                     {unreadCount > 0 && (
-                      <button 
+                      <button
                         onClick={() => markAsRead("all")}
                         className="text-xs font-bold text-primary-blue hover:underline"
                       >
@@ -139,7 +136,7 @@ const TopBar = ({ onMenuClick }) => {
                       </button>
                     )}
                   </div>
-                  
+
                   <div className="max-h-96 overflow-y-auto custom-scrollbar">
                     {notifications.length === 0 ? (
                       <div className="p-8 text-center text-slate-400">
@@ -149,8 +146,8 @@ const TopBar = ({ onMenuClick }) => {
                     ) : (
                       <div className="divide-y divide-slate-100">
                         {notifications.map((notif) => (
-                          <div 
-                            key={notif.id} 
+                          <div
+                            key={notif.id}
                             onClick={() => !notif.is_read && markAsRead(notif.id)}
                             className={cn(
                               "p-4 flex gap-3 transition-colors cursor-pointer hover:bg-slate-50",
@@ -160,12 +157,12 @@ const TopBar = ({ onMenuClick }) => {
                             <div className={cn(
                               "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
                               notif.type === "success" ? "bg-green-100 text-green-600" :
-                              notif.type === "warning" ? "bg-orange-100 text-orange-600" :
-                              "bg-blue-100 text-blue-600"
+                                notif.type === "warning" ? "bg-orange-100 text-orange-600" :
+                                  "bg-blue-100 text-blue-600"
                             )}>
                               {notif.type === "success" ? <CheckCircle2 size={20} /> :
-                               notif.type === "warning" ? <Flame size={20} /> :
-                               <Info size={20} />}
+                                notif.type === "warning" ? <Flame size={20} /> :
+                                  <Info size={20} />}
                             </div>
                             <div className="flex-1">
                               <p className="text-sm font-bold text-dark-blue leading-tight mb-1">{notif.title}</p>
@@ -186,7 +183,7 @@ const TopBar = ({ onMenuClick }) => {
 
           <div className="h-10 w-[1px] bg-light-blue hidden md:block"></div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 relative" ref={profileRef}>
             <div className="text-right hidden sm:block">
               <p className="text-sm font-black text-dark-blue leading-tight truncate max-w-[120px]">
                 {session?.user?.name || "Pengguna"}
@@ -195,13 +192,71 @@ const TopBar = ({ onMenuClick }) => {
                 {session?.user?.role === "admin" ? "Administrator" : "Anggota Basic"}
               </p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-primary-blue flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 overflow-hidden border-2 border-white shrink-0">
+            <button
+              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              className="w-10 h-10 rounded-xl bg-primary-blue flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 overflow-hidden border-2 border-white shrink-0 hover:scale-110 transition-transform cursor-pointer"
+            >
               {session?.user?.image ? (
                 <img src={session.user.image} alt="Profil" className="w-full h-full object-cover" />
               ) : (
                 (session?.user?.name?.[0] || "P").toUpperCase()
               )}
-            </div>
+            </button>
+
+            {/* Profile Dropdown */}
+            <AnimatePresence>
+              {isProfileDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-light-blue overflow-hidden flex flex-col z-50 top-full"
+                >
+                  {/* User Info Header */}
+                  <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+                    <p className="text-sm font-black text-dark-blue leading-tight">
+                      {session?.user?.name || "Pengguna"}
+                    </p>
+                    <p className="text-xs font-medium text-slate-500 mt-1">
+                      {session?.user?.email || "email@example.com"}
+                    </p>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="divide-y divide-slate-100">
+                    <Link
+                      href="/profile"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-3 p-4 text-dark-blue hover:bg-light-blue/50 transition-colors font-bold text-sm"
+                    >
+                      <User size={18} />
+                      <span>Profil</span>
+                    </Link>
+
+                    <Link
+                      href="/badges"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                      className="flex items-center gap-3 p-4 text-dark-blue hover:bg-light-blue/50 transition-colors font-bold text-sm"
+                    >
+                      <Trophy size={18} />
+                      <span>Badge</span>
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        setIsProfileDropdownOpen(false);
+                        signOut({ callbackUrl: "/" });
+                      }}
+                      className="flex items-center gap-3 p-4 w-full text-red-500 hover:bg-red-50/50 transition-colors font-bold text-sm"
+                    >
+                      <LogOut size={18} />
+                      <span>Keluar</span>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
