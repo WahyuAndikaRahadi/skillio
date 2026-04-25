@@ -47,7 +47,7 @@ const ResultPage = () => {
         method: "POST",
         body: JSON.stringify({ career }),
       });
-      if (response.ok) router.push("/dashboard");
+      if (response.ok) router.push("/belajar");
       else alert("Gagal membuat roadmap. Coba lagi ya!");
     } catch (err) {
       console.error(err);

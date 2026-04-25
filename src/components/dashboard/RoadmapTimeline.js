@@ -42,11 +42,20 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
 
         // Assume JSON has structure: { title, description, days: [...] }
         if (data && Array.isArray(data.days)) {
-          setDays(data.days.map(d => ({ ...d, day_number: d.day_number || d.day })));
+          setDays(data.days.map(d => ({ 
+            ...d, 
+            day_number: d.day_number || d.day,
+            material: d.material || d.description 
+          })));
         } else if (Array.isArray(data)) {
           // Fallback if the JSON is just an array of days
-          setDays(data.map(d => ({ ...d, day_number: d.day_number || d.day })));
+          setDays(data.map(d => ({ 
+            ...d, 
+            day_number: d.day_number || d.day,
+            material: d.material || d.description 
+          })));
         }
+
       } catch (err) {
         console.error("Gagal membaca JSON Roadmap:", err);
       } finally {
@@ -365,7 +374,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                     <Target size={12} /> Kuis Pemahaman
                  </div>
                  <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight">
-                    {currentQuiz.question_text}
+                    {currentQuiz.question_text || currentQuiz.question}
                  </h2>
               </div>
 
@@ -450,6 +459,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
       </div>
     );
   };
+
 
   // ═══ THEORY DETAIL VIEW ═══
   const renderDayDetail = () => {
@@ -591,6 +601,30 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
 
   const completedDaysCount = progress.filter(p => p.quiz_passed).length;
   const currentDayData = days.find(d => d.day_number === currentDay);
+
+  if (loadingDays) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-20 space-y-4">
+        <Loader2 className="w-12 h-12 text-skillio-500 animate-spin" />
+        <p className="text-slate-400 font-bold animate-pulse text-sm">Menyiapkan kurikulum belajar...</p>
+      </div>
+    );
+  }
+
+  if (days.length === 0) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-20 px-6 text-center">
+        <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-3xl flex items-center justify-center mb-6">
+          <BookOpen size={32} />
+        </div>
+        <h3 className="text-xl font-black text-slate-900 mb-2">Kurikulum Sedang Disiapkan</h3>
+        <p className="text-slate-500 text-sm max-w-sm font-medium">AI Mentor kami sedang menyusun roadmap 30 hari untuk Anda. Silakan muat ulang halaman ini dalam beberapa saat.</p>
+        <button onClick={() => window.location.reload()} className="mt-8 px-8 py-3 bg-slate-900 text-white rounded-xl font-black text-xs hover:bg-skillio-600 transition-all flex items-center gap-2">
+           <RotateCcw size={14} /> Muat Ulang
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

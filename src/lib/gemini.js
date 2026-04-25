@@ -115,9 +115,9 @@ export const generateFullRoadmap = async (career) => {
       ],
       "days": [
         {
-          "day": 1,
+          "day_number": 1,
           "title": "...",
-          "description": "...",
+          "material": "...",
           "tasks": ["...", "...", "..."],
           "quizzes": [
             {
@@ -129,6 +129,7 @@ export const generateFullRoadmap = async (career) => {
           ]
         }
       ]
+
     }
     Instruksi Kuis: Berikan TEPAT 5 pertanyaan kuis pilihan ganda untuk SETIAP hari.
     Penting: Pastikan ada 30 hari lengkap. Gunakan Bahasa Indonesia Profesional. HANYA OUTPUT JSON.

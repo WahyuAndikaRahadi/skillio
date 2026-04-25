@@ -25,6 +25,7 @@ export default async function DashboardPage() {
 
   const userRoadmap = await prisma.userRoadmap.findFirst({
     where: { user_id: session.user.id, status: "active" },
+    orderBy: { started_at: "desc" },
     include: {
       category: true,
       progress: { orderBy: { day_number: "asc" } },
@@ -93,29 +94,22 @@ export default async function DashboardPage() {
   let currentDayTitle = null;
   let currentDayTasks = [];
 
-  if (userRoadmap?.category?.slug) {
+  if (userRoadmap?.roadmap?.file_url) {
     try {
-      // Because this is server-side, we can import prismaQuestion and fetch directly
-      const { default: prismaQuestion } = await import("@/lib/prisma-question");
-      const curriculum = await prismaQuestion.curriculum.findUnique({
-        where: { category_slug: userRoadmap.category.slug }
-      });
-
-      if (curriculum && curriculum.content_json) {
-        const data = curriculum.content_json;
-        // The day index could be 'day' or 'day_number'
-        const currentDayData = data.days?.find(d => (d.day === currentDayNum || d.day_number === currentDayNum));
-        if (currentDayData) {
-          currentDayTitle = currentDayData.title;
-          currentDayTasks = (currentDayData.tasks || []).map((t, idx) => ({
-            id: idx.toString(),
-            task_text: t,
-            completed: completedTaskIds.includes(idx.toString()),
-          }));
-        }
+      const data = JSON.parse(userRoadmap.roadmap.file_url);
+      
+      // The day index could be 'day' or 'day_number'
+      const currentDayData = data.days?.find(d => (d.day === currentDayNum || d.day_number === currentDayNum));
+      if (currentDayData) {
+        currentDayTitle = currentDayData.title;
+        currentDayTasks = (currentDayData.tasks || []).map((t, idx) => ({
+          id: idx.toString(),
+          task_text: t,
+          completed: completedTaskIds.includes(idx.toString()),
+        }));
       }
     } catch(err) {
-      console.error("Failed fetching curriculum for dashboard from DB2:", err);
+      console.error("Failed parsing curriculum for dashboard:", err);
     }
   }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import prismaQuestion from "@/lib/prisma-question";
 import { auth } from "@/auth";
 import { generateFullRoadmap } from "@/lib/gemini";
 
@@ -11,18 +12,20 @@ export async function POST(req) {
     const { career } = await req.json();
     if (!career) return NextResponse.json({ message: "Career is required" }, { status: 400 });
 
-    const slug = career.toLowerCase().replace(/ /g, "-");
+    // Slug generation consistent with seed.js
+    const slug = career.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     // Cari Kategori berdasarkan nama atau slug
     let category = await prisma.category.findFirst({
       where: {
         OR: [
-          { name: { contains: career, mode: "insensitive" } },
-          { slug: slug }
+          { slug: slug },
+          { name: { contains: career, mode: "insensitive" } }
         ]
       },
       include: { roadmap: true }
     });
+
 
     // Jika Kategori belum ada (seharusnya 50 kategori sudah di-seed), buat sementara
     if (!category) {
@@ -61,21 +64,41 @@ export async function POST(req) {
       try {
         const curriculum = await generateFullRoadmap(career);
         
-        // Simpan JSON curriculum ke file_url di main DB
+        // 1. Simpan JSON curriculum ke file_url di main DB
         roadmap = await prisma.roadmap.update({
           where: { id: roadmap.id },
           data: {
             file_url: JSON.stringify(curriculum)
           }
         });
-        console.log(`AI Roadmap for ${career} successfully saved to main DB.`);
+
+        // 2. Simpan ke database kurikulum (tabel Curriculum) agar sinkron dengan Dashboard
+        try {
+          await prismaQuestion.curriculum.upsert({
+            where: { category_slug: category.slug },
+            update: { content_json: curriculum },
+            create: {
+              category_slug: category.slug,
+              content_json: curriculum
+            }
+          });
+        } catch (qError) {
+          console.error("Gagal sinkron ke DB Question:", qError);
+        }
+
+        console.log(`AI Roadmap for ${career} successfully saved to both DBs.`);
       } catch (aiError) {
         console.error("AI Roadmap Generation Failed:", aiError);
-        // Tetap lanjut meskipun AI gagal, user bisa generate ulang nanti atau admin bisa handle
       }
     }
 
-    // Assign User ke Roadmap ini
+    // 1. Nonaktifkan roadmap lama (jika ada)
+    await prisma.userRoadmap.updateMany({
+      where: { user_id: session.user.id, status: "active" },
+      data: { status: "paused" }
+    });
+
+    // 2. Assign User ke Roadmap ini
     const userRoadmap = await prisma.userRoadmap.create({
       data: {
         user_id: session.user.id,
@@ -98,3 +121,4 @@ export async function POST(req) {
     }, { status: 500 });
   }
 }
+
