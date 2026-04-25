@@ -8,6 +8,11 @@ export const dynamic = "force-dynamic";
 export default async function ScoreboardPage() {
   // Fetch Top 10 users by XP
   const topUsers = await prisma.user.findMany({
+    where: {
+      role: {
+        not: "admin"
+      }
+    },
     orderBy: { xp: "desc" },
     take: 10,
     select: {
@@ -112,7 +117,7 @@ export default async function ScoreboardPage() {
                     "text-xs md:text-sm font-bold opacity-80 uppercase tracking-widest",
                     index < 3 ? "opacity-100" : "text-slate-400"
                   )}>
-                    {user.role === "admin" ? "Admin" : "Member"}
+                    Member
                   </p>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
+import { generateFullRoadmap } from "@/lib/gemini";
 
 export async function POST(req) {
   try {
@@ -52,6 +53,26 @@ export async function POST(req) {
           description: `Kurikulum untuk bidang ${career}`,
         }
       });
+    }
+
+    // Jika curriculum belum ada di file_url, generate pakai AI
+    if (!roadmap.file_url) {
+      console.log(`Generating AI Roadmap for ${career}...`);
+      try {
+        const curriculum = await generateFullRoadmap(career);
+        
+        // Simpan JSON curriculum ke file_url di main DB
+        roadmap = await prisma.roadmap.update({
+          where: { id: roadmap.id },
+          data: {
+            file_url: JSON.stringify(curriculum)
+          }
+        });
+        console.log(`AI Roadmap for ${career} successfully saved to main DB.`);
+      } catch (aiError) {
+        console.error("AI Roadmap Generation Failed:", aiError);
+        // Tetap lanjut meskipun AI gagal, user bisa generate ulang nanti atau admin bisa handle
+      }
     }
 
     // Assign User ke Roadmap ini

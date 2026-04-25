@@ -26,19 +26,21 @@ export async function POST(req) {
       }
     });
 
-    // 2. We can optionally flag the main database category so the Admin UI knows it's filled.
-    // In our case, the Admin UI can just check the new endpoint, but let's update a dummy file_url or flag
-    // to mark it as 'Terisi'. Let's just set file_url to 'internal://db2'
-    await prismaMain.category.update({
-      where: { slug: category_slug },
-      data: {
-        roadmap: {
-          update: {
-            file_url: "internal://question-db"
-          }
+    // 2. Find the category in main DB to get its ID, then upsert its Roadmap record.
+    // This handles the case where the Category exists but has no linked Roadmap row yet.
+    const category = await prismaMain.category.findUnique({ where: { slug: category_slug } });
+    if (category) {
+      await prismaMain.roadmap.upsert({
+        where: { category_id: category.id },
+        update: { file_url: "internal://question-db" },
+        create: {
+          category_id: category.id,
+          title: `Kurikulum ${category.name}`,
+          description: `Kurikulum 30 hari untuk bidang ${category.name}`,
+          file_url: "internal://question-db"
         }
-      }
-    });
+      });
+    }
 
     return NextResponse.json({
       message: "Kurikulum berhasil disimpan ke Database Soal!",

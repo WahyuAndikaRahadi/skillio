@@ -13,7 +13,8 @@ import {
   Globe,
   Map,
   Bot,
-  BookOpen
+  BookOpen,
+  Medal
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
@@ -23,6 +24,7 @@ const userMenuItems = [
   { name: "Ruang Belajar", href: "/belajar", icon: <BookOpen size={20} /> },
   { name: "Eksplor Roadmap", href: "/roadmap", icon: <Map size={20} /> },
   { name: "AI Mentor", href: "/ai", icon: <Bot size={20} /> },
+  { name: "Scoreboard", href: "/scoreboard", icon: <Medal size={20} /> },
   { name: "Social Feed", href: "/feed", icon: <Globe size={20} /> },
   { name: "Komunitas", href: "/community", icon: <Users size={20} /> },
   { name: "Profil", href: "/profile", icon: <User size={20} /> },
