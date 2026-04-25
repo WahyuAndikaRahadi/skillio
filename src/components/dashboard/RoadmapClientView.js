@@ -35,7 +35,6 @@ export default function RoadmapClientView({ userRoadmap, session }) {
         <div className="pt-4">
           <RoadmapTimeline
             roadmap={userRoadmap.roadmap}
-            days={userRoadmap.roadmap.days}
             userRoadmap={userRoadmap}
             onToggleDetail={(isOpen) => setIsDetailOpen(isOpen)}
           />

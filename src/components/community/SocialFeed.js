@@ -68,7 +68,7 @@ const CommentItem = ({ comment, postId, onReply }) => {
   );
 };
 
-const PostCard = ({ post, currentUserId }) => {
+const PostCard = ({ post, currentUserId, userRole, onDeletePost }) => {
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [isLiked, setIsLiked] = useState(post.likes?.some(l => l.user_id === currentUserId));
   const [showComments, setShowComments] = useState(false);
@@ -76,6 +76,27 @@ const PostCard = ({ post, currentUserId }) => {
   const [commentText, setCommentText] = useState("");
   const [replyTo, setReplyTo] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  
+  const canDelete = currentUserId === post.user_id || userRole === "admin";
+
+  const handleDeletePost = async () => {
+    if (!confirm("Yakin ingin menghapus postingan ini?")) return;
+    try {
+      const res = await fetch("/api/posts/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: post.id })
+      });
+      if (res.ok) {
+        onDeletePost(post.id);
+      } else {
+        alert("Gagal menghapus postingan.");
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan.");
+    }
+  };
 
   useEffect(() => {
     // Listen to real-time likes and comments for THIS post
@@ -187,9 +208,24 @@ const PostCard = ({ post, currentUserId }) => {
               </p>
             </div>
           </div>
-          <button className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-200 hover:text-dark-blue hover:bg-slate-50 transition-all">
-            <MoreHorizontal size={20} />
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowMenu(!showMenu)}
+              className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-200 hover:text-dark-blue hover:bg-slate-50 transition-all"
+            >
+              <MoreHorizontal size={20} />
+            </button>
+            {showMenu && canDelete && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-10 py-1">
+                <button 
+                  onClick={handleDeletePost}
+                  className="w-full text-left px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50"
+                >
+                  Hapus Postingan
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Content */}
@@ -476,7 +512,13 @@ export default function SocialFeed({ categoryId }) {
           </div>
         ) : (
           posts.map((post) => (
-            <PostCard key={post.id} post={post} currentUserId={session?.user?.id} />
+            <PostCard 
+              key={post.id} 
+              post={post} 
+              currentUserId={session?.user?.id} 
+              userRole={session?.user?.role}
+              onDeletePost={(id) => setPosts(prev => prev.filter(p => p.id !== id))}
+            />
           ))
         )}
       </div>

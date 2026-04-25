@@ -20,10 +20,37 @@ const cleanAiText = (text) => {
   return cleaned.trim();
 };
 
-const RoadmapTimeline = ({ roadmap, days, userRoadmap, onToggleDetail }) => {
+const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
   const { isImmersiveMode, setIsImmersiveMode } = useAppStore();
+  const [days, setDays] = useState([]);
+  const [loadingDays, setLoadingDays] = useState(true);
   const [progress, setProgress] = useState(userRoadmap.progress || []);
-  const [currentDay, setCurrentDay] = useState(userRoadmap.current_day);
+  const [currentDay, setCurrentDay] = useState(userRoadmap.current_day || 1);
+  
+  useEffect(() => {
+    const fetchRoadmapJson = async () => {
+      if (!roadmap.file_url) {
+        setLoadingDays(false);
+        return;
+      }
+      try {
+        const res = await fetch(roadmap.file_url);
+        const data = await res.json();
+        // Assume JSON has structure: { title, description, days: [...] }
+        if (data && Array.isArray(data.days)) {
+          setDays(data.days);
+        } else if (Array.isArray(data)) {
+          // Fallback if the JSON is just an array of days
+          setDays(data);
+        }
+      } catch (err) {
+        console.error("Gagal membaca JSON Roadmap:", err);
+      } finally {
+        setLoadingDays(false);
+      }
+    };
+    fetchRoadmapJson();
+  }, [roadmap.file_url]);
   
   // View States
   const [viewMode, setViewMode] = useState('roadmap'); // 'roadmap', 'theory', 'quiz'
@@ -122,7 +149,7 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap, onToggleDetail }) => {
 
   useEffect(() => {
     if (selectedDay) {
-      if (!expandedContent[selectedDay.id] && !isExpanding) {
+      if (!expandedContent[selectedDay.day_number] && !isExpanding) {
         handleExpandMaterial();
       }
     }
@@ -185,11 +212,15 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap, onToggleDetail }) => {
       const res = await fetch("/api/roadmap/day/expand", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ day_id: selectedDay.id })
+        body: JSON.stringify({ 
+          day_number: selectedDay.day_number, 
+          title: selectedDay.title, 
+          material: selectedDay.material 
+        })
       });
       const data = await res.json();
       if (res.ok) {
-        setExpandedContent(prev => ({ ...prev, [selectedDay.id]: data }));
+        setExpandedContent(prev => ({ ...prev, [selectedDay.day_number]: data }));
       }
     } catch (err) {
       console.error("Gagal memproses materi AI.");
@@ -203,18 +234,15 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap, onToggleDetail }) => {
     if (!selectedDay) return;
     setQuizLoading(true);
     try {
-      const res = await fetch(`/api/quiz/day/${selectedDay.id}`);
-      const data = await res.json();
-      if (res.ok) {
-        const quizArray = Array.isArray(data) ? data : [data];
-        setQuizzes(quizArray);
-        setQuizIndex(0);
-        setScore(0);
-        setSelectedAnswer(null);
-        setIsSubmitted(false);
-        setQuizFinished(false);
-        setViewMode('quiz');
-      }
+      // Because we use JSON, quizzes are directly available on selectedDay
+      const quizArray = selectedDay.quizzes || [];
+      setQuizzes(quizArray);
+      setQuizIndex(0);
+      setScore(0);
+      setSelectedAnswer(null);
+      setIsSubmitted(false);
+      setQuizFinished(false);
+      setViewMode('quiz');
     } catch (err) {
       alert("Gagal memuat kuis.");
     } finally {
@@ -243,7 +271,11 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap, onToggleDetail }) => {
         const res = await fetch("/api/quiz/complete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ day_id: selectedDay.id, score: finalScore })
+          body: JSON.stringify({ 
+            user_roadmap_id: userRoadmap.id, 
+            day_number: selectedDay.day_number, 
+            score: finalScore 
+          })
         });
         const data = await res.json();
         if (res.ok) {
@@ -460,38 +492,44 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap, onToggleDetail }) => {
                          </div>
                       </div>
                       <div className="p-6 md:p-8 space-y-6">
-                         {isExpanding ? (
-                            <div className="flex flex-col items-center justify-center py-6 space-y-3">
-                               <div className="animate-spin w-6 h-6 border-3 border-skillio-500 border-t-transparent rounded-full" />
-                               <p className="text-xs font-bold text-slate-400 animate-pulse">Menghimpun pengetahuan...</p>
-                            </div>
-                         ) : expandedContent[selectedDay.id] ? (
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                               <div className="lg:col-span-8">
-                                  <div className="max-h-[350px] md:max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
-                                     <p className="text-slate-700 leading-relaxed font-medium text-base md:text-lg whitespace-pre-wrap">
-                                        {cleanAiText(expandedContent[selectedDay.id].explanation)}
-                                     </p>
-                                  </div>
+                         {(() => {
+                           if (isExpanding) {
+                             return (
+                               <div className="flex flex-col items-center justify-center py-6 space-y-3">
+                                  <div className="animate-spin w-6 h-6 border-3 border-skillio-500 border-t-transparent rounded-full" />
+                                  <p className="text-xs font-bold text-slate-400 animate-pulse">Menghimpun pengetahuan...</p>
                                </div>
-                               <div className="lg:col-span-4 space-y-6">
-                                  <div className="space-y-3 p-5 bg-slate-50/50 rounded-2xl border border-slate-100/50">
-                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Bahan Bacaan</p>
-                                     <div className="flex flex-col gap-2">
-                                        {expandedContent[selectedDay.id].resources?.map((res, i) => (
-                                          <a key={i} href={res.url} target="_blank" className="flex items-center justify-between px-4 py-2.5 bg-white border border-slate-100 rounded-xl hover:border-skillio-300 transition-all text-[11px] font-black text-slate-600 cursor-pointer group shadow-sm"><span className="truncate pr-2">{res.title}</span><ExternalLink size={12} className="shrink-0 opacity-40 group-hover:opacity-100" /></a>
-                                        ))}
+                             );
+                          } else if (expandedContent[selectedDay.day_number]) {
+                            return (
+                               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                                  <div className="lg:col-span-8">
+                                     <div className="max-h-[350px] md:max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
+                                        <p className="text-slate-700 leading-relaxed font-medium text-base md:text-lg whitespace-pre-wrap">
+                                           {cleanAiText(expandedContent[selectedDay.day_number].explanation)}
+                                        </p>
                                      </div>
                                   </div>
-                                  <div className="space-y-3 p-5 bg-red-50/30 rounded-2xl border border-red-50/50">
-                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Video Tutorial</p>
-                                     <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(expandedContent[selectedDay.id].youtube_query)}`} target="_blank" className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-red-100 text-red-600 rounded-xl text-[11px] font-black cursor-pointer hover:bg-red-100 transition-all shadow-sm"><FaYoutube size={16} /> Tonton di YouTube</a>
+                                  <div className="lg:col-span-4 space-y-6">
+                                     <div className="space-y-3 p-5 bg-slate-50/50 rounded-2xl border border-slate-100/50">
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Bahan Bacaan</p>
+                                        <div className="flex flex-col gap-2">
+                                           {expandedContent[selectedDay.day_number].resources?.map((res, i) => (
+                                             <a key={i} href={res.url} target="_blank" className="flex items-center justify-between px-4 py-2.5 bg-white border border-slate-100 rounded-xl hover:border-skillio-300 transition-all text-[11px] font-black text-slate-600 cursor-pointer group shadow-sm"><span className="truncate pr-2">{res.title}</span><ExternalLink size={12} className="shrink-0 opacity-40 group-hover:opacity-100" /></a>
+                                           ))}
+                                        </div>
+                                     </div>
+                                     <div className="space-y-3 p-5 bg-red-50/30 rounded-2xl border border-red-50/50">
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Video Tutorial</p>
+                                        <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(expandedContent[selectedDay.day_number].youtube_query)}`} target="_blank" className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-red-100 text-red-600 rounded-xl text-[11px] font-black cursor-pointer hover:bg-red-100 transition-all shadow-sm"><FaYoutube size={16} /> Tonton di YouTube</a>
+                                     </div>
                                   </div>
                                </div>
-                            </div>
-                         ) : (
-                            <p className="text-slate-400 font-medium italic text-center py-6 text-sm">Gagal memuat insight tambahan.</p>
-                         )}
+                            );
+                         } else {
+                            return <p className="text-slate-400 font-medium italic text-center py-6 text-sm">Gagal memuat insight tambahan.</p>;
+                         }
+                       })()}
                       </div>
                    </div>
                 </div>
@@ -505,12 +543,13 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap, onToggleDetail }) => {
                    <p className="text-lg text-slate-400 font-medium italic">"Belajar terbaik adalah dengan melakukan."</p>
                 </div>
                 <div className="grid grid-cols-1 gap-4 max-w-4xl">
-                   {selectedDay.tasks?.map((task) => {
-                     const isDone = dayProg.completed_tasks.includes(task.id);
+                   {selectedDay.tasks?.map((task, taskIdx) => {
+                     const taskId = task.id || task.order_number || taskIdx.toString();
+                     const isDone = dayProg.completed_tasks.includes(taskId);
                      return (
-                       <button key={task.id} onClick={() => handleToggleTask(task.id)} className={cn("w-full flex items-center gap-6 p-6 md:p-8 rounded-[32px] transition-all border-2 text-left cursor-pointer", isDone ? "bg-emerald-50/50 border-emerald-100" : "bg-white border-slate-100 hover:border-skillio-200 shadow-sm")}>
-                         <div className={cn("w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0", isDone ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-200" : "border-slate-300")}>{isToggling === task.id ? <div className="animate-spin w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full" /> : <CheckCircle2 size={18} className={cn(isDone ? "opacity-100" : "opacity-0")} />}</div>
-                         <span className={cn("text-lg md:text-xl font-bold transition-all", isDone ? "text-slate-300 line-through" : "text-slate-800")}>{task.task_text}</span>
+                       <button key={taskId} onClick={() => handleToggleTask(taskId)} className={cn("w-full flex items-center gap-6 p-6 md:p-8 rounded-[32px] transition-all border-2 text-left cursor-pointer", isDone ? "bg-emerald-50/50 border-emerald-100" : "bg-white border-slate-100 hover:border-skillio-200 shadow-sm")}>
+                         <div className={cn("w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0", isDone ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-200" : "border-slate-300")}>{isToggling === taskId ? <div className="animate-spin w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full" /> : <CheckCircle2 size={18} className={cn(isDone ? "opacity-100" : "opacity-0")} />}</div>
+                         <span className={cn("text-lg md:text-xl font-bold transition-all", isDone ? "text-slate-300 line-through" : "text-slate-800")}>{task.task_text || task}</span>
                        </button>
                      );
                    })}
@@ -565,7 +604,7 @@ const RoadmapTimeline = ({ roadmap, days, userRoadmap, onToggleDetail }) => {
                    const isMilestone = day.day_number % 10 === 0;
                    const isEven = idx % 2 === 0;
                    return (
-                     <div key={day.id} className="relative w-full flex items-center">
+                     <div key={day.day_number || idx} className="relative w-full flex items-center">
                         <div className={cn("w-full flex md:w-1/2 pl-16 md:pl-0", isEven ? "md:justify-end md:pr-12" : "md:absolute md:right-0 md:justify-start md:pl-12")}>
                            <button 
                              onClick={() => {

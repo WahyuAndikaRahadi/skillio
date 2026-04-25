@@ -51,13 +51,16 @@ export async function POST(req, { params }) {
 
     // 3. Join Logic (Password check for private)
     if (group.privacy === "private") {
-      if (!password) {
-        return NextResponse.json({ message: "Password dibutuhkan", requirePassword: true }, { status: 401 });
-      }
-      
-      const isMatch = await bcrypt.compare(password, group.password);
-      if (!isMatch) {
-        return NextResponse.json({ message: "Password salah" }, { status: 401 });
+      // Admins can bypass password
+      if (session.user.role !== "admin") {
+        if (!password) {
+          return NextResponse.json({ message: "Password dibutuhkan", requirePassword: true }, { status: 401 });
+        }
+        
+        const isMatch = await bcrypt.compare(password, group.password);
+        if (!isMatch) {
+          return NextResponse.json({ message: "Password salah" }, { status: 401 });
+        }
       }
     }
 

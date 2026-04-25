@@ -190,7 +190,7 @@ export default function ProfilePage() {
                   </div>
                </div>
                <p className="text-[10px] font-bold text-slate-400 mt-4 leading-relaxed">
-                  Peringkat: <span className="text-green-600">Pelajar Berbakat</span>
+                  Peringkat Global: <Link href="/scoreboard" className="text-primary-blue hover:underline font-black">#{stats.rank || "-"}</Link>
                </p>
             </div>
           </div>

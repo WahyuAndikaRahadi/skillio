@@ -171,12 +171,32 @@ export default function GroupList({ categoryId }) {
                      <span className="flex items-center gap-1.5"><Users size={14} /> {group._count?.members || 0} Member</span>
                      <span className="flex items-center gap-1.5 text-green-500"><MessageCircle size={14} /> Aktif</span>
                   </div>
-                  <button 
-                    onClick={() => handleJoin(group.id)}
-                    className="flex items-center gap-2 px-6 py-3 bg-slate-50 text-dark-blue rounded-2xl font-black text-xs hover:bg-primary-blue hover:text-white transition-all shadow-sm"
-                  >
-                    Masuk Grup <ChevronRight size={14} />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {(session?.user?.id === group.created_by || session?.user?.role === "admin") && (
+                      <button 
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if(confirm("Yakin ingin menghapus grup ini secara permanen?")) {
+                            try {
+                              const res = await fetch(`/api/community/groups/${group.id}`, { method: 'DELETE' });
+                              if(res.ok) fetchGroups();
+                              else alert("Gagal menghapus grup");
+                            } catch(err) { alert("Terjadi kesalahan"); }
+                          }
+                        }}
+                        className="p-3 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                        title="Hapus Grup"
+                      >
+                        <MoreVertical size={16} /> {/* Or a trash icon */}
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => handleJoin(group.id)}
+                      className="flex items-center gap-2 px-6 py-3 bg-slate-50 text-dark-blue rounded-2xl font-black text-xs hover:bg-primary-blue hover:text-white transition-all shadow-sm"
+                    >
+                      Masuk Grup <ChevronRight size={14} />
+                    </button>
+                  </div>
                </div>
             </motion.div>
           ))}

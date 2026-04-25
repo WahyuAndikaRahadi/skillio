@@ -21,7 +21,7 @@ export async function GET() {
           select: {
             roadmaps: {
               where: {
-                is_completed: true
+                status: "completed"
               }
             }
           }
@@ -31,6 +31,14 @@ export async function GET() {
 
     if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
+    // Calculate global rank based on XP
+    const higherXpCount = await prisma.user.count({
+      where: {
+        xp: { gt: user.xp }
+      }
+    });
+    const rank = higherXpCount + 1;
+
     // 2. Format Response
     const profileData = {
       xp: user.xp || 0,
@@ -38,6 +46,7 @@ export async function GET() {
       badges: user.badges || [],
       roadmapsCount: user._count.roadmaps || 0,
       joinedAt: user.createdAt || new Date(),
+      rank: rank,
     };
 
     return NextResponse.json(profileData);

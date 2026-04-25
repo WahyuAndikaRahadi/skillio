@@ -15,9 +15,9 @@ import {
   Bot
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
-const menuItems = [
+const userMenuItems = [
   { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} /> },
   { name: "Roadmap Belajar", href: "/roadmap", icon: <Map size={20} /> },
   { name: "AI Mentor", href: "/ai", icon: <Bot size={20} /> },
@@ -27,8 +27,18 @@ const menuItems = [
   { name: "Badge", href: "/badges", icon: <Trophy size={20} /> },
 ];
 
+const adminMenuItems = [
+  { name: "Kelola Kurikulum", href: "/admin/roadmaps", icon: <Map size={20} /> },
+  { name: "Social Feed", href: "/feed", icon: <Globe size={20} /> },
+  { name: "Komunitas", href: "/community", icon: <Users size={20} /> },
+];
+
 const Sidebar = ({ isMobile = false }) => {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  
+  const isAdmin = session?.user?.role === "admin";
+  const menuItems = isAdmin ? adminMenuItems : userMenuItems;
 
   return (
     <aside className={cn(
@@ -36,7 +46,7 @@ const Sidebar = ({ isMobile = false }) => {
       !isMobile ? "fixed left-0 top-0 hidden lg:flex" : "flex"
     )}>
       <div className="mb-10">
-        <Link href="/dashboard" className="flex items-center gap-2 group">
+        <Link href={isAdmin ? "/admin/roadmaps" : "/dashboard"} className="flex items-center gap-2 group">
           <div className=" p-2 rounded-xl group-hover:rotate-12 transition-transform">
             <Image
               src="/images/skillio-logo.png"
@@ -47,14 +57,14 @@ const Sidebar = ({ isMobile = false }) => {
             />
           </div>
           <span className="text-2xl font-black tracking-tighter text-primary-blue uppercase">
-            SKILLIO
+            SKILLIO {isAdmin && <span className="text-xs text-orange-500 block">ADMIN</span>}
           </span>
         </Link>
       </div>
 
       <nav className="flex-grow space-y-2">
         {menuItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
               key={item.name}

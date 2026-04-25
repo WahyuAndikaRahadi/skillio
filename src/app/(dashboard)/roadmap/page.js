@@ -15,14 +15,7 @@ export default async function RoadmapPage() {
   const userRoadmap = await prisma.userRoadmap.findFirst({
     where: { user_id: session.user.id, status: "active" },
     include: { 
-      roadmap: { 
-        include: { 
-          days: { 
-            orderBy: { day_number: "asc" },
-            include: { tasks: true, quizzes: true }
-          } 
-        } 
-      }, 
+      roadmap: true,
       category: true,
       progress: true,
       user: {

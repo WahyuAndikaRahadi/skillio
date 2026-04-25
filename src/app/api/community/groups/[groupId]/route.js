@@ -26,8 +26,8 @@ export async function DELETE(req, { params }) {
     }
 
     // 2. Verify Ownership
-    if (group.created_by !== session.user.id) {
-      return NextResponse.json({ message: "Hanya pembuat grup yang bisa menghapus grup ini" }, { status: 403 });
+    if (group.created_by !== session.user.id && session.user.role !== "admin") {
+      return NextResponse.json({ message: "Hanya pembuat grup atau admin yang bisa menghapus grup ini" }, { status: 403 });
     }
 
     // 3. Delete Group

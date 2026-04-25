@@ -8,23 +8,20 @@ export async function POST(req) {
     const session = await auth();
     if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const { day_id, score } = await req.json();
+    const { user_roadmap_id, day_number, score } = await req.json();
 
-    // 1. Get Day Details
-    const day = await prisma.roadmapDay.findUnique({
-      where: { id: day_id }
-    });
+    if (!user_roadmap_id || !day_number) {
+      return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+    }
 
-    if (!day) return NextResponse.json({ message: "Day not found" }, { status: 404 });
-
-    // 2. Get User Roadmap Instance
+    // 1. Get User Roadmap Instance
     const userRoadmap = await prisma.userRoadmap.findFirst({
-      where: { user_id: session.user.id, roadmap_id: day.roadmap_id }
+      where: { id: user_roadmap_id, user_id: session.user.id }
     });
 
     if (!userRoadmap) return NextResponse.json({ message: "User Roadmap not found" }, { status: 404 });
 
-    // 3. Find/Create Streak Logic
+    // 2. Find/Create Streak Logic
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -51,18 +48,19 @@ export async function POST(req) {
       newStreak = 1;
     }
 
-    // 4. Update Everything in Transaction
+    // 3. Update Everything in Transaction
+    // Use upsert trick for UserDayProgress by checking first
+    const existingProgress = await prisma.userDayProgress.findFirst({
+      where: { user_roadmap_id: userRoadmap.id, day_number: day_number }
+    });
+
     await prisma.$transaction([
       // A. Progress
       prisma.userDayProgress.upsert({
-        where: { 
-          id: (await prisma.userDayProgress.findFirst({
-            where: { user_roadmap_id: userRoadmap.id, day_number: day.day_number }
-          }))?.id || "new-record"
-        },
+        where: { id: existingProgress?.id || "new-record" },
         create: {
           user_roadmap_id: userRoadmap.id,
-          day_number: day.day_number,
+          day_number: day_number,
           quiz_passed: true,
           quiz_score: score,
           tasks_completed: true,
@@ -79,7 +77,7 @@ export async function POST(req) {
 
       // B. Increment current_day if applicable
       prisma.userRoadmap.updateMany({
-        where: { id: userRoadmap.id, current_day: day.day_number },
+        where: { id: userRoadmap.id, current_day: day_number },
         data: { current_day: { increment: 1 } }
       }),
 
@@ -100,14 +98,13 @@ export async function POST(req) {
       })
     ]);
 
-    // 5. Invalidate Redis
+    // 4. Invalidate Redis
     await redis.set(`user_stats:${session.user.id}`, null);
 
-    // 6. Check for Badges (Background/Parallel)
+    // 5. Check for Badges (Background/Parallel)
     const { checkAndAwardBadges } = await import("@/lib/badges");
     const newBadges = await checkAndAwardBadges(session.user.id, "perfect_score", { score });
     
-    // Also check streak and xp
     const updatedUser = await prisma.user.findUnique({
        where: { id: session.user.id },
        include: { streak: true }
@@ -116,14 +113,14 @@ export async function POST(req) {
     await checkAndAwardBadges(session.user.id, "streak_count", { streak: updatedUser.streak?.current_streak });
     await checkAndAwardBadges(session.user.id, "xp_count", { xp: updatedUser.xp });
 
-    // 7. Auto-post to Social Feed (Optional: Only if passed)
+    // 6. Auto-post to Social Feed
     if (score >= 80) {
       try {
         const { pusherServer } = await import("@/lib/pusher");
         const autoPost = await prisma.communityPost.create({
           data: {
             user_id: session.user.id,
-            content: `Berhasil menyelesaikan materi hari ke-${day.day_number} dengan skor ${score}! 🚀🔥`,
+            content: `Berhasil menyelesaikan materi hari ke-${day_number} dengan skor ${score}! 🚀🔥`,
             type: "achievement",
           },
           include: { user: { select: { name: true, image: true } } }

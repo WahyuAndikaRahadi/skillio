@@ -37,4 +37,15 @@ export const ourFileRouter = {
       console.log("Document upload complete for userId:", metadata.userId);
       return { uploadedBy: metadata.userId, url: file.url };
     }),
+
+  jsonUploader: f({ blob: { maxFileSize: "4MB", maxFileCount: 1 } })
+    .middleware(async ({ req }) => {
+      const session = await auth();
+      if (!session || session.user.role !== "admin") throw new Error("Unauthorized - Admin Only");
+      return { userId: session.user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("JSON upload complete for Admin:", metadata.userId);
+      return { uploadedBy: metadata.userId, url: file.url };
+    }),
 };
