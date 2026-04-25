@@ -7,6 +7,12 @@ import { ShieldCheck, FileJson, CheckCircle2, AlertCircle } from "lucide-react";
 export default function AdminRoadmapsPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredCategories = categories.filter(category => 
+    category.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    category.slug.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const fetchCategories = async () => {
     try {
@@ -56,10 +62,24 @@ export default function AdminRoadmapsPage() {
       </div>
 
       <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-        <h2 className="text-xl font-black text-dark-blue mb-6 border-b border-slate-100 pb-4">Daftar Kategori (Bidang Digital)</h2>
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 border-b border-slate-100 pb-4 gap-4">
+          <h2 className="text-xl font-black text-dark-blue">Daftar Kategori (Bidang Digital)</h2>
+          <div className="relative max-w-sm w-full">
+            <input
+              type="text"
+              placeholder="Cari kategori..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 pl-10 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary-blue focus:ring-2 focus:ring-primary-blue/20 outline-none transition-all text-sm font-medium"
+            />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {categories.map((category) => (
+          {filteredCategories.length > 0 ? filteredCategories.map((category) => (
             <div key={category.id} className="p-5 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-4">
               <div className="flex justify-between items-start">
                 <div>
@@ -108,7 +128,11 @@ export default function AdminRoadmapsPage() {
                 )}
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="col-span-1 md:col-span-2 py-10 text-center">
+              <p className="text-slate-400 font-medium italic">Kategori tidak ditemukan.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

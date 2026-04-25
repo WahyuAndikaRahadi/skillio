@@ -28,15 +28,7 @@ export default async function DashboardPage() {
     include: {
       category: true,
       progress: { orderBy: { day_number: "asc" } },
-      roadmap: {
-        include: {
-          days: {
-            orderBy: { day_number: "asc" },
-            take: 5,
-            include: { tasks: true },
-          },
-        },
-      },
+      roadmap: true,
     },
   });
 
@@ -91,17 +83,35 @@ export default async function DashboardPage() {
 
   // Current day tasks
   const currentDayNum = userRoadmap?.current_day || 1;
-  const currentDayData = userRoadmap?.roadmap?.days?.find(
-    (d) => d.day_number === currentDayNum
-  );
   const currentDayProgress = userRoadmap?.progress?.find(
     (p) => p.day_number === currentDayNum
   );
-  const completedTaskIds = Array.isArray(
-    currentDayProgress?.completed_tasks
-  )
+  const completedTaskIds = Array.isArray(currentDayProgress?.completed_tasks)
     ? currentDayProgress.completed_tasks
     : [];
+
+  let currentDayTitle = null;
+  let currentDayTasks = [];
+
+  if (userRoadmap?.roadmap?.file_url) {
+    try {
+      const res = await fetch(userRoadmap.roadmap.file_url);
+      if (res.ok) {
+        const data = await res.json();
+        const currentDayData = data.days?.find(d => d.day === currentDayNum);
+        if (currentDayData) {
+          currentDayTitle = currentDayData.title;
+          currentDayTasks = (currentDayData.tasks || []).map((t, idx) => ({
+            id: idx.toString(),
+            task_text: t,
+            completed: completedTaskIds.includes(idx.toString()),
+          }));
+        }
+      }
+    } catch(err) {
+      console.error("Failed fetching JSON roadmap for dashboard:", err);
+    }
+  }
 
   const props = {
     userName: session.user.name || "User",
@@ -121,12 +131,8 @@ export default async function DashboardPage() {
     progressPercentage,
     completedDays,
     currentDay: currentDayNum,
-    currentDayTitle: currentDayData?.title || null,
-    currentDayTasks: (currentDayData?.tasks || []).map((t) => ({
-      id: t.id,
-      task_text: t.task_text,
-      completed: completedTaskIds.includes(t.id),
-    })),
+    currentDayTitle,
+    currentDayTasks,
     completedRoadmaps,
     weeklyActivity,
     totalAiChats: aiLogs.reduce((sum, l) => sum + l.count, 0),

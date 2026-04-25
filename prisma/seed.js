@@ -75,14 +75,18 @@ async function main() {
   
   const admin = await prisma.user.upsert({
     where: { email: 'admin@skillio.com' },
-    update: {},
+    update: {
+      emailVerified: new Date(),
+      password: adminPassword, // Ensure password is correct even if updated
+    },
     create: {
       email: 'admin@skillio.com',
       name: 'Skillio Admin',
       password: adminPassword,
       role: 'admin',
       is_pro: true,
-      xp: 999999
+      xp: 999999,
+      emailVerified: new Date()
     },
   });
   console.log(`✅ Admin terbuat: ${admin.email}`);

@@ -1,0 +1,80 @@
+{
+  "career": "Pengembangan Web Frontend",
+  "weeks": [
+    {
+      "week": 1,
+      "theme": "Fundamental Web: HTML & CSS Dasar"
+    },
+    {
+      "week": 2,
+      "theme": "Interaktivitas: JavaScript Fundamental"
+    },
+    {
+      "week": 3,
+      "theme": "Framework Modern: React JS"
+    },
+    {
+      "week": 4,
+      "theme": "Optimasi, Deployment, & Proyek Akhir"
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "title": "Berkenalan dengan HTML5",
+      "description": "Memahami struktur dasar sebuah halaman web, elemen semantik, dan bagaimana browser membaca dokumen HTML.",
+      "tasks": [
+        "Membaca dokumentasi struktur dasar file HTML5 (<html>, <head>, <body>).",
+        "Membuat sebuah file index.html yang berisi heading, paragraf, gambar, dan link sederhana.",
+        "Menggunakan elemen semantik seperti <header>, <nav>, <main>, dan <footer>."
+      ],
+      "quizzes": [
+        {
+          "question": "Tag HTML manakah yang secara semantik digunakan untuk membungkus konten utama pada sebuah halaman web?",
+          "options": [
+            "<div>",
+            "<section>",
+            "<main>",
+            "<article>"
+          ],
+          "correct_option": "<main>",
+          "explanation": "Tag <main> mendefinisikan konten utama yang unik untuk dokumen tersebut dan sangat penting untuk aksesibilitas (SEO & Screen Readers)."
+        },
+        {
+          "question": "Atribut apa yang wajib disertakan pada tag <img> agar web memenuhi standar aksesibilitas?",
+          "options": [
+            "src",
+            "title",
+            "alt",
+            "href"
+          ],
+          "correct_option": "alt",
+          "explanation": "Atribut 'alt' memberikan teks alternatif jika gambar gagal dimuat dan dibaca oleh screen reader untuk pengguna tunanetra."
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Mewarnai Web dengan CSS",
+      "description": "Mempelajari cara menghubungkan file CSS ke HTML, menyeleksi elemen, dan menerapkan gaya dasar seperti warna dan tipografi.",
+      "tasks": [
+        "Menghubungkan file style.css eksternal ke dalam dokumen HTML.",
+        "Mempraktikkan cara menggunakan Class dan ID selectors.",
+        "Mengubah warna background, jenis font, dan ukuran teks."
+      ],
+      "quizzes": [
+        {
+          "question": "Bagaimana cara memanggil elemen dengan ID 'header' di dalam CSS?",
+          "options": [
+            ".header",
+            "#header",
+            "*header",
+            "header"
+          ],
+          "correct_option": "#header",
+          "explanation": "Dalam CSS, simbol hashtag (#) digunakan untuk menyeleksi elemen berdasarkan atribut ID-nya."
+        }
+      ]
+    }
+  ]
+}
