@@ -1,13 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { UploadButton } from "@/lib/uploadthing";
-import { ShieldCheck, FileJson, CheckCircle2, AlertCircle } from "lucide-react";
+import { ShieldCheck, FileJson, CheckCircle2, AlertCircle, Bot, Save, Loader2, Edit3, X } from "lucide-react";
 
 export default function AdminRoadmapsPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // AI Generation States
+  const [isGenerating, setIsGenerating] = useState(null); // stores category id
+  const [editingJson, setEditingJson] = useState(null); // stores { categoryId, categorySlug, content }
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const filteredCategories = categories.filter(category => 
     category.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -30,20 +34,70 @@ export default function AdminRoadmapsPage() {
     fetchCategories();
   }, []);
 
-  const handleUploadComplete = async (categoryId, res) => {
-    if (res && res[0]) {
-      const fileUrl = res[0].url;
-      try {
-        await fetch("/api/admin/categories/update-roadmap", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ categoryId, fileUrl })
+  const handleGenerateAI = async (category) => {
+    if (!confirm(`Generate kurikulum 30 hari untuk ${category.name}? Proses ini mungkin memakan waktu 30-60 detik.`)) return;
+    
+    setIsGenerating(category.id);
+    try {
+      const res = await fetch("/api/admin/roadmaps/generate-ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category: category.name })
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.data) {
+        // Open the editor with the generated JSON
+        setEditingJson({
+          categoryId: category.id,
+          categorySlug: category.slug,
+          categoryName: category.name,
+          content: JSON.stringify(data.data, null, 2)
         });
-        alert("Roadmap JSON berhasil diunggah!");
-        fetchCategories();
-      } catch (error) {
-        alert("Gagal menyimpan URL Roadmap");
+      } else {
+        alert(`Gagal Generate: ${data.message}`);
       }
+    } catch (error) {
+      alert("Terjadi kesalahan jaringan saat memanggil AI.");
+    } finally {
+      setIsGenerating(null);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!editingJson) return;
+    
+    let parsedContent;
+    try {
+      parsedContent = JSON.parse(editingJson.content);
+    } catch (e) {
+      alert("Format JSON tidak valid! Silakan perbaiki sebelum menyimpan.");
+      return;
+    }
+
+    setIsPublishing(true);
+    try {
+      const res = await fetch("/api/admin/roadmaps/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          category_slug: editingJson.categorySlug,
+          content_json: parsedContent
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("Berhasil menyimpan kurikulum ke Database Soal!");
+        setEditingJson(null);
+        fetchCategories(); // Refresh list
+      } else {
+        alert(`Gagal menyimpan: ${data.message}`);
+      }
+    } catch (error) {
+      alert("Terjadi kesalahan jaringan saat menyimpan data.");
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -52,12 +106,12 @@ export default function AdminRoadmapsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-20">
+    <div className="max-w-6xl mx-auto space-y-8 pb-20 relative">
       <div className="bg-dark-blue rounded-3xl p-8 md:p-10 text-white shadow-xl relative overflow-hidden">
         <ShieldCheck className="absolute -right-10 -top-10 w-64 h-64 text-white/5" />
-        <h1 className="text-3xl md:text-4xl font-black mb-4 relative z-10">Admin Panel: Manajemen Roadmap</h1>
+        <h1 className="text-3xl md:text-4xl font-black mb-4 relative z-10">Admin Panel: Manajemen Kurikulum AI</h1>
         <p className="text-blue-200 font-medium max-w-2xl relative z-10">
-          Unggah kurikulum dalam format JSON untuk setiap bidang digital. File JSON ini akan menjadi sumber materi bagi pengguna. Database tidak akan menyimpan materi hari demi hari, melainkan membaca langsung dari URL yang Anda unggah.
+          Generate kurikulum lengkap 30 hari beserta soal kuis secara otomatis menggunakan Gemini AI. Anda dapat me-review dan mengedit hasil JSON sebelum menyimpannya ke Database Soal terpisah.
         </p>
       </div>
 
@@ -79,62 +133,106 @@ export default function AdminRoadmapsPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredCategories.length > 0 ? filteredCategories.map((category) => (
-            <div key={category.id} className="p-5 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-black text-dark-blue text-lg">{category.name}</h3>
-                  <p className="text-xs font-bold text-slate-400">{category.slug}</p>
-                </div>
-                {category.roadmap?.file_url ? (
-                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-black flex items-center gap-1">
-                    <CheckCircle2 size={14} /> Terisi
-                  </span>
-                ) : (
-                  <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-black flex items-center gap-1">
-                    <AlertCircle size={14} /> Kosong
-                  </span>
-                )}
-              </div>
-
-              <div className="mt-auto pt-4 border-t border-slate-200">
-                {category.roadmap?.file_url ? (
-                  <div className="flex flex-col gap-2">
-                    <a href={category.roadmap.file_url} target="_blank" rel="noreferrer" className="text-xs font-bold text-primary-blue hover:underline break-all flex items-center gap-1">
-                      <FileJson size={14} /> Lihat File JSON Saat Ini
-                    </a>
-                    <div className="text-xs text-slate-500 mt-2">Timpa dengan file baru:</div>
-                    <UploadButton
-                      endpoint="jsonUploader"
-                      onClientUploadComplete={(res) => handleUploadComplete(category.id, res)}
-                      onUploadError={(error) => alert(`ERROR! ${error.message}`)}
-                      appearance={{
-                        button: "bg-orange-500 text-white font-bold text-sm w-full py-2 rounded-xl"
-                      }}
-                    />
-                  </div>
-                ) : (
+          {filteredCategories.length > 0 ? filteredCategories.map((category) => {
+            const isFilled = category.roadmap?.file_url === "internal://question-db" || category.roadmap?.file_url;
+            return (
+              <div key={category.id} className="p-5 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-4">
+                <div className="flex justify-between items-start">
                   <div>
-                    <div className="text-xs font-bold text-slate-500 mb-2">Unggah JSON Kurikulum 30 Hari:</div>
-                    <UploadButton
-                      endpoint="jsonUploader"
-                      onClientUploadComplete={(res) => handleUploadComplete(category.id, res)}
-                      onUploadError={(error) => alert(`ERROR! ${error.message}`)}
-                      appearance={{
-                        button: "bg-primary-blue text-white font-bold text-sm w-full py-2 rounded-xl"
-                      }}
-                    />
+                    <h3 className="font-black text-dark-blue text-lg">{category.name}</h3>
+                    <p className="text-xs font-bold text-slate-400">{category.slug}</p>
                   </div>
-                )}
+                  {isFilled ? (
+                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-black flex items-center gap-1">
+                      <CheckCircle2 size={14} /> Tersedia
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-black flex items-center gap-1">
+                      <AlertCircle size={14} /> Kosong
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-auto pt-4 border-t border-slate-200">
+                  <button
+                    onClick={() => handleGenerateAI(category)}
+                    disabled={isGenerating === category.id}
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all shadow-md shadow-purple-500/20 disabled:opacity-70"
+                  >
+                    {isGenerating === category.id ? (
+                      <><Loader2 className="animate-spin" size={18} /> Generating AI...</>
+                    ) : (
+                      <><Bot size={18} /> {isFilled ? "Generate Ulang" : "Generate via AI"}</>
+                    )}
+                  </button>
+                  {isFilled && (
+                    <p className="text-center text-[10px] text-slate-400 font-bold mt-2">
+                      Kurikulum sudah tersimpan di Database Soal.
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          )) : (
+            );
+          }) : (
             <div className="col-span-1 md:col-span-2 py-10 text-center">
               <p className="text-slate-400 font-medium italic">Kategori tidak ditemukan.</p>
             </div>
           )}
         </div>
       </div>
+
+      {/* ═══ JSON EDITOR MODAL ═══ */}
+      {editingJson && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+          <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50">
+              <div>
+                <h3 className="font-black text-slate-900 flex items-center gap-2">
+                  <Edit3 className="text-purple-600" /> Preview & Edit Kurikulum
+                </h3>
+                <p className="text-sm font-bold text-slate-500 mt-1">{editingJson.categoryName}</p>
+              </div>
+              <button 
+                onClick={() => {
+                  if (confirm("Yakin ingin membatalkan? Hasil generate AI belum tersimpan.")) {
+                    setEditingJson(null);
+                  }
+                }}
+                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+              >
+                <X size={24} className="text-slate-500" />
+              </button>
+            </div>
+            
+            <div className="flex-1 bg-[#1e1e1e] p-4 overflow-hidden flex flex-col">
+              <textarea
+                value={editingJson.content}
+                onChange={(e) => setEditingJson(prev => ({ ...prev, content: e.target.value }))}
+                className="w-full flex-1 bg-transparent text-[#d4d4d4] font-mono text-sm outline-none resize-none custom-scrollbar"
+                spellCheck={false}
+              />
+            </div>
+            
+            <div className="p-6 border-t border-slate-100 bg-white flex justify-end gap-4">
+              <button
+                onClick={() => setEditingJson(null)}
+                className="px-6 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handlePublish}
+                disabled={isPublishing}
+                className="px-8 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2"
+              >
+                {isPublishing ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+                Simpan & Kirim
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

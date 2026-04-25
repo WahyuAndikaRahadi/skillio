@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 const mammoth = require("mammoth");
 const xlsx = require("xlsx");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY2);
 
 export async function POST(req) {
   try {

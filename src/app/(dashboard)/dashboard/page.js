@@ -93,12 +93,18 @@ export default async function DashboardPage() {
   let currentDayTitle = null;
   let currentDayTasks = [];
 
-  if (userRoadmap?.roadmap?.file_url) {
+  if (userRoadmap?.category?.slug) {
     try {
-      const res = await fetch(userRoadmap.roadmap.file_url);
-      if (res.ok) {
-        const data = await res.json();
-        const currentDayData = data.days?.find(d => d.day === currentDayNum);
+      // Because this is server-side, we can import prismaQuestion and fetch directly
+      const { default: prismaQuestion } = await import("@/lib/prisma-question");
+      const curriculum = await prismaQuestion.curriculum.findUnique({
+        where: { category_slug: userRoadmap.category.slug }
+      });
+
+      if (curriculum && curriculum.content_json) {
+        const data = curriculum.content_json;
+        // The day index could be 'day' or 'day_number'
+        const currentDayData = data.days?.find(d => (d.day === currentDayNum || d.day_number === currentDayNum));
         if (currentDayData) {
           currentDayTitle = currentDayData.title;
           currentDayTasks = (currentDayData.tasks || []).map((t, idx) => ({
@@ -109,7 +115,7 @@ export default async function DashboardPage() {
         }
       }
     } catch(err) {
-      console.error("Failed fetching JSON roadmap for dashboard:", err);
+      console.error("Failed fetching curriculum for dashboard from DB2:", err);
     }
   }
 

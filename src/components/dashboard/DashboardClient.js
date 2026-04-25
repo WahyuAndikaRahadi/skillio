@@ -178,7 +178,7 @@ export default function DashboardClient({
             </div>
 
             <Link
-              href="/roadmap"
+              href="/belajar"
               className="flex items-center gap-2 px-6 py-3.5 bg-white text-slate-900 rounded-2xl font-bold text-sm hover:bg-white/90 transition-colors shadow-lg shadow-black/20 group shrink-0"
             >
               Lanjut Belajar
@@ -282,7 +282,7 @@ export default function DashboardClient({
             </div>
             {hasRoadmap && (
               <Link
-                href="/roadmap"
+                href="/belajar"
                 className="text-xs font-bold text-skillio-500 hover:text-skillio-700 transition-colors flex items-center gap-1"
               >
                 Lihat semua <ArrowRight size={12} />
@@ -422,7 +422,7 @@ export default function DashboardClient({
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { href: "/roadmap", icon: Map, label: "Roadmap", color: "bg-skillio-50 text-skillio-600 hover:bg-skillio-100" },
+            { href: "/belajar", icon: BookOpen, label: "Ruang Belajar", color: "bg-skillio-50 text-skillio-600 hover:bg-skillio-100" },
             { href: "/ai", icon: Bot, label: "AI Mentor", color: "bg-purple-50 text-purple-600 hover:bg-purple-100" },
             { href: "/feed", icon: TrendingUp, label: "Social Feed", color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" },
             { href: "/community", icon: Users, label: "Komunitas", color: "bg-amber-50 text-amber-600 hover:bg-amber-100" },

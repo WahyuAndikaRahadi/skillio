@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:push:main": "prisma db push",
+    "db:push:question": "prisma db push --schema=prisma/question.schema.prisma",
+    "postinstall": "prisma generate && prisma generate --schema=prisma/question.schema.prisma"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

@@ -29,19 +29,23 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
   
   useEffect(() => {
     const fetchRoadmapJson = async () => {
-      if (!roadmap.file_url) {
-        setLoadingDays(false);
-        return;
-      }
       try {
-        const res = await fetch(roadmap.file_url);
-        const data = await res.json();
+        const res = await fetch(`/api/roadmaps/curriculum?slug=${userRoadmap.category.slug}`);
+        const result = await res.json();
+        
+        if (!res.ok) {
+          setLoadingDays(false);
+          return;
+        }
+
+        const data = result.data; // this is the parsed content_json
+
         // Assume JSON has structure: { title, description, days: [...] }
         if (data && Array.isArray(data.days)) {
-          setDays(data.days);
+          setDays(data.days.map(d => ({ ...d, day_number: d.day_number || d.day })));
         } else if (Array.isArray(data)) {
           // Fallback if the JSON is just an array of days
-          setDays(data);
+          setDays(data.map(d => ({ ...d, day_number: d.day_number || d.day })));
         }
       } catch (err) {
         console.error("Gagal membaca JSON Roadmap:", err);
@@ -50,7 +54,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
       }
     };
     fetchRoadmapJson();
-  }, [roadmap.file_url]);
+  }, [userRoadmap.category.slug]);
   
   // View States
   const [viewMode, setViewMode] = useState('roadmap'); // 'roadmap', 'theory', 'quiz'

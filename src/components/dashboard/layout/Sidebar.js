@@ -12,14 +12,16 @@ import {
   LogOut,
   Globe,
   Map,
-  Bot
+  Bot,
+  BookOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
 
 const userMenuItems = [
   { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} /> },
-  { name: "Roadmap Belajar", href: "/roadmap", icon: <Map size={20} /> },
+  { name: "Ruang Belajar", href: "/belajar", icon: <BookOpen size={20} /> },
+  { name: "Eksplor Roadmap", href: "/roadmap", icon: <Map size={20} /> },
   { name: "AI Mentor", href: "/ai", icon: <Bot size={20} /> },
   { name: "Social Feed", href: "/feed", icon: <Globe size={20} /> },
   { name: "Komunitas", href: "/community", icon: <Users size={20} /> },

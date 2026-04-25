@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-question"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_QUESTION")
+}
+
+model Curriculum {
+  id            String   @id @default(cuid())
+  category_slug String   @unique
+  content_json  Json
+  updated_at    DateTime @updatedAt
+  created_at    DateTime @default(now())
+}
