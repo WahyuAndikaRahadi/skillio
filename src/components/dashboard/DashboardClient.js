@@ -100,8 +100,8 @@ export default function DashboardClient({
     hour < 12
       ? "Selamat Pagi"
       : hour < 17
-      ? "Selamat Siang"
-      : "Selamat Malam";
+        ? "Selamat Siang"
+        : "Selamat Malam";
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 overflow-x-hidden">
@@ -411,40 +411,6 @@ export default function DashboardClient({
         </div>
       </div>
 
-      {/* ═══ QUICK ACCESS ═══ */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.45 }}
-      >
-        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">
-          Akses Cepat
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { href: "/roadmap", icon: Map, label: "Roadmap", color: "bg-skillio-50 text-skillio-600 hover:bg-skillio-100" },
-            { href: "/ai", icon: Bot, label: "AI Mentor", color: "bg-purple-50 text-purple-600 hover:bg-purple-100" },
-            { href: "/feed", icon: TrendingUp, label: "Social Feed", color: "bg-emerald-50 text-emerald-600 hover:bg-emerald-100" },
-            { href: "/community", icon: Users, label: "Komunitas", color: "bg-amber-50 text-amber-600 hover:bg-amber-100" },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 p-4 rounded-2xl font-bold text-sm transition-all group",
-                item.color
-              )}
-            >
-              <item.icon size={20} />
-              <span>{item.label}</span>
-              <ArrowRight
-                size={14}
-                className="ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
-              />
-            </Link>
-          ))}
-        </div>
-      </motion.div>
     </div>
   );
 }

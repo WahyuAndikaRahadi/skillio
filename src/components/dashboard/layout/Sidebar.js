@@ -7,15 +7,12 @@ import Image from "next/image";
 import {
   LayoutDashboard,
   Users,
-  User,
-  Trophy,
-  LogOut,
   Globe,
   Map,
-  Bot
+  Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const userMenuItems = [
   { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} /> },
@@ -23,8 +20,6 @@ const userMenuItems = [
   { name: "AI Mentor", href: "/ai", icon: <Bot size={20} /> },
   { name: "Social Feed", href: "/feed", icon: <Globe size={20} /> },
   { name: "Komunitas", href: "/community", icon: <Users size={20} /> },
-  { name: "Profil", href: "/profile", icon: <User size={20} /> },
-  { name: "Badge", href: "/badges", icon: <Trophy size={20} /> },
 ];
 
 const adminMenuItems = [
@@ -37,7 +32,7 @@ const adminMenuItems = [
 const Sidebar = ({ isMobile = false }) => {
   const pathname = usePathname();
   const { data: session } = useSession();
-  
+
   const isAdmin = session?.user?.role === "admin";
   const menuItems = isAdmin ? adminMenuItems : userMenuItems;
 
@@ -48,7 +43,7 @@ const Sidebar = ({ isMobile = false }) => {
     )}>
       <div className="mb-10">
         <Link href={isAdmin ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-2 group">
-          <div className=" p-2 rounded-xl group-hover:rotate-12 transition-transform">
+          <div className="p-2 rounded-xl group-hover:rotate-12 transition-transform">
             <Image
               src="/images/skillio-logo.png"
               alt="Skillio Logo"
@@ -87,13 +82,9 @@ const Sidebar = ({ isMobile = false }) => {
       </nav>
 
       <div className="pt-6 border-t border-light-blue">
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex items-center gap-3 p-4 w-full rounded-2xl font-bold text-red-500 hover:bg-red-50 transition-all"
-        >
-          <LogOut size={20} />
-          <span>Keluar</span>
-        </button>
+        <p className="text-xs text-slate-400 font-bold uppercase tracking-wider px-4">
+          © 2026 Skillio Indonesia
+        </p>
       </div>
     </aside>
   );
