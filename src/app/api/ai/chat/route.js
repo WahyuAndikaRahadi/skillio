@@ -6,7 +6,15 @@ import prisma from "@/lib/prisma";
 const mammoth = require("mammoth");
 const xlsx = require("xlsx");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY2);
+const API_KEYS = [
+  process.env.GEMINI_API_KEY,
+  process.env.GEMINI_API_KEY2,
+  process.env.GEMINI_API_KEY3,
+  process.env.GEMINI_API_KEY4
+].filter(Boolean);
+
+const genAI = new GoogleGenerativeAI(API_KEYS[0] || process.env.GEMINI_API_KEY);
+
 
 export async function POST(req) {
   try {
@@ -133,22 +141,28 @@ export async function POST(req) {
     const enrichedPrompt = finalPromptText;
 
     // Log the usage for the Curious Explorer badge
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    await prisma.aiMentorLog.upsert({
-      where: { id: "log_" + session.user.id + "_" + today.getTime() }, // dummy id, actually the schema uses user_id and date? 
-      // Wait, let's just log it using a raw query or simple create for simplicity since upsert needs a unique identifier.
-      // Actually, I'll skip logging for now to prevent schema unique constraint issues, or just create it.
-      create: {
-        user_id: session.user.id,
-        date: today,
-        count: 1
-      },
-      update: {
-        count: { increment: 1 }
-      }
-    }).catch(e => console.log("Log error ignored"));
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const logId = `log_${session.user.id}_${today.getTime()}`;
+      
+      await prisma.aiMentorLog.upsert({
+        where: { id: logId },
+        create: {
+          id: logId,
+          user_id: session.user.id,
+          date: today,
+          count: 1
+        },
+        update: {
+          count: { increment: 1 }
+        }
+      });
+    } catch (logError) {
+      console.log("Log error ignored:", logError.message);
+    }
+
 
     return NextResponse.json({ reply: responseText, enrichedPrompt });
   } catch (error) {

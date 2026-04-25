@@ -1,14 +1,37 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY3);
+// Daftar API Key untuk rotasi jika salah satu limit/error
+const API_KEYS = [
+  process.env.GEMINI_API_KEY,
+  process.env.GEMINI_API_KEY2,
+  process.env.GEMINI_API_KEY3,
+  process.env.GEMINI_API_KEY4
+].filter(Boolean);
 
-// Model yang valid dan stabil
-export const model = genAI.getGenerativeModel({ 
-  model: "gemini-3.1-flash-lite-preview", // Disarankan menggunakan versi stabil ini
-  generationConfig: {
-    responseMimeType: "application/json",
-  }
-});
+let currentKeyIndex = 0;
+
+const getModel = (key) => {
+  const genAI = new GoogleGenerativeAI(key || API_KEYS[currentKeyIndex]);
+  return genAI.getGenerativeModel({ 
+    model: "gemini-3-flash-preview",
+    generationConfig: {
+      responseMimeType: "application/json",
+    }
+  });
+
+};
+
+export let model = getModel();
+
+// Fungsi untuk rotasi key jika gagal
+const rotateKey = () => {
+  if (API_KEYS.length <= 1) return false;
+  currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+  model = getModel(API_KEYS[currentKeyIndex]);
+  console.log(`[AI] Berhasil rotasi ke API KEY #${currentKeyIndex + 1}`);
+  return true;
+};
+
 
 const extractJson = (text) => {
   try {
@@ -104,41 +127,76 @@ export const analyzeCareerRecommendation = async (allAnswers) => {
 export const generateFullRoadmap = async (career) => {
   const prompt = `
     Tugas: Buat roadmap belajar intensif 30 hari untuk karier: "${career}".
-    Output harus berupa JSON murni dengan struktur berikut:
+    Anda HARUS memberikan rencana lengkap untuk 30 hari tanpa terputus.
+    
+    Format JSON:
     {
       "career": "${career}",
       "weeks": [
-        { "week": 1, "theme": "..." },
-        { "week": 2, "theme": "..." },
-        { "week": 3, "theme": "..." },
-        { "week": 4, "theme": "..." }
+        { "week": 1, "theme": "Pengenalan & Dasar" },
+        { "week": 2, "theme": "Fundamental Mendalam" },
+        { "week": 3, "theme": "Praktik Lanjutan" },
+        { "week": 4, "theme": "Proyek & Sertifikasi" }
       ],
       "days": [
         {
           "day_number": 1,
           "title": "...",
           "material": "...",
-          "tasks": ["...", "...", "..."],
+          "tasks": ["...", "..."],
           "quizzes": [
             {
               "question": "...",
-              "options": ["...", "...", "...", "..."],
+              "options": ["A", "B", "C", "D"],
               "correct_option": "...",
               "explanation": "..."
             }
           ]
         }
       ]
-
     }
-    Instruksi Kuis: Berikan TEPAT 5 pertanyaan kuis pilihan ganda untuk SETIAP hari.
-    Penting: Pastikan ada 30 hari lengkap. Gunakan Bahasa Indonesia Profesional. HANYA OUTPUT JSON.
+    
+    SYARAT MUTLAK:
+    1. WAJIB 30 HARI LENGKAP (Day 1 s/d Day 30).
+    2. Materi ringkas tapi jelas.
+    3. HANYA OUTPUT JSON.
   `;
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  return extractJson(response.text());
+  let retryCount = 0;
+  const maxRetries = API_KEYS.length;
+
+  while (retryCount < maxRetries) {
+    try {
+      console.log(`[AI] Mencoba generate roadmap dengan Key #${currentKeyIndex + 1}...`);
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
+      if (!text) throw new Error("AI memberikan respons kosong");
+      
+      const parsed = extractJson(text);
+      
+      if (parsed.days && parsed.days.length < 25) {
+        throw new Error("Output terpotong oleh AI (kurang dari 25 hari)");
+      }
+      
+      console.log(`[AI] Berhasil generate roadmap (${parsed.days.length} hari).`);
+      return parsed;
+    } catch (error) {
+      console.error(`[AI] Kesalahan pada Key #${currentKeyIndex + 1}:`, error.message);
+      retryCount++;
+      if (retryCount < maxRetries) {
+        if (!rotateKey()) throw error;
+      } else {
+        throw error;
+      }
+    }
+  }
+  throw new Error("Gagal generate roadmap setelah mencoba semua API Key.");
 };
+
+
+
 export async function generateDayExpansion(dayTitle, dayMaterial) {
   const prompt = `
     Anda adalah AI Mentor Senior di Skillio. Tugas Anda adalah memberikan PENJELASAN MENDALAM (Deep Dive) untuk materi berikut:
