@@ -18,7 +18,7 @@ export async function POST(req) {
 
     if (!day) return NextResponse.json({ message: "Day not found" }, { status: 404 });
 
-    if (day.ai_expanded_content) {
+    if (day.ai_expanded_content && day.ai_expanded_content.explanation && day.ai_expanded_content.explanation.length > 50) {
       return NextResponse.json(day.ai_expanded_content);
     }
 

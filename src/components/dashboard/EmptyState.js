@@ -1,78 +1,68 @@
 "use client";
 
 import React from "react";
-import { Sparkles, ArrowRight, BrainCircuit, Play } from "lucide-react";
+import { Sparkles, ArrowRight, BrainCircuit, Play, Target, Rocket, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const EmptyState = ({ userName, hasProgress }) => {
+  const firstName = userName?.split(" ")[0] || "User";
+
   return (
-    <div className="flex flex-col items-center justify-center text-center py-12 md:py-20">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-24 h-24 bg-primary-blue/10 rounded-[32px] flex items-center justify-center text-primary-blue mb-8 shadow-inner"
-      >
-        <BrainCircuit size={48} />
-      </motion.div>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <h1 className="text-3xl md:text-5xl font-black text-dark-blue mb-4">
-          Selamat Datang, {userName || "Pengguna Skillio"}! 👋
-        </h1>
-        <p className="text-lg text-dark-blue/60 font-medium max-w-lg mx-auto mb-12">
-          Perjalanan karier profesional Anda dimulai di sini. Mari izinkan AI kami membantu Anda menemukan bidang yang paling sesuai dengan potensi diri Anda.
-        </p>
-      </motion.div>
+    <div className="relative flex flex-col items-center justify-center text-center min-h-[70vh] py-12 overflow-hidden">
+      {/* Background Decor Orbs - Fixed with overflow-hidden on parent */}
+      <div className="absolute top-0 right-0 w-80 h-80 bg-skillio-50/50 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 -z-10" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-50/40 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/3 -z-10" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="relative group"
-      >
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary-blue to-accent-blue rounded-[24px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-        <Link 
-          href="/quiz"
-          className="relative flex items-center gap-3 bg-primary-blue text-white px-10 py-5 rounded-[24px] font-black text-xl hover:bg-accent-blue transition-all shadow-xl shadow-primary-blue/20 active:scale-[0.98]"
+      <div className="max-w-3xl px-6 relative z-10">
+        
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="space-y-4"
         >
-          {hasProgress ? (
-            <>
-              <Play className="w-6 h-6 fill-current" />
-              Lanjutkan Kuis Anda
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-6 h-6" />
-              Mulai Kuis Penentuan
-            </>
-          )}
-          <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-        </Link>
-        {hasProgress && (
-           <p className="mt-4 text-primary-blue font-black text-sm animate-pulse">
-             Ada kuis yang sedang berjalan!
-           </p>
-        )}
-      </motion.div>
+          <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">
+            Temukan <span className="text-skillio-500">Passion</span> <br />
+            Sejatimu, {firstName}!
+          </h1>
+          <p className="text-base md:text-lg text-slate-400 font-medium max-w-xl mx-auto leading-relaxed">
+            AI Mentor kami siap menganalisis potensimu dan membangun roadmap belajar 30 hari yang presisi.
+          </p>
+        </motion.div>
 
-      {/* Decorative background element */}
-      <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
-        {[
-          { title: "30 Pertanyaan", desc: "Berbasis kepribadian & minat", icon: "📝" },
-          { title: "AI Matching", desc: "98% akurasi bidang karier", icon: "🤖" },
-          { title: "Roadmap 30 Hari", desc: "Langkah nyata setiap hari", icon: "🎯" },
-        ].map((item, i) => (
-          <div key={i} className="bg-white p-6 rounded-3xl border border-light-blue shadow-sm">
-            <div className="text-3xl mb-4">{item.icon}</div>
-            <h4 className="font-bold text-dark-blue mb-1">{item.title}</h4>
-            <p className="text-sm text-dark-blue/50 font-bold">{item.desc}</p>
-          </div>
-        ))}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-10 flex flex-col items-center gap-4"
+        >
+          <Link 
+            href="/quiz"
+            className="group relative flex items-center gap-4 bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-skillio-600 transition-all shadow-xl shadow-slate-900/20 active:scale-[0.98]"
+          >
+            {hasProgress ? (
+              <>
+                <Play className="w-5 h-5 fill-current" />
+                Lanjutkan Kuis
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5" />
+                Mulai Analisis AI
+              </>
+            )}
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+          </Link>
+          
+          {hasProgress && (
+             <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest bg-orange-50 px-3 py-1 rounded-full border border-orange-100">
+               Analisis sedang berlangsung
+             </p>
+          )}
+        </motion.div>
+
       </div>
     </div>
   );

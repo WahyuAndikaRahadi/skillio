@@ -66,12 +66,14 @@ export async function POST(req) {
           quiz_passed: true,
           quiz_score: score,
           tasks_completed: true,
-          completed_tasks: []
+          completed_tasks: [],
+          completed_at: new Date()
         },
         update: {
           quiz_passed: true,
           quiz_score: score,
-          tasks_completed: true
+          tasks_completed: true,
+          completed_at: new Date()
         }
       }),
 
@@ -121,7 +123,7 @@ export async function POST(req) {
         const autoPost = await prisma.communityPost.create({
           data: {
             user_id: session.user.id,
-            content: `Berhasil menyelesaikan materi hari ke-${day_number} dengan skor ${score}! 🚀🔥`,
+            content: `Berhasil menyelesaikan materi hari ke-${day.day_number} dengan skor ${score}! 🚀🔥`,
             type: "achievement",
           },
           include: { user: { select: { name: true, image: true } } }

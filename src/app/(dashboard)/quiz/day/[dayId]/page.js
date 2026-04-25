@@ -12,13 +12,19 @@ import {
   Sparkles,
   HelpCircle,
   Award,
-  ChevronRight
+  ChevronRight,
+  ChevronLeft,
+  X,
+  Target
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAppStore } from "@/store/useAppStore";
 
 export default function DailyQuizPage() {
   const { dayId } = useParams();
   const router = useRouter();
+  const { setIsImmersiveMode } = useAppStore();
+  
   const [loading, setLoading] = useState(true);
   const [quizzes, setQuizzes] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -27,6 +33,12 @@ export default function DailyQuizPage() {
   const [score, setScore] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Set immersive mode
+  useEffect(() => {
+    setIsImmersiveMode(true);
+    return () => setIsImmersiveMode(false);
+  }, [setIsImmersiveMode]);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -47,10 +59,10 @@ export default function DailyQuizPage() {
   }, [dayId]);
 
   const currentQuiz = quizzes[currentIndex];
+  const progressPercent = ((currentIndex + 1) / quizzes.length) * 100;
 
   const handleSubmit = () => {
     if (!selectedAnswer || isSubmitted) return;
-    
     const correct = selectedAnswer === currentQuiz.correct_option;
     if (correct) setScore(prev => prev + 1);
     setIsSubmitted(true);
@@ -62,10 +74,8 @@ export default function DailyQuizPage() {
       setSelectedAnswer(null);
       setIsSubmitted(false);
     } else {
-      // Finish Quiz
       setQuizFinished(true);
       const finalScore = Math.round((score / quizzes.length) * 100);
-      
       setSaving(true);
       try {
         await fetch("/api/quiz/complete", {
@@ -83,19 +93,32 @@ export default function DailyQuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-12 h-12 text-primary-blue animate-spin" />
-        <p className="font-bold text-dark-blue/40">Menyiapkan kuis Anda...</p>
+      <div className="min-h-[85vh] flex flex-col items-center justify-center gap-6">
+        <div className="relative">
+           <div className="w-16 h-16 border-4 border-skillio-100 rounded-full" />
+           <div className="absolute top-0 left-0 w-16 h-16 border-4 border-skillio-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+        <p className="font-black text-slate-400 uppercase tracking-widest text-xs">Menyiapkan kuis...</p>
       </div>
     );
   }
 
   if (quizzes.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-6">
-        <XCircle className="w-16 h-16 text-red-500" />
-        <h2 className="text-2xl font-black text-dark-blue">Kuis Tidak Ditemukan</h2>
-        <button onClick={() => router.back()} className="px-8 py-3 bg-primary-blue text-white rounded-2xl font-bold">Kembali</button>
+      <div className="min-h-[85vh] flex flex-col items-center justify-center gap-8 text-center px-6">
+        <div className="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center">
+           <XCircle size={48} />
+        </div>
+        <div>
+           <h2 className="text-3xl font-black text-slate-900 mb-2">Kuis Belum Tersedia</h2>
+           <p className="text-slate-500 font-medium">Sistem sedang menyiapkan pertanyaan kuis untuk hari ini.</p>
+        </div>
+        <button 
+          onClick={() => router.back()} 
+          className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm shadow-xl cursor-pointer"
+        >
+          Kembali ke Roadmap
+        </button>
       </div>
     );
   }
@@ -105,150 +128,188 @@ export default function DailyQuizPage() {
     const isPassed = finalScore >= 60;
 
     return (
-      <div className="max-w-2xl mx-auto py-20 px-6 text-center">
-         <motion.div 
-           initial={{ opacity: 0, scale: 0.9 }}
-           animate={{ opacity: 1, scale: 1 }}
-           className="bg-white rounded-[40px] border-2 border-light-blue p-12 shadow-2xl"
-         >
-            <div className="flex justify-center mb-6">
-               <div className={cn(
-                 "w-24 h-24 rounded-full flex items-center justify-center shadow-lg",
-                 isPassed ? "bg-green-500 shadow-green-200" : "bg-orange-500 shadow-orange-200"
-               )}>
-                  {isPassed ? <Trophy size={48} className="text-white" /> : <Award size={48} className="text-white" />}
-               </div>
-            </div>
-            <h2 className="text-4xl font-black text-dark-blue mb-2">Kuis Selesai!</h2>
-            <p className="text-dark-blue/60 font-bold text-lg mb-8">Anda menjawab {score} dari {quizzes.length} soal dengan benar.</p>
-            
-            <div className="bg-slate-50 rounded-3xl p-8 mb-10">
-               <p className="text-sm font-black text-dark-blue/40 uppercase tracking-widest mb-1">Skor Akhir</p>
-               <h3 className={cn("text-6xl font-black", isPassed ? "text-green-500" : "text-orange-500")}>{finalScore}</h3>
-            </div>
+      <div className="w-full flex flex-col min-h-[85vh] relative pt-12 items-center justify-center">
+        <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-skillio-50/40 rounded-full blur-[120px] -z-10 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[30%] h-[30%] bg-teal-50/30 rounded-full blur-[100px] -z-10 pointer-events-none" />
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-xl w-full bg-white rounded-[40px] border border-slate-100 p-10 md:p-14 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] text-center relative overflow-hidden"
+        >
+           {/* Celebration Decor */}
+           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-skillio-500 to-teal-400" />
+           
+           <div className="flex justify-center mb-8">
+              <div className={cn(
+                "w-24 h-24 rounded-3xl flex items-center justify-center shadow-xl rotate-3",
+                isPassed ? "bg-emerald-500 text-white shadow-emerald-200" : "bg-orange-500 text-white shadow-orange-200"
+              )}>
+                 {isPassed ? <Trophy size={48} /> : <Award size={48} />}
+              </div>
+           </div>
+           
+           <h2 className="text-4xl font-black text-slate-900 mb-3">Misi Selesai!</h2>
+           <p className="text-slate-500 font-bold mb-10">Skor Anda: {finalScore}/100</p>
+           
+           <div className="bg-slate-50 rounded-3xl p-8 mb-10 border border-slate-100">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">XP Didapatkan</p>
+              <h3 className="text-5xl font-black text-skillio-600">+50 XP</h3>
+           </div>
 
-            <p className="text-dark-blue/80 font-medium mb-10 leading-relaxed">
-              {isPassed 
-                ? "Luar biasa! Pemahaman Anda sangat baik. Anda mendapatkan +50 XP dan lencana hari ini telah ditambahkan ke portofolio Anda."
-                : "Hampir saja! Anda tetap mendapatkan progres hari ini, namun jangan lupa untuk meninjau kembali materi yang salah ya."}
-            </p>
+           <p className="text-slate-600 font-medium mb-10 leading-relaxed">
+             {isPassed 
+               ? "Luar biasa! Pemahaman Anda sangat baik. Progress hari ini telah tersimpan secara permanen."
+               : "Hampir saja! Anda tetap mendapatkan progres hari ini, namun jangan lupa tinjau kembali materi kuisnya ya."}
+           </p>
 
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="w-full bg-primary-blue text-white py-5 rounded-2xl font-black text-xl shadow-xl shadow-primary-blue/20 hover:scale-[0.98] transition-all"
-            >
-              Lanjutkan ke Dashboard
-            </button>
-         </motion.div>
+           <button
+             onClick={() => router.push("/roadmap")}
+             className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg shadow-2xl shadow-slate-900/20 hover:bg-skillio-600 transition-all cursor-pointer"
+           >
+             Kembali ke Roadmap
+           </button>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-10 px-6">
-      <div className="mb-10 flex items-center justify-between">
-         <div>
-            <span className="inline-flex items-center gap-2 bg-primary-blue/10 text-primary-blue px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-2">
-              <Award size={14} /> Pertanyaan {currentIndex + 1} / {quizzes.length}
-            </span>
-            <h1 className="text-2xl font-black text-dark-blue">Uji Pemahaman</h1>
-         </div>
-         <div className="hidden md:flex gap-1">
-            {quizzes.map((_, i) => (
-              <div key={i} className={cn("h-2 w-8 rounded-full transition-all", i <= currentIndex ? "bg-primary-blue" : "bg-slate-200")} />
-            ))}
+    <div className="w-full flex flex-col min-h-[85vh] relative pt-2">
+      {/* Background Orbs */}
+      <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-skillio-50/40 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[30%] h-[30%] bg-teal-50/30 rounded-full blur-[100px] -z-10 pointer-events-none" />
+
+      {/* Top Progress Bar - Fixed & Full Width */}
+      <div className="fixed top-0 left-0 w-full z-[60] bg-white px-6 py-4 border-b border-slate-100 flex justify-center">
+         <div className="max-w-7xl w-full flex items-center gap-6">
+            <button 
+              onClick={() => router.back()}
+              className="p-2 text-slate-300 hover:text-slate-900 transition-colors cursor-pointer"
+            >
+               <X size={24} />
+            </button>
+            <div className="flex-grow h-2 bg-slate-100 rounded-full overflow-hidden">
+               <motion.div 
+                 className="h-full bg-gradient-to-r from-skillio-500 to-teal-400" 
+                 initial={{ width: 0 }}
+                 animate={{ width: `${progressPercent}%` }}
+                 transition={{ duration: 0.5 }}
+               />
+            </div>
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+               Soal {currentIndex + 1} / {quizzes.length}
+            </div>
          </div>
       </div>
 
-      <motion.div 
-        key={currentIndex}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="bg-white rounded-[40px] border-2 border-light-blue p-8 md:p-12 shadow-xl shadow-primary-blue/5"
-      >
-        <div className="flex items-start gap-4 mb-10">
-          <div className="w-12 h-12 bg-primary-blue rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-primary-blue/20">
-             <HelpCircle className="text-white" />
-          </div>
-          <h2 className="text-xl md:text-2xl font-bold text-dark-blue leading-relaxed">
-            {currentQuiz.question_text}
-          </h2>
-        </div>
+      <div className="max-w-4xl mx-auto w-full flex-grow flex flex-col justify-center py-16">
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={currentIndex}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="space-y-12"
+          >
+            <div className="space-y-6">
+               <div className="inline-flex items-center gap-2 px-3 py-1 bg-skillio-50 text-skillio-600 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                  <Target size={14} /> Kuis Pemahaman
+               </div>
+               <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                {currentQuiz.question_text}
+              </h2>
+            </div>
 
-        <div className="grid grid-cols-1 gap-4 mb-10">
-          {currentQuiz.options.map((option, index) => {
-            const isSelected = selectedAnswer === option;
-            const isAnswerCorrect = isSubmitted && option === currentQuiz.correct_option;
-            const isAnswerWrong = isSubmitted && isSelected && selectedAnswer !== currentQuiz.correct_option;
+            <div className="grid grid-cols-1 gap-4">
+              {currentQuiz.options.map((option, index) => {
+                const isSelected = selectedAnswer === option;
+                const isAnswerCorrect = isSubmitted && option === currentQuiz.correct_option;
+                const isAnswerWrong = isSubmitted && isSelected && selectedAnswer !== currentQuiz.correct_option;
 
-            return (
+                return (
+                  <button
+                    key={index}
+                    disabled={isSubmitted}
+                    onClick={() => setSelectedAnswer(option)}
+                    className={cn(
+                      "flex items-center justify-between p-6 md:p-8 rounded-[32px] border-2 transition-all text-left group cursor-pointer",
+                      isSelected && !isSubmitted && "border-skillio-500 bg-skillio-50/50 shadow-lg shadow-skillio-100",
+                      isAnswerCorrect && "border-emerald-500 bg-emerald-50 shadow-lg shadow-emerald-100",
+                      isAnswerWrong && "border-red-500 bg-red-50 shadow-lg shadow-red-100",
+                      !isSelected && !isSubmitted && "border-slate-100 bg-white hover:border-skillio-300 shadow-sm"
+                    )}
+                  >
+                    <span className={cn(
+                      "font-black text-lg md:text-xl",
+                      isSelected && !isSubmitted ? "text-skillio-600" : "text-slate-800",
+                      isAnswerCorrect && "text-emerald-700",
+                      isAnswerWrong && "text-red-700"
+                    )}>
+                      {option}
+                    </span>
+                    <div className={cn(
+                      "w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all",
+                      isAnswerCorrect ? "bg-emerald-500 border-emerald-500 text-white" : 
+                      isAnswerWrong ? "bg-red-500 border-red-500 text-white" :
+                      isSelected ? "bg-skillio-500 border-skillio-500 text-white" : "border-slate-200"
+                    )}>
+                       {isAnswerCorrect ? <CheckCircle2 size={18} /> : 
+                        isAnswerWrong ? <XCircle size={18} /> : 
+                        isSelected ? <div className="w-2 h-2 bg-white rounded-full" /> : null}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <AnimatePresence>
+              {isSubmitted && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  className={cn(
+                    "p-8 rounded-[32px] border-l-8",
+                    selectedAnswer === currentQuiz.correct_option ? "bg-emerald-50/50 border-emerald-500" : "bg-red-50/50 border-red-500"
+                  )}
+                >
+                   <p className="font-black text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-3">Penjelasan Mentor AI:</p>
+                   <p className="text-slate-700 font-medium leading-relaxed text-lg italic">
+                     "{currentQuiz.explanation}"
+                   </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Footer Navigation - Fixed & Full Width */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-100 p-6 flex justify-center z-50">
+         <div className="max-w-7xl w-full flex items-center justify-end">
+            {!isSubmitted ? (
               <button
-                key={index}
-                disabled={isSubmitted}
-                onClick={() => setSelectedAnswer(option)}
+                onClick={handleSubmit}
+                disabled={!selectedAnswer}
                 className={cn(
-                  "flex items-center justify-between p-6 rounded-3xl border-2 transition-all text-left group",
-                  isSelected && !isSubmitted && "border-primary-blue bg-primary-blue/5 scale-[1.02]",
-                  isAnswerCorrect && "border-green-500 bg-green-50",
-                  isAnswerWrong && "border-red-500 bg-red-50",
-                  !isSelected && !isSubmitted && "border-transparent bg-slate-50 hover:bg-white hover:border-primary-blue/40"
+                  "px-12 py-5 rounded-2xl font-black text-lg transition-all shadow-xl flex items-center gap-3 cursor-pointer",
+                  selectedAnswer 
+                    ? "bg-slate-900 text-white hover:bg-skillio-600" 
+                    : "bg-slate-200 text-slate-400 cursor-not-allowed"
                 )}
               >
-                <span className={cn(
-                  "font-bold text-lg",
-                  isSelected && !isSubmitted ? "text-primary-blue" : "text-dark-blue",
-                  isAnswerCorrect && "text-green-700",
-                  isAnswerWrong && "text-red-700"
-                )}>
-                  {option}
-                </span>
-                {isAnswerCorrect && <CheckCircle2 className="text-green-500" />}
-                {isAnswerWrong && <XCircle className="text-red-500" />}
+                Konfirmasi Jawaban <ArrowRight size={20} />
               </button>
-            );
-          })}
-        </div>
-
-        <AnimatePresence>
-          {isSubmitted && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              className={cn(
-                "p-6 rounded-3xl mb-8 border-l-4",
-                selectedAnswer === currentQuiz.correct_option ? "bg-green-50 border-green-500" : "bg-red-50 border-red-500"
-              )}
-            >
-               <p className="font-black text-sm uppercase tracking-widest mb-2">Penjelasan:</p>
-               <p className="text-dark-blue font-medium leading-relaxed">{currentQuiz.explanation}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {!isSubmitted ? (
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedAnswer}
-            className={cn(
-              "w-full py-5 rounded-[24px] font-black text-xl transition-all shadow-2xl flex items-center justify-center gap-3",
-              selectedAnswer 
-                ? "bg-primary-blue text-white shadow-primary-blue/20 hover:scale-[0.98]" 
-                : "bg-slate-200 text-slate-400 cursor-not-allowed"
+            ) : (
+              <button
+                onClick={handleNext}
+                className="px-12 py-5 rounded-2xl bg-skillio-600 text-white font-black text-lg transition-all shadow-xl flex items-center gap-3 cursor-pointer hover:bg-skillio-700"
+              >
+                {currentIndex < quizzes.length - 1 ? "Lanjutkan" : "Lihat Hasil"} <ChevronRight size={20} />
+              </button>
             )}
-          >
-            Konfirmasi Jawaban
-            <ArrowRight />
-          </button>
-        ) : (
-          <button
-            onClick={handleNext}
-            className="w-full py-5 rounded-[24px] bg-dark-blue text-white font-black text-xl transition-all shadow-2xl flex items-center justify-center gap-3 hover:scale-[0.98]"
-          >
-            {currentIndex < quizzes.length - 1 ? "Pertanyaan Selanjutnya" : "Lihat Hasil Akhir"}
-            <ChevronRight />
-          </button>
-        )}
-      </motion.div>
+         </div>
+      </div>
     </div>
   );
 }

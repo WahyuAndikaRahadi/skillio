@@ -140,25 +140,60 @@ export const generateFullRoadmap = async (career) => {
 };
 export async function generateDayExpansion(dayTitle, dayMaterial) {
   const prompt = `
-    Anda adalah asisten belajar profesional tingkat tinggi. 
-    Tugas Anda adalah memberikan penjelasan mendalam untuk materi belajar berikut:
-    Judul: ${dayTitle}
-    Ringkasan: ${dayMaterial}
+    Anda adalah AI Mentor Senior di Skillio. Tugas Anda adalah memberikan PENJELASAN MENDALAM (Deep Dive) untuk materi berikut:
+    
+    JUDUL MATERI: ${dayTitle}
+    RINGKASAN MATERI: ${dayMaterial}
 
-    Berikan output dalam format JSON murni:
+    Tujuan: Memberikan pemahaman tingkat lanjut yang tidak ada di ringkasan dasar. 
+    Gunakan gaya bahasa profesional, inspiratif, namun sangat teknis dan praktis.
+    
+    STRUKTUR PENJELASAN (explanation):
+    1. Konsep Fundamental (Mengapa ini penting?)
+    2. Cara Kerja / Mekanisme Detail (Langkah-demi-langkah teknis)
+    3. Best Practices & Pro Tips (Sesuai standar industri saat ini)
+    4. Kesalahan Umum yang Harus Dihindari
+    5. Analogi Dunia Nyata (Agar mudah diingat)
+
+    SYARAT OUTPUT:
+    - Penjelasan (explanation) harus minimal 800 karakter dan maksimal 1200 karakter.
+    - JANGAN GUNAKAN SYMBOL MARKDOWN SEPERTI #, ##, *, **, atau -.
+    - WAJIB gunakan DUA kali baris baru (Double Newline) di antara setiap poin penomoran (1., 2., dst) agar teks tidak menumpuk.
+    - Gunakan paragraf yang jelas.
+    - Berikan minimal 3 sumber belajar (resources) berkualitas tinggi.
+    - YouTube query harus sangat spesifik.
+
+    WAJIB OUTPUT DALAM JSON MURNI:
     {
-      "explanation": "Penjelasan mendalam, teknis namun mudah dipahami, gunakan poin-poin dan struktur yang sangat rapi.",
+      "explanation": "...",
       "resources": [
-        { 
-          "title": "Nama sumber (misal: Dokumentasi Resmi React, Artikel Medium, Buku Spesifik)", 
-          "url": "Berikan URL lengkap (dimulai dengan https://). Jika tidak tahu URL pastinya, berikan null saja, JANGAN memberikan teks deskripsi di sini." 
-        }
+        { "title": "...", "url": "..." }
       ],
-      "youtube_query": "Kata kunci pencarian YouTube yang paling spesifik untuk materi ini"
+      "youtube_query": "..."
     }
   `;
 
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
-  return extractJson(text);
+  try {
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    const data = extractJson(text);
+
+    // Validasi data
+    if (!data.explanation || data.explanation.length < 50) {
+      throw new Error("AI returned insufficient content");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("AI Generation failed, using fallback:", error);
+    // Fallback content if AI fails
+    return {
+      explanation: `### Penjelasan Mendalam: ${dayTitle}\n\nMateri tentang **${dayTitle}** merupakan pilar penting dalam perjalanan Anda. \n\n**Kenapa ini penting?**\n${dayMaterial}\n\n**Panduan Belajar:**\n1. Pahami dokumentasi teknis terkait materi ini.\n2. Lakukan praktik langsung pada proyek nyata.\n3. Hubungkan konsep ini dengan materi hari-hari sebelumnya untuk membangun pemahaman yang utuh.\n\n*Mentor AI sedang mengalami kendala teknis untuk memberikan penjelasan yang lebih mendalam, silakan gunakan sumber daya di bawah untuk eksplorasi mandiri.*`,
+      resources: [
+        { title: "Dokumentasi Resmi", url: `https://www.google.com/search?q=${encodeURIComponent(dayTitle + " official documentation")}` },
+        { title: "Artikel Praktik Terbaik", url: `https://www.google.com/search?q=${encodeURIComponent(dayTitle + " best practices")}` }
+      ],
+      youtube_query: dayTitle
+    };
+  }
 }

@@ -3,7 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { motion } from "framer-motion";
-import { Sparkles, Trophy, ArrowRight, BrainCircuit, Loader2 } from "lucide-react";
+import { 
+  Trophy, ArrowRight, RotateCcw, Target, Sparkles, 
+  ChevronRight, Info, CheckCircle2
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -17,12 +20,8 @@ const ResultPage = () => {
       router.push("/quiz");
       return;
     }
-
-    if (!quizResult) {
-      analyzeResults();
-    } else {
-      setIsLoading(false);
-    }
+    if (!quizResult) analyzeResults();
+    else setIsLoading(false);
   }, []);
 
   const analyzeResults = async () => {
@@ -48,12 +47,8 @@ const ResultPage = () => {
         method: "POST",
         body: JSON.stringify({ career }),
       });
-      
-      if (response.ok) {
-        router.push("/dashboard");
-      } else {
-        alert("Gagal membuat roadmap. Coba lagi ya!");
-      }
+      if (response.ok) router.push("/dashboard");
+      else alert("Gagal membuat roadmap. Coba lagi ya!");
     } catch (err) {
       console.error(err);
     } finally {
@@ -63,83 +58,102 @@ const ResultPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-light-blue/20 flex flex-col items-center justify-center p-6 text-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-          className="text-primary-blue mb-8"
-        >
-          <BrainCircuit size={80} />
-        </motion.div>
-        <h2 className="text-3xl font-black text-dark-blue mb-4">Menganalisis Potensi Anda...</h2>
-        <p className="text-dark-blue/60 font-medium max-w-md mx-auto leading-relaxed">
-          Mohon tunggu sebentar, AI sedang menganalisis 30 jawaban Anda untuk merumuskan masa depan yang paling sesuai.
-        </p>
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center">
+        <div className="w-12 h-12 rounded-full border-2 border-slate-100 border-t-skillio-600 animate-spin mb-6" />
+        <h2 className="text-xl font-bold text-slate-900">Menganalisis Hasil...</h2>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-light-blue/20 py-16 px-6">
+    <div className="min-h-screen bg-white py-12 md:py-20 px-6">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-primary-blue text-white px-4 py-2 rounded-full text-sm font-bold mb-6">
-            <Trophy className="w-4 h-4" />
-            <span>Analisis Selesai</span>
+        
+        {/* Header - Simple & Modern */}
+        <div className="text-center mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2 bg-skillio-50 text-skillio-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+            <Trophy size={12} />
+            Analysis Complete
           </div>
-          <h1 className="text-4xl md:text-6xl font-black text-dark-blue mb-6">Hasil <span className="text-primary-blue">Analisis Anda</span></h1>
-          <p className="text-lg text-dark-blue/60 font-medium max-w-2xl mx-auto leading-relaxed">
-            {quizResult?.summary}
+          <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">
+            Rekomendasi <span className="text-skillio-600">Karier Anda</span>
+          </h1>
+          <p className="text-base md:text-lg text-slate-400 font-medium max-w-2xl mx-auto">
+            Berdasarkan profil Anda, berikut adalah jalur yang paling sesuai.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* AI Summary - Simple Box */}
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-slate-50 border border-slate-100 rounded-3xl p-6 mb-12 flex items-start gap-4"
+        >
+          <div className="p-2 bg-white rounded-xl shadow-sm text-skillio-600">
+            <Info size={18} />
+          </div>
+          <p className="text-sm text-slate-500 font-medium leading-relaxed italic">
+            "{quizResult?.summary}"
+          </p>
+        </motion.div>
+
+        {/* Results Grid - Clean & Minimalist */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {quizResult?.recommendations.map((rec, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.2 }}
+              transition={{ delay: i * 0.1 }}
               className={cn(
-                "bg-white p-8 rounded-[40px] border-2 transition-all flex flex-col relative overflow-hidden group",
-                i === 0 ? "border-primary-blue ring-4 ring-primary-blue/10 scale-105 z-10" : "border-light-blue"
+                "group bg-white p-8 rounded-[32px] border transition-all flex flex-col",
+                i === 0 
+                  ? "border-skillio-600 shadow-xl shadow-skillio-100/50 ring-1 ring-skillio-600/10" 
+                  : "border-slate-100 hover:border-slate-200"
               )}
             >
-              {i === 0 && (
-                <div className="absolute top-0 right-0 bg-primary-blue text-white px-4 py-1 text-[10px] font-black uppercase rounded-bl-2xl">
-                  Best Match
+              <div className="mb-6 flex justify-between items-start">
+                <div className="space-y-1">
+                   <div className="text-3xl font-black text-skillio-600">{rec.match}%</div>
+                   <div className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Match Score</div>
                 </div>
-              )}
-              
-              <div className="mb-6">
-                <div className="text-4xl font-black text-primary-blue mb-1">{rec.match}%</div>
-                <div className="text-xs font-bold text-dark-blue/40 uppercase tracking-widest">Match Rate</div>
+                {i === 0 && (
+                   <span className="bg-skillio-600 text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-md">
+                      Best
+                   </span>
+                )}
               </div>
 
-              <h3 className="text-2xl font-black text-dark-blue mb-4 leading-tight">{rec.career}</h3>
-              <p className="text-sm text-dark-blue/60 font-medium mb-8 flex-grow">
+              <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-skillio-600 transition-colors">
+                {rec.career}
+              </h3>
+              <p className="text-xs text-slate-400 font-medium mb-8 flex-grow leading-relaxed">
                 {rec.reason}
               </p>
 
               <button 
                 onClick={() => handleSelectCareer(rec.career)}
                 className={cn(
-                  "w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all",
+                  "w-full py-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all",
                   i === 0 
-                    ? "bg-primary-blue text-white shadow-xl shadow-primary-blue/20 hover:bg-accent-blue" 
-                    : "bg-light-blue text-primary-blue hover:bg-primary-blue hover:text-white"
+                    ? "bg-skillio-600 text-white shadow-lg shadow-skillio-600/20 hover:bg-skillio-700" 
+                    : "bg-slate-50 text-slate-600 hover:bg-slate-900 hover:text-white"
                 )}
               >
-                Pilih Bidang Ini <ArrowRight size={16} />
+                Pilih Bidang <ArrowRight size={14} />
               </button>
             </motion.div>
           ))}
         </div>
 
-        <div className="mt-16 text-center">
-          <p className="text-dark-blue/40 font-bold mb-6">Merasa kurang sesuai dengan pilihan di atas?</p>
-          <button className="text-primary-blue font-black hover:underline flex items-center gap-2 mx-auto">
-             Ulangi Kuis (Klarifikasi AI) <Sparkles size={18} />
+        {/* Simple Footer Actions */}
+        <div className="mt-20 flex flex-col items-center">
+          <button 
+            onClick={() => router.push("/quiz")}
+            className="flex items-center gap-2 text-slate-400 font-bold text-sm hover:text-slate-900 transition-all cursor-pointer"
+          >
+             <RotateCcw size={16} />
+             Ulangi Kuis
           </button>
         </div>
       </div>

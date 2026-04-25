@@ -5,17 +5,20 @@ import Sidebar from "@/components/dashboard/layout/Sidebar";
 import TopBar from "@/components/dashboard/layout/TopBar";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAppStore } from "@/store/useAppStore";
+import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isImmersiveMode } = useAppStore();
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      <Sidebar />
+      {!isImmersiveMode && <Sidebar />}
       
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
-        {isSidebarOpen && (
+        {isSidebarOpen && !isImmersiveMode && (
           <>
             <motion.div 
               initial={{ opacity: 0 }}
@@ -42,10 +45,16 @@ export default function DashboardLayout({ children }) {
         )}
       </AnimatePresence>
 
-      <div className="lg:ml-72 flex flex-col min-h-screen relative">
-        <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
+      <div className={cn(
+        "flex flex-col min-h-screen relative transition-all duration-500",
+        !isImmersiveMode ? "lg:ml-72" : "lg:ml-0"
+      )}>
+        {!isImmersiveMode && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         
-        <main className="flex-grow pt-28 pb-12 px-6 md:px-10 max-w-7xl mx-auto w-full">
+        <main className={cn(
+          "flex-grow pb-12 px-6 md:px-10 max-w-7xl mx-auto w-full transition-all duration-500",
+          !isImmersiveMode ? "pt-28" : "pt-12"
+        )}>
           {children}
         </main>
       </div>

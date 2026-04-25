@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import EmptyState from "@/components/dashboard/EmptyState";
-import RoadmapTimeline from "@/components/dashboard/RoadmapTimeline";
+import RoadmapClientView from "@/components/dashboard/RoadmapClientView";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 
@@ -24,7 +24,12 @@ export default async function RoadmapPage() {
         } 
       }, 
       category: true,
-      progress: true
+      progress: true,
+      user: {
+        include: {
+          streak: true
+        }
+      }
     }
   });
 
@@ -33,24 +38,18 @@ export default async function RoadmapPage() {
     where: { user_id: session.user.id }
   });
 
-  return (
-    <div className="w-full">
-      {!userRoadmap ? (
+  if (!userRoadmap) {
+    return (
+      <div className="w-full max-w-7xl mx-auto pb-12">
         <EmptyState userName={session.user.name} hasProgress={!!quizProgress} />
-      ) : (
-        <div className="space-y-8">
-           <div className="mb-10">
-             <h1 className="text-4xl font-black text-dark-blue mb-2">Roadmap Belajar</h1>
-             <p className="text-dark-blue/60 font-medium text-lg">Perjalanan 30 hari Anda menjadi {userRoadmap.category.name}</p>
-           </div>
-           
-           <RoadmapTimeline 
-             roadmap={userRoadmap.roadmap} 
-             days={userRoadmap.roadmap.days} 
-             userRoadmap={userRoadmap}
-           />
-        </div>
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  return (
+    <RoadmapClientView 
+      userRoadmap={userRoadmap}
+      session={session}
+    />
   );
 }

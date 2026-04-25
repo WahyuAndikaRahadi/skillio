@@ -15,4 +15,7 @@ export const useAppStore = create((set) => ({
   
   roadmapProgress: 0,
   setRoadmapProgress: (progress) => set({ roadmapProgress: progress }),
+
+  isImmersiveMode: false,
+  setIsImmersiveMode: (mode) => set({ isImmersiveMode: mode }),
 }));
