@@ -103,15 +103,29 @@ export async function POST(req) {
 
     // 5. Check for Badges (Background/Parallel)
     const { checkAndAwardBadges } = await import("@/lib/badges");
-    const newBadges = await checkAndAwardBadges(session.user.id, "perfect_score", { score });
+    
+    // Perfect score badge
+    const newBadges = await checkAndAwardBadges(session.user.id, "quiz_perfect", { score });
+    
+    // Day specific badges (e.g., Pemula Berani - Day 1)
+    await checkAndAwardBadges(session.user.id, "day_complete", { day: day_number });
     
     const updatedUser = await prisma.user.findUnique({
        where: { id: session.user.id },
        include: { streak: true }
     });
     
-    await checkAndAwardBadges(session.user.id, "streak_count", { streak: updatedUser.streak?.current_streak });
-    await checkAndAwardBadges(session.user.id, "xp_count", { xp: updatedUser.xp });
+    // Streak badges
+    await checkAndAwardBadges(session.user.id, "streak_check", { streak: updatedUser.streak?.current_streak });
+    
+    // Total days completed badges (e.g., Setengah Jalan - 15 days)
+    const totalDaysCompleted = await prisma.userDayProgress.count({
+      where: { 
+        user_roadmap: { user_id: session.user.id },
+        quiz_passed: true 
+      }
+    });
+    await checkAndAwardBadges(session.user.id, "days_completed", { count: totalDaysCompleted });
 
     // 6. Auto-post to Social Feed
     if (score >= 80) {

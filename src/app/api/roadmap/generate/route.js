@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import prismaQuestion from "@/lib/prisma-question";
 import { auth } from "@/auth";
 import { generateFullRoadmap } from "@/lib/gemini";
 
@@ -55,21 +54,7 @@ export async function POST(req) {
             where: { id: roadmap.id },
             data: { file_url: JSON.stringify(curriculum) }
           });
-
-          // SINKRONISASI: Simpan ke DB Question (agar Dashboard sinkron)
-          try {
-            await prismaQuestion.curriculum.upsert({
-              where: { category_slug: category.slug },
-              update: { content_json: curriculum },
-              create: {
-                category_slug: category.slug,
-                content_json: curriculum
-              }
-            });
-            console.log(`[AI] Sinkronisasi ke DB Question berhasil.`);
-          } catch (qError) {
-            console.error("[AI] Gagal sinkron ke DB Question:", qError.message);
-          }
+          console.log(`[AI] Roadmap berhasil disimpan ke database utama.`);
         }
       } catch (aiError) {
         console.error("[AI] Gagal generate kurikulum:", aiError.message);

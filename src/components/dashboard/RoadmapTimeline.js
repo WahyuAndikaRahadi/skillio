@@ -613,6 +613,14 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
   };
 
   const completedDaysCount = progress.filter(p => p.quiz_passed).length;
+  useEffect(() => {
+    console.log("DEBUG: Progres Belajar:", {
+      totalDays: days.length,
+      completedDays: completedDaysCount,
+      currentDay: currentDay
+    });
+  }, [days, completedDaysCount, currentDay]);
+
   const currentDayData = days.find(d => d.day_number === currentDay);
 
   if (loadingDays) {
@@ -647,6 +655,46 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
             <div className="lg:col-span-8 relative py-10">
               <div className="absolute left-8 md:left-1/2 top-0 bottom-0 border-l-[3px] border-dashed border-slate-200 md:-translate-x-1/2 z-0" />
               <div className="space-y-6 md:space-y-12">
+            {/* Certificate Claim Banner — Simple & Clean */}
+            {(completedDaysCount >= 25 || (days.length > 0 && currentDay > days.length)) && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative z-10 flex items-center justify-between gap-4 p-4 pl-5 bg-white border border-skillio-100 rounded-2xl shadow-sm mb-24"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-skillio-50 text-skillio-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Award size={18} />
+                  </div>
+                  <div>
+                    <p className="font-black text-slate-900 text-sm">30 Hari Selesai — Sertifikatmu siap!</p>
+                    <p className="text-xs text-slate-400 font-medium">Klik untuk melihat dan mengunduh sertifikat resmimu.</p>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("/api/roadmap/complete", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userRoadmapId: userRoadmap.id })
+                      });
+                      if (res.ok) {
+                        window.open(`/verify/${userRoadmap.id}`, "_blank");
+                        // Refresh page to show NewRoadmapBanner if they are on /belajar
+                        window.location.reload();
+                      }
+                    } catch (err) {
+                      console.error("Failed to complete roadmap:", err);
+                    }
+                  }}
+                  className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 bg-skillio-600 text-white text-xs font-black rounded-xl hover:bg-skillio-700 transition-colors"
+                >
+                  Claim <ArrowRight size={14} />
+                </button>
+              </motion.div>
+            )}
+
                 {days.map((day, idx) => {
                    const lockStatus = checkLockout(day.day_number);
                    const isLocked = lockStatus.isLocked;

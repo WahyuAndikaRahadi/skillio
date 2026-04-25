@@ -3,46 +3,74 @@ import prisma from "./prisma";
 /**
  * Check and award badges based on user performance
  * @param {string} userId 
- * @param {string} type - type of achievement (e.g., 'perfect_score', 'streak_count', 'xp_count')
+ * @param {string} triggerType - what just happened (e.g., 'day_complete', 'streak_check', 'quiz_perfect')
  * @param {any} context - additional data needed for the check
  */
-export async function checkAndAwardBadges(userId, type, context = {}) {
+export async function checkAndAwardBadges(userId, triggerType, context = {}) {
   try {
-    // 1. Get all badges related to this type
-    const potentialBadges = await prisma.badge.findMany({
-      where: { type: { in: [type, 'special', 'completion', 'xp', 'streak', 'quiz'] } }
-    });
-
+    // 1. Get all badges
+    const allBadges = await prisma.badge.findMany();
     const earnedBadges = [];
 
-    for (const badge of potentialBadges) {
-      const req = badge.requirement;
-      if (!req || req.type !== type) continue;
+    // 2. Get user's current earned badges to avoid duplicates
+    const userBadges = await prisma.userBadge.findMany({
+      where: { user_id: userId },
+      select: { badge_id: true }
+    });
+    const earnedBadgeIds = new Set(userBadges.map(ub => ub.badge_id));
 
-      // Check if user already has this badge
-      const alreadyHas = await prisma.userBadge.findFirst({
-        where: { user_id: userId, badge_id: badge.id }
-      });
-      if (alreadyHas) continue;
+    for (const badge of allBadges) {
+      if (earnedBadgeIds.has(badge.id)) continue;
+
+      const req = badge.requirement;
+      if (!req || req.type !== triggerType) continue;
 
       let qualified = false;
 
-      // Logic for each type
-      switch (type) {
-        case 'perfect_score':
+      // Logic based on triggerType
+      switch (triggerType) {
+        case 'day_complete':
+          // Badge: Pemula Berani (Day 1)
+          if (req.day === context.day) qualified = true;
+          break;
+          
+        case 'streak_check':
+          // Badge: Konsisten 7 Hari, Streak Legenda
+          if (context.streak >= req.days) qualified = true;
+          break;
+
+        case 'days_completed':
+          // Badge: Setengah Jalan (15 days)
+          if (context.count >= req.count) qualified = true;
+          break;
+
+        case 'quiz_perfect':
           if (context.score === 100) qualified = true;
           break;
-        case 'streak_count':
-          if (context.streak >= req.value) qualified = true;
+
+        case 'ai_messages':
+          // Badge: AI Enthusiast
+          if (context.count >= req.count) qualified = true;
           break;
-        case 'xp_count':
-          if (context.xp >= req.value) qualified = true;
+
+        case 'community_posts':
+          // Badge: Social Butterfly
+          if (context.count >= req.count) qualified = true;
           break;
-        case 'orientation_complete':
-          qualified = true; // awarded when called
+
+        case 'community_comments':
+          // Badge: Community Helper
+          if (context.count >= req.count) qualified = true;
           break;
-        case 'roadmap_complete':
-          qualified = true; // awarded when called
+
+        case 'night_activity':
+          // Badge: Night Owl (Count of activities between 00:00 - 04:00)
+          if (context.count >= req.count) qualified = true;
+          break;
+
+        case 'quiz_speed':
+          // Badge: Speed Runner (Completed within X seconds with perfect score)
+          if (context.seconds <= req.seconds && context.score === 100) qualified = true;
           break;
       }
 

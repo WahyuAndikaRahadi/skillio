@@ -207,23 +207,34 @@ export default function ProfilePage() {
              {stats.roadmapsCount === 0 ? (
                <div className="text-center py-10 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
                   <p className="font-bold text-slate-400">Belum ada roadmap yang selesai.</p>
-                  <Link href="/orientation" className="text-primary-blue font-black mt-2 inline-block hover:underline">
+                  <Link href="/roadmap" className="text-primary-blue font-black mt-2 inline-block hover:underline">
                     Mulai petualanganmu sekarang →
                   </Link>
                </div>
              ) : (
                <div className="space-y-4">
-                  {/* Mock for now */}
-                  <div className="flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:bg-white hover:border-primary-blue/20 transition-all cursor-pointer group">
-                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-primary-blue rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20">UX</div>
-                        <div>
-                           <h4 className="font-black text-dark-blue">UX Research Fundamental</h4>
-                           <p className="text-xs font-bold text-slate-400">Diselesaikan pada 12 April 2024</p>
-                        </div>
-                     </div>
-                     <ChevronRight className="text-slate-300 group-hover:text-primary-blue transition-colors" />
-                  </div>
+                  {stats.completedRoadmaps?.map((roadmap) => (
+                    <Link 
+                      key={roadmap.id}
+                      href={`/verify/${roadmap.id}`}
+                      className="flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:bg-white hover:border-primary-blue/20 transition-all group"
+                    >
+                       <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-primary-blue rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 uppercase">
+                            {roadmap.categoryName.slice(0, 2)}
+                          </div>
+                          <div>
+                             <h4 className="font-black text-dark-blue">{roadmap.categoryName}</h4>
+                             <p className="text-xs font-bold text-slate-400">
+                               Diselesaikan pada {new Date(roadmap.completedAt).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}
+                             </p>
+                          </div>
+                       </div>
+                       <div className="flex items-center gap-2 text-primary-blue font-black text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                         Lihat Sertifikat <ChevronRight size={18} />
+                       </div>
+                    </Link>
+                  ))}
                </div>
              )}
           </div>
@@ -243,7 +254,7 @@ export default function ProfilePage() {
                 </h2>
              </div>
 
-             {stats.badges.length === 0 ? (
+             {!stats.badges || stats.badges.length === 0 ? (
                <div className="text-center py-10">
                   <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-slate-200">
                      <Award className="text-slate-300" size={32} />
@@ -252,19 +263,40 @@ export default function ProfilePage() {
                </div>
              ) : (
                <div className="grid grid-cols-2 gap-4">
-                  {stats.badges.map((userBadge, idx) => (
-                    <motion.div 
-                      key={idx}
-                      whileHover={{ scale: 1.05 }}
-                      className="p-4 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col items-center text-center group transition-colors hover:bg-white hover:border-primary-blue/20"
-                    >
-                       <div className="w-16 h-16 mb-3 rounded-2xl bg-white shadow-lg flex items-center justify-center">
-                          <img src={userBadge.badge.image_url} alt={userBadge.badge.name} className="w-12 h-12 object-contain" />
-                       </div>
-                       <h4 className="text-xs font-black text-dark-blue leading-tight mb-1">{userBadge.badge.name}</h4>
-                       <p className="text-[10px] font-bold text-slate-400">{new Date(userBadge.earned_at).toLocaleDateString()}</p>
-                    </motion.div>
-                  ))}
+                  {stats.badges.map((badge, idx) => {
+                    const isEmoji = !badge.image_url?.includes('.') && !badge.image_url?.includes('/');
+                    return (
+                      <motion.div 
+                        key={idx}
+                        whileHover={{ scale: 1.05 }}
+                        className={cn(
+                          "p-4 rounded-3xl border transition-all flex flex-col items-center text-center group",
+                          badge.earned 
+                            ? "bg-white border-primary-blue/20 shadow-lg shadow-primary-blue/5" 
+                            : "bg-slate-50 border-slate-100 opacity-60 grayscale"
+                        )}
+                      >
+                         <div className={cn(
+                           "w-16 h-16 mb-3 rounded-2xl flex items-center justify-center text-3xl",
+                           badge.earned ? "bg-white shadow-md" : "bg-slate-100"
+                         )}>
+                            {isEmoji ? (
+                              <span>{badge.image_url}</span>
+                            ) : (
+                              <img src={badge.image_url} alt={badge.name} className="w-12 h-12 object-contain" />
+                            )}
+                         </div>
+                         <h4 className="text-xs font-black text-dark-blue leading-tight mb-1">
+                           {badge.name}
+                         </h4>
+                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                           {badge.earned 
+                             ? new Date(badge.earned_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short' })
+                             : "Belum Diraih"}
+                         </p>
+                      </motion.div>
+                    );
+                  })}
                </div>
              )}
           </div>

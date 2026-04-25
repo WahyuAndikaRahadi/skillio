@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { generateDayExpansion } from "@/lib/gemini";
 import prisma from "@/lib/prisma";
-import prismaQuestion from "@/lib/prisma-question";
 
 export async function POST(req) {
   try {
@@ -59,16 +58,6 @@ export async function POST(req) {
           where: { id: roadmap.id },
           data: { file_url: updatedJson }
         });
-
-        // Sync with Question DB
-        try {
-          await prismaQuestion.curriculum.update({
-            where: { category_slug: userRoadmap.category.slug },
-            data: { content_json: curriculum }
-          });
-        } catch (qErr) {
-          console.error("Failed to sync expansion to Question DB:", qErr.message);
-        }
       }
     }
 
