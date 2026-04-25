@@ -7,7 +7,7 @@ export default function RoadmapClientView({ userRoadmap, session }) {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   return (
-    <div className="w-full max-w-7xl mx-auto pb-12">
+    <div className="w-full max-w-7xl mx-auto pb-12 px-6 md:px-10 max-w-7xl mx-auto pt-6">
       <div className="space-y-8">
         {/* Global Header - Hidden when detail is open */}
         {!isDetailOpen && (

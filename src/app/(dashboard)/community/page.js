@@ -26,7 +26,7 @@ export default function CommunityPage() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto pb-12 px-6 md:px-10 max-w-7xl pt-6">
       <div className="flex flex-col lg:flex-row gap-10">
         
         {/* Sidebar Filters */}

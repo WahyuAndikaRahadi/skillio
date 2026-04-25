@@ -160,7 +160,7 @@ export default function AiMentorPage() {
 
   return (
     <div 
-      className="h-[calc(100vh-120px)] flex flex-col -mx-6 md:-mx-10 -mb-12 mt-[-40px] bg-slate-50 relative overflow-hidden"
+      className="h-[calc(100vh-120px)] flex flex-col -mx-6 md:-mx-10 -mb-12 mt-[-40px] bg-slate-50 relative overflow-hidden pb-12 px-6 md:px-10  mx-auto pt-6"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}

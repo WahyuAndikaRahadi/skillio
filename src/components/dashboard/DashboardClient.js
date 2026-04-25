@@ -104,7 +104,7 @@ export default function DashboardClient({
       : "Selamat Malam";
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 overflow-x-hidden">
+    <div className="max-w-7xl mx-auto space-y-8 overflow-x-hidden pb-12 px-6 md:px-10 max-w-7xl mx-auto pt-6">
       {/* ═══ HEADER ═══ */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}

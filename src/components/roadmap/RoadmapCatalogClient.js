@@ -37,7 +37,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmap 
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-12 pb-20">
+    <div className="max-w-7xl mx-auto space-y-12 pb-20 px-6 md:px-10 max-w-7xl mx-auto pt-6">
       
       {/* ═══ HEADER & SEARCH ═══ */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
