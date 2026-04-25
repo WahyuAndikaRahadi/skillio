@@ -28,6 +28,7 @@ const userMenuItems = [
 ];
 
 const adminMenuItems = [
+  { name: "Dashboard Admin", href: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
   { name: "Kelola Kurikulum", href: "/admin/roadmaps", icon: <Map size={20} /> },
   { name: "Social Feed", href: "/feed", icon: <Globe size={20} /> },
   { name: "Komunitas", href: "/community", icon: <Users size={20} /> },
@@ -46,7 +47,7 @@ const Sidebar = ({ isMobile = false }) => {
       !isMobile ? "fixed left-0 top-0 hidden lg:flex" : "flex"
     )}>
       <div className="mb-10">
-        <Link href={isAdmin ? "/admin/roadmaps" : "/dashboard"} className="flex items-center gap-2 group">
+        <Link href={isAdmin ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-2 group">
           <div className=" p-2 rounded-xl group-hover:rotate-12 transition-transform">
             <Image
               src="/images/skillio-logo.png"
