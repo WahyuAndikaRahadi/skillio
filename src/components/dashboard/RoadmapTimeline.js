@@ -6,7 +6,7 @@ import {
   CheckCircle2, Lock, PlayCircle, Trophy, BookOpen, 
   ChevronDown, ExternalLink, Target, Calendar, ArrowRight, ArrowLeft, Star,
   Zap, Flame, Award, ShieldCheck, Sparkles, ChevronRight, ChevronLeft,
-  X, HelpCircle, Loader2, XCircle
+  X, HelpCircle, Loader2, XCircle, RotateCcw
 } from "lucide-react";
 import { FaYoutube } from "react-icons/fa";
 import { cn } from "@/lib/utils";
@@ -465,7 +465,12 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
   const renderDayDetail = () => {
     if (!selectedDay) return null;
     const dayProg = getDayProgress(selectedDay.day_number);
-    const allTasksDone = selectedDay.tasks?.length > 0 && selectedDay.tasks.every(t => dayProg.completed_tasks.includes(t.id));
+    
+    // Perbaikan: Gunakan logika ID yang sama dengan di render loop (task.id || taskIdx)
+    const allTasksDone = selectedDay.tasks?.length > 0 && selectedDay.tasks.every((t, idx) => {
+      const taskId = t.id || t.order_number || idx.toString();
+      return dayProg.completed_tasks.includes(taskId);
+    });
 
     const totalSlides = 3;
     const progressPercent = ((currentSlide + 1) / totalSlides) * 100;
