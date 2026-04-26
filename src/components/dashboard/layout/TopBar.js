@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Flame, Bell, Search, Menu, Sparkles, Check, CheckCircle2, Info, User, Trophy, LogOut } from "lucide-react";
+import { Flame, Bell, Search, Menu, Sparkles, Check, CheckCircle2, Info, User, LogOut } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -234,15 +234,6 @@ const TopBar = ({ onMenuClick }) => {
                     >
                       <User size={18} />
                       <span>Profil</span>
-                    </Link>
-
-                    <Link
-                      href="/badges"
-                      onClick={() => setIsProfileDropdownOpen(false)}
-                      className="flex items-center gap-3 p-4 text-dark-blue hover:bg-light-blue/50 transition-colors font-bold text-sm"
-                    >
-                      <Trophy size={18} />
-                      <span>Badge</span>
                     </Link>
 
                     <button

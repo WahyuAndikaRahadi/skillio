@@ -11,13 +11,13 @@
   --color-skillio-900: #0d2133;
   --color-mist: #f7fafc;
   --color-ink: #0f172a;
-  
+
   /* Intuitive Aliases */
   --color-primary-blue: var(--color-skillio-500);
   --color-dark-blue: var(--color-skillio-900);
   --color-accent-blue: var(--color-skillio-600);
   --color-light-blue: var(--color-skillio-50);
-  
+
   --font-sans: var(--font-inter), sans-serif;
   --font-display: var(--font-outfit), sans-serif;
 }
@@ -94,7 +94,12 @@ body::before {
     background: rgba(43, 110, 166, 0.18);
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     letter-spacing: -0.04em;
   }
@@ -201,14 +206,12 @@ body::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      115deg,
-      transparent 0%,
-      transparent 42%,
-      rgba(255, 255, 255, 0.38) 50%,
-      transparent 58%,
-      transparent 100%
-    );
+    background: linear-gradient(115deg,
+        transparent 0%,
+        transparent 42%,
+        rgba(255, 255, 255, 0.38) 50%,
+        transparent 58%,
+        transparent 100%);
     transform: translateX(-120%);
     animation: sweep 7s linear infinite;
   }
@@ -218,31 +221,49 @@ body::before {
     color: inherit;
     font-size: inherit;
   }
+
   .prose p {
     margin-bottom: 0.75rem;
   }
+
   .prose p:last-child {
     margin-bottom: 0;
   }
-  .prose ul, .prose ol {
+
+  .prose ul,
+  .prose ol {
     margin: 0.5rem 0;
     padding-left: 1.25rem;
   }
+
   .prose li {
     margin-bottom: 0.25rem;
   }
+
   .prose strong {
     font-weight: 700;
   }
-  .prose h1, .prose h2, .prose h3 {
+
+  .prose h1,
+  .prose h2,
+  .prose h3 {
     margin-top: 1rem;
     margin-bottom: 0.5rem;
     font-weight: 800;
     line-height: 1.2;
   }
-  .prose h1 { font-size: 1.25rem; }
-  .prose h2 { font-size: 1.15rem; }
-  .prose h3 { font-size: 1.05rem; }
+
+  .prose h1 {
+    font-size: 1.25rem;
+  }
+
+  .prose h2 {
+    font-size: 1.15rem;
+  }
+
+  .prose h3 {
+    font-size: 1.05rem;
+  }
 
   /* Custom Scrollbar Utility */
   .custom-scrollbar::-webkit-scrollbar {
@@ -284,7 +305,9 @@ body::before {
 }
 
 @keyframes floatGentle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
 
@@ -294,7 +317,9 @@ body::before {
 }
 
 @keyframes floatSlow {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate3d(0, 0, 0);
   }
 
@@ -310,5 +335,17 @@ body::before {
 
   100% {
     transform: translateX(120%);
+  }
+}
+
+@keyframes podiumRiseUp {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -174,7 +174,7 @@ export default function FeedPage() {
                     return (
                       <button
                         key={group.id}
-                        onClick={() => router.push(`/community/chat/${group.id}`)}
+                        onClick={() => router.push(`/community?groupId=${group.id}`)} 
                         className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group"
                       >
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm ${colors[i % colors.length]}`}>

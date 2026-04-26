@@ -2,19 +2,35 @@
 
 import React, { useState, useEffect } from "react";
 import GroupList from "@/components/community/GroupList";
-import { 
-  Users, 
-  Search, 
-  Plus, 
+import GroupChat from "@/components/community/chat/[groupId]/GroupChat";
+import { useSearchParams } from "next/navigation";
+import {
+  Search,
+  Plus,
   Sparkles,
   ChevronRight,
-  Filter
+  Hash,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Fungsi bantuan untuk mengambil singkatan (misal: "Desain Antarmuka" -> "DE")
+const getInitials = (name) => {
+  const words = name.trim().split(" ");
+  if (words.length > 1) {
+    return (words[0].slice(0, 2)).toUpperCase(); // Mengikuti gambar: Desain Antarmuka -> DE
+  }
+  return name.slice(0, 2).toUpperCase();
+};
 
 export default function CommunityPage() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchParams = useSearchParams();
+  const urlGroupId = searchParams.get("groupId");
+
+  const [activeGroupId, setActiveGroupId] = useState(urlGroupId || null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -25,77 +41,168 @@ export default function CommunityPage() {
     fetchCategories();
   }, []);
 
-  return (
-    <div className="max-w-7xl mx-auto pb-12 px-6 md:px-10 max-w-7xl pt-6">
-      <div className="flex flex-col lg:flex-row gap-10">
-        
-        {/* Sidebar Filters */}
-        <div className="lg:w-80 space-y-8 shrink-0">
-          <div className="bg-white rounded-[40px] border border-light-blue p-8 shadow-sm">
-             <h3 className="text-xl font-black text-dark-blue mb-6 flex items-center gap-3">
-                <Filter className="text-primary-blue" size={20} /> Cari Grup
-             </h3>
-             
-             <div className="relative mb-8">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Nama grup..."
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-primary-blue/20 text-sm font-medium transition-all"
-                />
-             </div>
+  useEffect(() => {
+    if (urlGroupId) {
+      setActiveGroupId(urlGroupId);
+    }
+  }, [urlGroupId]);
 
-             <div className="space-y-2">
-                <button 
-                  onClick={() => setSelectedCategory(null)}
+  const filteredCategories = categories.filter((c) =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
+  return (
+    // Full viewport, no outer padding — fills the layout shell exactly
+    <div className="flex h-[calc(100vh-56px)] overflow-hidden bg-white">
+
+      {/* ── LEFT PANEL ────────────────────────────────────────────────────── */}
+      <div className="w-80 shrink-0 flex flex-col border-r border-skillio-100 bg-white">
+
+        {/* Search bar */}
+        <div className="px-4 py-3 border-b border-skillio-100">
+          <div className="relative">
+            <Search
+              size={15}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari bidang..."
+              className="w-full pl-9 pr-4 py-2 bg-skillio-50 rounded-xl border-none text-sm font-medium text-dark-blue placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-blue/20"
+            />
+          </div>
+        </div>
+
+        {/* Scrollable category list */}
+        <div className="flex-1 overflow-y-auto">
+
+          {/* "All" row */}
+          <button
+            onClick={() => setSelectedCategory(null)}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 transition-colors text-left",
+              !selectedCategory
+                ? "bg-skillio-100 text-primary-blue"
+                : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            <div
+              className={cn(
+                "w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0",
+                !selectedCategory
+                  ? "bg-primary-blue text-white"
+                  : "bg-skillio-100 text-primary-blue"
+              )}
+            >
+              #
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm truncate">Semua Bidang</p>
+              <p className="text-xs text-slate-400 font-medium">
+                {categories.length} kategori
+              </p>
+            </div>
+            {!selectedCategory && (
+              <ChevronRight size={14} className="shrink-0 text-primary-blue" />
+            )}
+          </button>
+
+          {/* Divider label */}
+          <div className="px-4 pt-4 pb-1">
+            <p className="text-[10px] font-black tracking-[0.18em] uppercase text-slate-300">
+              Bidang
+            </p>
+          </div>
+
+          {/* Category rows */}
+          {filteredCategories.map((cat) => {
+            const isActive = selectedCategory === cat.id;
+            const initials = getInitials(cat.name);
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={cn(
+                  "w-full flex items-center gap-4 px-5 py-3 transition-colors text-left",
+                  isActive
+                    ? "bg-[#E6F0F9]"
+                    : "hover:bg-slate-50"
+                )}
+              >
+                <div
                   className={cn(
-                    "w-full flex items-center justify-between p-4 rounded-2xl font-bold transition-all",
-                    !selectedCategory ? "bg-primary-blue/10 text-primary-blue" : "text-slate-500 hover:bg-slate-50"
+                    "w-11 h-11 rounded-xl flex items-center justify-center font-black text-[13px] shrink-0",
+                    isActive
+                      ? "bg-[#2A75C4] text-white"
+                      : "bg-[#E2E8F0] text-[#1E293B]"
                   )}
                 >
-                   <span>Semua Bidang</span>
-                   {!selectedCategory && <ChevronRight size={16} />}
-                </button>
+                  {initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={cn("font-bold text-sm truncate", isActive ? "text-[#2A75C4]" : "text-[#1E293B]")}>{cat.name}</p>
+                  <p className="text-xs text-slate-400 font-medium truncate">
+                    Komunitas · {cat.name}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
 
-                {categories.map((cat) => (
-                  <button 
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={cn(
-                      "w-full flex items-center justify-between p-4 rounded-2xl font-bold transition-all text-sm",
-                      selectedCategory === cat.id ? "bg-primary-blue/10 text-primary-blue" : "text-slate-500 hover:bg-slate-50"
-                    )}
-                  >
-                     <span className="truncate">{cat.name}</span>
-                     {selectedCategory === cat.id && <ChevronRight size={16} />}
-                  </button>
-                ))}
-             </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-dark-blue to-primary-blue rounded-[40px] p-8 text-white relative overflow-hidden shadow-xl shadow-primary-blue/20">
-             <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-             <Sparkles className="mb-4 text-white/50" />
-             <h4 className="text-lg font-black mb-2 leading-tight">Bangun Komunitasmu</h4>
-             <p className="text-xs text-white/70 font-medium mb-6 leading-relaxed">
-                Jadilah admin dan pimpin perjalanan belajar teman-temanmu.
-             </p>
-             <button className="w-full py-4 bg-white text-primary-blue rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center gap-2">
-                <Plus size={14} /> Buat Grup
-             </button>
-          </div>
+          {filteredCategories.length === 0 && searchQuery && (
+            <p className="px-4 py-6 text-sm text-slate-300 font-medium text-center">
+              Tidak ada bidang ditemukan.
+            </p>
+          )}
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1">
-          <div className="mb-10">
-             <h1 className="text-4xl font-black text-dark-blue mb-2">Grup Komunitas</h1>
-             <p className="text-slate-400 font-medium italic">Temukan tempat belajar dan diskusi yang lebih privat.</p>
-          </div>
-          
-          <GroupList categoryId={selectedCategory} />
+        {/* Create group CTA at bottom */}
+        <div className="p-4 border-t border-skillio-100">
+          <button
+            onClick={() => {
+              // Trigger create modal via GroupList — we'll use a custom event
+              window.dispatchEvent(new CustomEvent("skillio:open-create-group"));
+            }}
+            className="w-full flex items-center justify-center gap-2 py-3 bg-primary-blue text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-accent-blue transition-colors"
+          >
+            <Plus size={14} /> Buat Grup
+          </button>
         </div>
+      </div>
 
+      {/* ── RIGHT PANEL (DINAMIS: LIST ATAU CHAT) ────────────────────────── */}
+      <div className="flex-1 flex flex-col overflow-hidden bg-[#edf4f8] relative">
+        {!activeGroupId ? (
+          <>
+            {/* Tampilan List Grup */}
+            <div className="px-8 py-6 border-b border-slate-200 bg-white/80 backdrop-blur-xl flex items-center justify-between shrink-0 shadow-sm z-10">
+              <div>
+                <h1 className="text-2xl font-black text-[#0d2133] tracking-tight">
+                  {selectedCategory ? categories.find((c) => c.id === selectedCategory)?.name ?? "Grup" : "Grup Komunitas"}
+                </h1>
+                <p className="text-sm text-[#92b7d6] font-medium mt-1">Temukan tempat belajar dan diskusi yang lebih privat.</p>
+              </div>
+              <button onClick={() => window.dispatchEvent(new CustomEvent("skillio:open-create-group"))} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d2133] text-white text-sm font-bold shadow-md hover:bg-[#1f547e] transition-colors">
+                <Sparkles size={16} className="text-white/80" /> Bangun Komunitasmu
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-8 py-8 custom-scrollbar relative">
+              {/* Pattern Background Tipis */}
+              <div className="absolute inset-0 pointer-events-none opacity-40" style={{ backgroundImage: `linear-gradient(rgba(146, 183, 214, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(146, 183, 214, 0.15) 1px, transparent 1px)`, backgroundSize: '40px 40px' }}></div>
+              <div className="relative z-10">
+                {/* Prop onJoin dikirim ke GroupList */}
+                <GroupList categoryId={selectedCategory} onJoin={(id) => setActiveGroupId(id)} />
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Tampilan Chat Room */
+          <GroupChat groupId={activeGroupId} onBack={() => setActiveGroupId(null)} />
+        )}
       </div>
     </div>
   );

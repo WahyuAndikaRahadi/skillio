@@ -7,6 +7,7 @@ import Image from "next/image";
 import {
   LayoutDashboard,
   Users,
+  Trophy,
   Globe,
   Map,
   Bot,
@@ -22,6 +23,7 @@ const userMenuItems = [
   { name: "Eksplor Roadmap", href: "/roadmap", icon: <Map size={20} /> },
   { name: "AI Mentor", href: "/ai", icon: <Bot size={20} /> },
   { name: "Scoreboard", href: "/scoreboard", icon: <Medal size={20} /> },
+  { name: "Badge", href: "/badges", icon: <Trophy size={20} /> },
   { name: "Social Feed", href: "/feed", icon: <Globe size={20} /> },
   { name: "Komunitas", href: "/community", icon: <Users size={20} /> },
 ];
