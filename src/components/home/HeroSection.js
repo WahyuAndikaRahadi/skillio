@@ -13,21 +13,19 @@ const credibility = [
   "Pendampingan AI Mentor",
 ];
 
-export default function HeroSection() {
-  const HeroImage = ({ className }) => (
-    <div className={`fade-up relative mix-blend-multiply ${className}`} style={{ animationDelay: "150ms" }}>
-      <div className="relative z-10 mx-auto max-w-[280px] sm:max-w-[400px] lg:max-w-[500px]">
-        <Image
-          src="/images/karir.png"
-          alt="Skillio"
-          width={1000}
-          height={1000}
-          className="h-full w-full object-cover transition-transform duration-700 hover:scale-105 contrast-[1.05]"
-          priority
-        />
-      </div>
+const HeroImage = ({ className }) => (
+  <div className={`fade-up relative ${className}`} style={{ animationDelay: "150ms" }}>
+    <div className="relative z-10 mx-auto max-w-[280px] sm:max-w-[400px] lg:max-w-[500px]">
+      <img
+        src="/images/karir2.png"
+        alt="Skillio hero"
+        className="h-auto w-full object-contain transition-transform duration-700 hover:scale-105"
+      />
     </div>
-  );
+  </div>
+);
+
+export default function HeroSection() {
 
   return (
     <section className="relative overflow-hidden px-5 pb-14 pt-28 sm:px-6 sm:pt-32 lg:px-8 lg:pb-24">

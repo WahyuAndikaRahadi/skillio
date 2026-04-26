@@ -2,23 +2,12 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, User, Send, Loader2, Sparkles, Plus, File, X, Mic, MicOff, Volume2, VolumeX, StopCircle } from "lucide-react";
+import { Bot, User, Send, Loader2, Sparkles, Plus, File, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
 
-/** Remove markdown symbols so TTS sounds natural */
-function stripMarkdown(text) {
-  return text
-    .replace(/\*\*(.*?)\*\*/g, "$1")
-    .replace(/\*(.*?)\*/g, "$1")
-    .replace(/`{1,3}(.*?)`{1,3}/gs, "$1")
-    .replace(/#{1,6}\s/g, "")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/>\s/g, "")
-    .replace(/[-*+]\s/g, "")
-    .trim();
-}
+
 
 export default function AiMentorPage() {
   const [messages, setMessages] = useState([
@@ -32,16 +21,8 @@ export default function AiMentorPage() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Voice State
-  const [isListening, setIsListening]   = useState(false);
-  const [isSpeaking, setIsSpeaking]     = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(true);
-  const [micSupported, setMicSupported] = useState(false);
-
   const messagesEndRef = useRef(null);
   const fileInputRef   = useRef(null);
-  const recognitionRef = useRef(null);
-  const synthRef       = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -51,60 +32,11 @@ export default function AiMentorPage() {
     scrollToBottom();
   }, [messages]);
 
-  // Init voice support
-  useEffect(() => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    setMicSupported(!!SR);
-    synthRef.current = window.speechSynthesis;
-  }, []);
 
-  // TTS helpers
-  const stopSpeaking = useCallback(() => {
-    if (synthRef.current?.speaking) {
-      synthRef.current.cancel();
-      setIsSpeaking(false);
-    }
-  }, []);
 
-  const speak = useCallback((text) => {
-    if (!voiceEnabled || !synthRef.current) return;
-    stopSpeaking();
-    const utterance = new SpeechSynthesisUtterance(stripMarkdown(text));
-    utterance.lang  = "id-ID";
-    utterance.rate  = 1.05;
-    const voices    = synthRef.current.getVoices();
-    const voice     = voices.find(v => v.lang.startsWith("id")) || voices.find(v => v.lang.startsWith("en"));
-    if (voice) utterance.voice = voice;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend   = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    synthRef.current.speak(utterance);
-  }, [voiceEnabled, stopSpeaking]);
 
-  // STT helpers
-  const startListening = useCallback(() => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return;
-    stopSpeaking();
-    const recognition = new SR();
-    recognition.lang            = "id-ID";
-    recognition.interimResults  = false;
-    recognition.maxAlternatives = 1;
-    recognitionRef.current = recognition;
-    recognition.onstart  = () => setIsListening(true);
-    recognition.onresult = (e) => {
-      const transcript = e.results[0][0].transcript;
-      setInput(transcript);
-    };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend   = () => setIsListening(false);
-    recognition.start();
-  }, [stopSpeaking]);
 
-  const stopListening = () => {
-    recognitionRef.current?.stop();
-    setIsListening(false);
-  };
+
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -225,8 +157,6 @@ export default function AiMentorPage() {
           }
           return [...updatedMessages, { role: "ai", content: data.reply }];
         });
-        // Speak the AI reply
-        if (voiceEnabled) speak(data.reply);
       } else {
         setMessages(prev => [...prev, { role: "ai", content: `Error: ${data.message || "Sistem bermasalah."}` }]);
       }
@@ -287,26 +217,9 @@ export default function AiMentorPage() {
             </div>
             <div className="flex items-center gap-3 mt-2">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-full text-xs font-bold shadow-sm">
-                <span className={cn("w-2 h-2 rounded-full animate-pulse", isListening ? "bg-red-500" : isSpeaking ? "bg-blue-500" : "bg-green-500")} />
-                {isListening ? "Mendengarkan kamu…" : isSpeaking ? "AI sedang berbicara…" : "Sistem siap membantu"}
+                <span className="w-2 h-2 rounded-full bg-green-500" />
+                Sistem siap membantu
               </div>
-              {/* Global TTS toggle */}
-              <button
-                onClick={() => { setVoiceEnabled(v => !v); if (isSpeaking) stopSpeaking(); }}
-                title={voiceEnabled ? "Matikan suara AI" : "Aktifkan suara AI"}
-                className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 text-slate-500 hover:text-skillio-600 hover:border-skillio-300 rounded-full text-xs font-bold shadow-sm transition-colors"
-              >
-                {voiceEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
-                {voiceEnabled ? "Suara ON" : "Suara OFF"}
-              </button>
-              {isSpeaking && (
-                <button
-                  onClick={stopSpeaking}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-red-50 border border-red-100 text-red-500 rounded-full text-xs font-bold shadow-sm hover:bg-red-100 transition-colors"
-                >
-                  <StopCircle size={13} /> Stop
-                </button>
-              )}
             </div>
           </div>
 
@@ -463,35 +376,18 @@ export default function AiMentorPage() {
               <Plus size={24} />
             </button>
 
-            {/* Mic Button — only if browser supports Speech Recognition */}
-            {micSupported && (
-              <button
-                type="button"
-                onClick={isListening ? stopListening : startListening}
-                disabled={isLoading}
-                title={isListening ? "Stop mendengarkan" : "Bicara ke mentor"}
-                className={cn(
-                  "absolute left-14 sm:left-16 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all",
-                  isListening
-                    ? "bg-red-500 text-white shadow-lg shadow-red-500/30 scale-110"
-                    : "text-slate-400 hover:text-skillio-600 hover:bg-skillio-50"
-                )}
-              >
-                {isListening ? <MicOff size={22} /> : <Mic size={22} />}
-              </button>
-            )}
+
 
             {/* Text Input */}
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isListening ? "🎤 Bicara sekarang, aku mendengarkan…" : "Tanyakan sesuatu pada mentormu..."}
-              disabled={isLoading || isListening}
+              placeholder="Tanyakan sesuatu pada mentormu..."
+              disabled={isLoading}
               className={cn(
                 "w-full py-4 sm:py-5 bg-white/80 backdrop-blur-xl rounded-full border focus:ring-4 text-slate-800 font-medium outline-none transition-all disabled:opacity-50 shadow-xl shadow-slate-200/50",
-                micSupported ? "pl-28 sm:pl-32 pr-16" : "pl-14 pr-16",
-                isListening ? "border-red-300 focus:border-red-400 focus:ring-red-500/10 bg-red-50/50" : "border-slate-200 focus:border-skillio-400 focus:ring-skillio-500/10"
+                "pl-14 pr-16 border-slate-200 focus:border-skillio-400 focus:ring-skillio-500/10"
               )}
             />
 

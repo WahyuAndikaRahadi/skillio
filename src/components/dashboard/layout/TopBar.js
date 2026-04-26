@@ -183,24 +183,26 @@ const TopBar = ({ onMenuClick }) => {
 
           <div className="h-10 w-[1px] bg-light-blue hidden md:block"></div>
 
-          <div className="flex items-center gap-3 relative" ref={profileRef}>
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-black text-dark-blue leading-tight truncate max-w-[120px]">
-                {session?.user?.name || "Pengguna"}
-              </p>
-              <p className="text-[10px] font-bold text-primary-blue uppercase tracking-wider">
-                {session?.user?.role === "admin" ? "Administrator" : "Anggota Basic"}
-              </p>
-            </div>
+          <div className="relative" ref={profileRef}>
             <button
               onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-              className="w-10 h-10 rounded-xl bg-primary-blue flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 overflow-hidden border-2 border-white shrink-0 hover:scale-110 transition-transform cursor-pointer"
+              className="flex items-center gap-3 p-1.5 pr-2 rounded-2xl hover:bg-slate-50 transition-all cursor-pointer group"
             >
-              {session?.user?.image ? (
-                <img src={session.user.image} alt="Profil" className="w-full h-full object-cover" />
-              ) : (
-                (session?.user?.name?.[0] || "P").toUpperCase()
-              )}
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-black text-dark-blue leading-tight truncate max-w-[120px] group-hover:text-primary-blue transition-colors">
+                  {session?.user?.name || "Pengguna"}
+                </p>
+                <p className="text-[10px] font-bold text-primary-blue uppercase tracking-wider">
+                  {session?.user?.role === "admin" ? "Administrator" : "Anggota Basic"}
+                </p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-primary-blue flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 overflow-hidden border-2 border-white shrink-0 group-hover:scale-110 transition-transform">
+                {session?.user?.image ? (
+                  <img src={session.user.image} alt="Profil" className="w-full h-full object-cover" />
+                ) : (
+                  (session?.user?.name?.[0] || "P").toUpperCase()
+                )}
+              </div>
             </button>
 
             {/* Profile Dropdown */}
