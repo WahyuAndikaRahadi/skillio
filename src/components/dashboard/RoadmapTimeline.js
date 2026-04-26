@@ -345,7 +345,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">XP Didapatkan</p>
                 <h3 className="text-5xl font-black text-skillio-600">+50 XP</h3>
              </div>
-             <button onClick={() => { setViewMode('roadmap'); setSelectedDay(null); window.scrollTo(0, 0); }} className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg shadow-2xl shadow-slate-900/20 hover:bg-skillio-600 transition-all cursor-pointer">
+             <button onClick={() => { setViewMode('roadmap'); setSelectedDay(null); window.scrollTo(0, 0); }} className="w-full bg-gradient-to-r from-skillio-500 to-blue-600 text-white py-5 rounded-2xl font-black text-lg shadow-2xl shadow-skillio-500/30 hover:shadow-skillio-500/40 transition-all cursor-pointer">
                Kembali ke Roadmap
              </button>
           </motion.div>
@@ -605,7 +605,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
            <div className="max-w-7xl w-full flex items-center justify-between">
               <button onClick={() => setCurrentSlide(prev => Math.max(0, prev - 1))} className={cn("flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm transition-all cursor-pointer", currentSlide === 0 ? "opacity-0 pointer-events-none" : "text-slate-400 hover:text-slate-900 hover:bg-slate-50")}><ChevronLeft size={20} /> Sebelumnya</button>
               <div className="hidden md:flex items-center gap-2"><span className="text-xs font-black text-slate-300">MODUL PROGRESS</span><div className="w-40 h-1.5 bg-slate-50 rounded-full overflow-hidden"><motion.div className="h-full bg-skillio-600" initial={{ width: 0 }} animate={{ width: `${((currentSlide + 1) / totalSlides) * 100}%` }} /></div></div>
-              <button onClick={() => currentSlide < totalSlides - 1 && setCurrentSlide(prev => prev + 1)} className={cn("flex items-center gap-3 px-10 py-5 rounded-2xl font-black text-sm transition-all shadow-xl cursor-pointer", currentSlide === totalSlides - 1 ? "opacity-0 pointer-events-none" : "bg-slate-900 text-white hover:bg-skillio-600")}>Lanjutkan <ChevronRight size={20} /></button>
+              <button onClick={() => currentSlide < totalSlides - 1 && setCurrentSlide(prev => prev + 1)} className={cn("flex items-center gap-3 px-10 py-5 rounded-2xl font-black text-sm transition-all shadow-xl cursor-pointer", currentSlide === totalSlides - 1 ? "opacity-0 pointer-events-none" : "bg-gradient-to-r from-skillio-500 to-blue-600 text-white hover:shadow-skillio-500/40")}>Lanjutkan <ChevronRight size={20} /></button>
            </div>
         </div>
       </div>
@@ -758,7 +758,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
               </div>
             </div>
             <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
-               <div className="bg-slate-900 text-white rounded-3xl p-6 shadow-2xl shadow-slate-900/20">
+               <div className="bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 text-white rounded-3xl p-6 shadow-2xl shadow-skillio-500/30">
                   <div className="flex items-center justify-between mb-8">
                      <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center border border-white/20">
@@ -806,7 +806,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                                     "w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer",
                                     isLocked 
                                        ? "bg-slate-100 text-slate-400 cursor-not-allowed opacity-60" 
-                                       : "bg-slate-900 text-white hover:bg-skillio-600 shadow-lg shadow-slate-900/10"
+                                       : "bg-gradient-to-r from-skillio-500 to-blue-600 text-white hover:shadow-skillio-500/40 shadow-lg shadow-skillio-500/20"
                                  )}
                               >
                                  {isLocked ? (

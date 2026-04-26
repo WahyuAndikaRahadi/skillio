@@ -141,7 +141,7 @@ export default function DashboardClient({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6 }}
-          className="relative bg-gradient-to-br from-slate-900 via-skillio-900 to-skillio-700 rounded-[28px] p-7 md:p-9 text-white overflow-hidden shadow-2xl shadow-skillio-900/30"
+          className="relative bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 rounded-[28px] p-7 md:p-9 text-white overflow-hidden shadow-2xl shadow-skillio-500/30"
         >
           {/* Decorative */}
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-skillio-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3" />
@@ -197,7 +197,7 @@ export default function DashboardClient({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="relative bg-gradient-to-br from-slate-900 via-skillio-900 to-skillio-700 rounded-[28px] p-9 text-white overflow-hidden"
+          className="relative bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 rounded-[28px] p-9 text-white overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-skillio-500/15 rounded-full blur-[80px]" />
           <div className="relative z-10 text-center space-y-4">

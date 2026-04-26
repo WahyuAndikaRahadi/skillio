@@ -38,7 +38,7 @@ export default function AdminRoadmapsPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-20">
-      <div className="bg-dark-blue rounded-3xl p-8 md:p-10 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 rounded-3xl p-8 md:p-10 text-white shadow-xl relative overflow-hidden">
         <ShieldCheck className="absolute -right-10 -top-10 w-64 h-64 text-white/5" />
         <h1 className="text-3xl md:text-4xl font-black mb-4 relative z-10">Status Kurikulum AI</h1>
         <p className="text-blue-200 font-medium max-w-2xl relative z-10">

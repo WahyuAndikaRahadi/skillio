@@ -40,7 +40,7 @@ const EmptyState = ({ userName, hasProgress }) => {
         >
           <Link 
             href="/quiz"
-            className="group relative flex items-center gap-4 bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-skillio-600 transition-all shadow-xl shadow-slate-900/20 active:scale-[0.98]"
+            className="group relative flex items-center gap-4 bg-gradient-to-r from-skillio-500 to-blue-600 text-white px-10 py-4 rounded-2xl font-black text-lg hover:shadow-skillio-500/40 transition-all shadow-xl shadow-skillio-500/30 active:scale-[0.98]"
           >
             {hasProgress ? (
               <>
