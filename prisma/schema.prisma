@@ -292,6 +292,7 @@ model GroupMessage {
   image_url  String?
   file_url   String?
   file_name  String?
+  attachments Json?    // Array of { url: string, name: string, type: 'image' | 'file' }
   createdAt  DateTime @default(now())
   
   group      CommunityGroup @relation(fields: [group_id], references: [id], onDelete: Cascade)

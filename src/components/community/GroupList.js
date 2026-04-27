@@ -357,14 +357,14 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
         </AnimatePresence>
       ) : (
         /* Normal Group List View */
-        <div className="flex flex-col gap-3 p-4 bg-[#f8fbfd] min-h-full">
+        <div className="flex flex-col gap-3 p-4 bg-transparent min-h-full">
           {displayedGroups.map((group) => {
             const isMember = group.members && group.members.length > 0;
             return (
               <motion.div
                 key={group.id}
                 onClick={() => isMember ? onJoin(group.id) : confirmJoin(group)}
-                className="flex items-center gap-4 p-4 bg-white border border-slate-200/60 rounded-2xl hover:border-primary-blue/30 hover:shadow-sm transition-all cursor-pointer group relative"
+                className="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:border-primary-blue/30 hover:shadow-md transition-all cursor-pointer group relative shadow-sm"
               >
 
                 {/* Avatar Style WhatsApp */}

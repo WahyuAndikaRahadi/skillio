@@ -62,7 +62,14 @@ export default function CommunityPage() {
 
   return (
     // Full viewport, no outer padding — fills the layout shell exactly
-    <div className="flex h-[calc(100vh-56px)] md:h-[calc(100vh-80px)] overflow-hidden bg-white relative font-sans">
+    <div className="flex h-[calc(100vh-56px)] md:h-[calc(100vh-80px)] overflow-hidden bg-[#f0f7ff] relative font-sans">
+      
+      {/* Unified Atmospheric Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-5%] right-[-5%] w-[600px] h-[600px] rounded-full bg-blue-200/20 blur-[130px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-100/30 blur-[110px]" />
+        <div className="absolute top-[20%] left-[30%] w-[400px] h-[400px] rounded-full bg-sky-100/20 blur-[100px]" />
+      </div>
 
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
@@ -77,9 +84,9 @@ export default function CommunityPage() {
         )}
       </AnimatePresence>
 
-      {/* ── LEFT PANEL ────────────────────────────────────────────────────── */}
+      {/* ── LEFT PANEL (Glass Sidebar) ────────────────────────────────────────────────────── */}
       <div className={cn(
-        "absolute inset-y-0 left-0 z-[70] lg:z-10 w-80 shrink-0 flex flex-col border-r border-skillio-100 bg-white transition-transform duration-300 lg:relative lg:translate-x-0",
+        "absolute inset-y-0 left-0 z-[70] lg:z-10 w-80 shrink-0 flex flex-col border-r border-white/20 bg-white/40 backdrop-blur-xl transition-transform duration-300 lg:relative lg:translate-x-0",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full",
         activeGroupId && "lg:hidden"
       )}>
@@ -94,7 +101,7 @@ export default function CommunityPage() {
         </div>
 
         {/* Search bar */}
-        <div className="px-4 py-3 border-b border-skillio-100">
+        <div className="px-4 py-3 border-b border-white/20">
           <div className="relative">
             <Search
               size={15}
@@ -105,7 +112,7 @@ export default function CommunityPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari bidang..."
-              className="w-full pl-9 pr-4 py-2 bg-skillio-50 rounded-xl border-none text-sm font-medium text-dark-blue placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-blue/20"
+              className="w-full pl-9 pr-4 py-2 bg-white/50 backdrop-blur-sm rounded-xl border-none text-sm font-medium text-dark-blue placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all"
             />
           </div>
         </div>
@@ -121,7 +128,7 @@ export default function CommunityPage() {
                 "py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
                 viewMode === "joined" 
                   ? "bg-primary-blue text-white border-primary-blue shadow-lg shadow-primary-blue/20" 
-                  : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
+                  : "bg-white/50 text-slate-400 border-white/20 hover:border-white/40"
               )}
             >
               Grup Saya
@@ -132,14 +139,14 @@ export default function CommunityPage() {
                 "py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
                 viewMode === "all" 
                   ? "bg-primary-blue text-white border-primary-blue shadow-lg shadow-primary-blue/20" 
-                  : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
+                  : "bg-white/50 text-slate-400 border-white/20 hover:border-white/40"
               )}
             >
               Cari Grup
             </button>
           </div>
 
-          {/* "All" row - hide when in 'joined' mode or use it as 'All My Groups' */}
+          {/* "All" row */}
           <button
             onClick={() => {
               setSelectedCategory(null);
@@ -148,8 +155,8 @@ export default function CommunityPage() {
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 transition-colors text-left",
               !selectedCategory
-                ? "bg-skillio-100 text-primary-blue"
-                : "text-slate-600 hover:bg-slate-50"
+                ? "bg-primary-blue/10 text-primary-blue"
+                : "text-slate-600 hover:bg-white/30"
             )}
           >
             <div
@@ -157,7 +164,7 @@ export default function CommunityPage() {
                 "w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0",
                 !selectedCategory
                   ? "bg-primary-blue text-white"
-                  : "bg-skillio-100 text-primary-blue"
+                  : "bg-white/50 text-primary-blue shadow-sm"
               )}
             >
               #
@@ -195,16 +202,16 @@ export default function CommunityPage() {
                 className={cn(
                   "w-full flex items-center gap-4 px-5 py-3 transition-colors text-left",
                   isActive
-                    ? "bg-[#E6F0F9]"
-                    : "hover:bg-slate-50"
+                    ? "bg-primary-blue/10"
+                    : "hover:bg-white/30"
                 )}
               >
                 <div
                   className={cn(
                     "w-11 h-11 rounded-xl flex items-center justify-center font-black text-[13px] shrink-0",
                     isActive
-                      ? "bg-[#2A75C4] text-white"
-                      : "bg-[#E2E8F0] text-[#1E293B]"
+                      ? "bg-[#2A75C4] text-white shadow-md shadow-blue-500/20"
+                      : "bg-white/60 text-[#1E293B] shadow-sm border border-white/40"
                   )}
                 >
                   {initials}
@@ -218,23 +225,16 @@ export default function CommunityPage() {
               </button>
             );
           })}
-
-          {filteredCategories.length === 0 && searchQuery && (
-            <p className="px-4 py-6 text-sm text-slate-300 font-medium text-center">
-              Tidak ada bidang ditemukan.
-            </p>
-          )}
         </div>
 
         {/* Create group CTA at bottom */}
-        <div className="p-4 border-t border-skillio-100">
+        <div className="p-4 border-t border-white/20">
           <button
             onClick={() => {
-              // Trigger create modal via GroupList — we'll use a custom event
               window.dispatchEvent(new CustomEvent("skillio:open-create-group"));
               if (window.innerWidth < 1024) setIsSidebarOpen(false);
             }}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-primary-blue text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-accent-blue transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-3 bg-primary-blue text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-accent-blue transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98]"
           >
             <Plus size={14} /> Buat Grup
           </button>
@@ -242,16 +242,16 @@ export default function CommunityPage() {
       </div>
 
 
-      {/* ── RIGHT PANEL (DINAMIS: LIST ATAU CHAT) ────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-[#edf4f8] relative">
+      {/* ── RIGHT PANEL (Unified Background) ────────────────────────── */}
+      <div className="flex-1 flex flex-col overflow-hidden relative z-10">
         {!activeGroupId ? (
           <>
             {/* Tampilan List Grup */}
-            <div className="px-6 py-5 border-b border-slate-100 bg-white flex items-center justify-between shrink-0 z-10">
+            <div className="px-6 py-5 border-b border-white/20 bg-white/30 backdrop-blur-xl flex items-center justify-between shrink-0 z-20">
               <div className="flex items-center gap-4">
                 <button 
                   onClick={() => setIsSidebarOpen(true)}
-                  className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-primary-blue hover:bg-skillio-50 rounded-xl transition-all"
+                  className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-primary-blue hover:bg-white/50 rounded-xl transition-all"
                 >
                   <Menu size={24} />
                 </button>
@@ -262,13 +262,13 @@ export default function CommunityPage() {
                   <p className="text-[11px] text-[#92b7d6] font-bold uppercase tracking-wider mt-0.5">Komunitas Belajar</p>
                 </div>
               </div>
-              <button onClick={() => window.dispatchEvent(new CustomEvent("skillio:open-create-group"))} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-blue text-white text-xs font-bold shadow-sm hover:bg-accent-blue transition-colors">
+              <button onClick={() => window.dispatchEvent(new CustomEvent("skillio:open-create-group"))} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-blue text-white text-xs font-bold shadow-lg shadow-blue-500/20 hover:bg-accent-blue transition-all active:scale-[0.98]">
                 <Plus size={14} className="hidden sm:block" /> Buat Grup
               </button>
             </div>
 
 
-            <div className="flex-1 relative bg-white overflow-hidden">
+            <div className="flex-1 relative overflow-hidden">
               <div className="absolute inset-0 overflow-y-auto custom-scrollbar">
                 <div className="relative z-10 min-h-full flex flex-col">
                   {/* Prop onJoin dikirim ke GroupList */}

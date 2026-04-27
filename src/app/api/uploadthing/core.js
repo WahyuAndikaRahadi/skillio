@@ -48,4 +48,19 @@ export const ourFileRouter = {
       console.log("JSON upload complete for Admin:", metadata.userId);
       return { uploadedBy: metadata.userId, url: file.url };
     }),
+
+  mediaUploader: f({ 
+    image: { maxFileSize: "8MB", maxFileCount: 1 },
+    pdf: { maxFileSize: "16MB", maxFileCount: 1 },
+    text: { maxFileSize: "4MB", maxFileCount: 1 },
+  })
+    .middleware(async ({ req }) => {
+      const session = await auth();
+      if (!session || !session.user) throw new Error("Unauthorized");
+      return { userId: session.user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Media upload complete:", file.url);
+      return { uploadedBy: metadata.userId, url: file.url, name: file.name };
+    }),
 };

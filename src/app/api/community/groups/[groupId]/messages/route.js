@@ -44,7 +44,7 @@ export async function POST(req, { params }) {
 
     const resolvedParams = await params;
     const { groupId } = resolvedParams;
-    const { content, imageUrl, fileUrl, fileName } = await req.json();
+    const { content, imageUrl, fileUrl, fileName, attachments } = await req.json();
 
     // Check membership
     const member = await prisma.groupMember.findUnique({
@@ -64,7 +64,8 @@ export async function POST(req, { params }) {
         content,
         image_url: imageUrl,
         file_url: fileUrl,
-        file_name: fileName
+        file_name: fileName,
+        attachments: attachments || []
       },
       include: {
         user: { select: { id: true, name: true, image: true } }
