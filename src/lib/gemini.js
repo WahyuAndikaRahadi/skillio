@@ -161,6 +161,7 @@ export const generateFullRoadmap = async (career) => {
     2. Materi ringkas tapi jelas.
     3. HANYA OUTPUT JSON.
     4. Setiap hari WAJIB memiliki minimal 5 pertanyaan kuis yang menantang.
+    5. Penjelasan kuis (explanation) harus menggunakan gaya bahasa mentor yang mendukung (misal: "Bagus sekali! Kamu benar karena...", atau "Sayang sekali, ingat bahwa...").
   `;
 
   let retryCount = 0;
@@ -198,30 +199,34 @@ export const generateFullRoadmap = async (career) => {
 
 
 
-export async function generateDayExpansion(dayTitle, dayMaterial) {
+export async function generateDayExpansion(dayNumber, dayTitle, dayMaterial) {
   const prompt = `
-    Anda adalah AI Mentor Senior di Skillio. Tugas Anda adalah memberikan PENJELASAN MENDALAM (Deep Dive) untuk materi berikut:
+    Role: Senior Mentor Profesional di Skillio.
+    Tugas: Berikan bimbingan dan PENJELASAN MENDALAM (Deep Dive) untuk materi hari ini.
     
+    KONTEKS TIMELINE: Hari ke-${dayNumber}
     JUDUL MATERI: ${dayTitle}
     RINGKASAN MATERI: ${dayMaterial}
 
-    Tujuan: Memberikan pemahaman tingkat lanjut yang tidak ada di ringkasan dasar. 
-    Gunakan gaya bahasa profesional, inspiratif, namun sangat teknis dan praktis.
+    GAYA BAHASA: 
+    - Gunakan sapaan profesional yang hangat (misal: "Halo! Di hari ke-${dayNumber} ini, kita akan...", "Selamat datang di sesi mendalam hari ini...").
+    - Bertindaklah seperti mentor nyata yang sedang mengajar di depan kelas, bukan sekadar mesin perangkum.
+    - Gunakan "Anda" sebagai sapaan sopan.
+    - Tetap teknis, praktis, dan berikan insight standar industri.
     
-    STRUKTUR PENJELASAN (explanation):
-    1. Konsep Fundamental (Mengapa ini penting?)
-    2. Cara Kerja / Mekanisme Detail (Langkah-demi-langkah teknis)
-    3. Best Practices & Pro Tips (Sesuai standar industri saat ini)
-    4. Kesalahan Umum yang Harus Dihindari
-    5. Analogi Dunia Nyata (Agar mudah diingat)
+    STRUKTUR BIMBINGAN (explanation):
+    1. Konsep Fundamental & Urgensi: Jelaskan mengapa di hari ke-${dayNumber} ini kita harus menguasai ${dayTitle}. Apa hubungannya dengan perjalanan 30 hari kita?
+    2. Mekanisme Detail & Teknis: Bedah cara kerjanya secara mendalam. Berikan langkah-langkah atau logika teknis yang solid.
+    3. Best Practices & Standar Industri: Berikan "rahasia dapur" atau tips yang biasa digunakan profesional di lapangan.
+    4. Kesalahan Umum & Mitigasi: Apa yang biasanya membuat pemula gagal di materi ini? Bagaimana cara menghindarinya?
+    5. Analogi & Motivasi: Berikan analogi yang kuat dan pesan penyemangat untuk menyelesaikan misi hari ini.
 
     SYARAT OUTPUT:
-    - Penjelasan (explanation) harus minimal 800 karakter dan maksimal 1200 karakter.
+    - Penjelasan (explanation) harus minimal 1000 karakter dan maksimal 1500 karakter.
     - JANGAN GUNAKAN SYMBOL MARKDOWN SEPERTI #, ##, *, **, atau -.
-    - WAJIB gunakan DUA kali baris baru (Double Newline) di antara setiap poin penomoran (1., 2., dst) agar teks tidak menumpuk.
-    - Gunakan paragraf yang jelas.
-    - Berikan minimal 3 sumber belajar (resources) berkualitas tinggi.
-    - YouTube query harus sangat spesifik.
+    - WAJIB gunakan DUA kali baris baru (Double Newline) di antara setiap poin penomoran (1., 2., dst) agar teks sangat mudah dibaca.
+    - Berikan minimal 3 sumber belajar (resources) berkualitas tinggi (artikel, dokumentasi, atau kursus gratis).
+    - YouTube query harus sangat spesifik untuk membantu praktik.
 
     WAJIB OUTPUT DALAM JSON MURNI:
     {

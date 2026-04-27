@@ -178,7 +178,8 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
     const p = progress.find(item => item.day_number === dayNum);
     return {
       completed_tasks: Array.isArray(p?.completed_tasks) ? p.completed_tasks : [],
-      quiz_passed: !!p?.quiz_passed
+      quiz_passed: !!p?.quiz_passed,
+      quiz_score: p?.quiz_score || 0
     };
   };
 
@@ -511,10 +512,16 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                    <div className="bg-white border border-slate-100 rounded-[32px] shadow-[0_32px_64px_-16px_rgba(43,110,166,0.12)] overflow-hidden">
                       <div className="bg-gradient-to-r from-skillio-600 to-skillio-500 p-5 md:p-6 flex items-center justify-between">
                          <div className="flex items-center gap-4">
-                            <div className="p-2.5 bg-white/20 text-white rounded-xl backdrop-blur-md"><Sparkles size={20} /></div>
+                            <div className="w-12 h-12 bg-white/20 rounded-2xl backdrop-blur-md flex items-center justify-center overflow-hidden border border-white/30">
+                               <img 
+                                 src="https://api.dicebear.com/7.x/avataaars/svg?seed=mentor&backgroundColor=b6e3f4" 
+                                 alt="AI Mentor" 
+                                 className="w-full h-full object-cover scale-110" 
+                               />
+                            </div>
                             <div>
-                               <h3 className="text-white font-black text-base tracking-tight">AI Mentor Insight</h3>
-                               <p className="text-white/60 text-[9px] font-black uppercase tracking-widest">Deep Explanation</p>
+                               <h3 className="text-white font-black text-base tracking-tight">Bimbingan Personal</h3>
+                               <p className="text-white/60 text-[9px] font-black uppercase tracking-widest">AI Senior Mentor • Skillio</p>
                             </div>
                          </div>
                       </div>
@@ -585,16 +592,60 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
             )}
 
             {currentSlide === 2 && (
-              <motion.div key="confirm" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col items-center justify-center py-20 text-center space-y-10">
-                <div className={cn("w-32 h-32 rounded-full flex items-center justify-center transition-all duration-1000", allTasksDone ? "bg-skillio-100 text-skillio-600 scale-110 shadow-2xl shadow-skillio-200" : "bg-slate-50 text-slate-200")}><Trophy size={60} /></div>
-                <div className="space-y-4 max-w-lg">
-                   <h3 className="text-4xl font-black text-slate-900">Siap untuk Kuis?</h3>
-                   <p className="text-lg text-slate-500 font-medium leading-relaxed">{allTasksDone ? "Luar biasa! Kamu telah menyelesaikan semua materi dan tugas hari ini. Waktunya mengunci progresmu." : "Ups! Sepertinya ada beberapa tugas praktik yang belum kamu selesaikan. Selesaikan dulu ya agar pemahamanmu maksimal."}</p>
+              <motion.div key="confirm" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col items-center justify-center py-4 text-center space-y-6">
+                <div className={cn("w-20 h-20 rounded-full flex items-center justify-center transition-all duration-1000", (allTasksDone || dayProg.quiz_passed) ? "bg-skillio-100 text-skillio-600 scale-110 shadow-lg shadow-skillio-200" : "bg-slate-50 text-slate-200")}><Trophy size={40} /></div>
+                <div className="space-y-2 max-w-lg">
+                   <h3 className="text-2xl font-black text-slate-900">{dayProg.quiz_passed ? "Tingkatkan Skor?" : "Siap untuk Kuis?"}</h3>
+                   <p className="text-sm text-slate-500 font-medium leading-relaxed px-4">
+                     {dayProg.quiz_passed 
+                       ? "Kamu sudah lulus misi ini. Coba lagi untuk hasil sempurna!" 
+                       : allTasksDone 
+                         ? "Semua materi selesai. Waktunya mengunci progresmu." 
+                         : "Selesaikan semua tugas praktik dulu ya agar pemahamanmu maksimal."}
+                   </p>
                 </div>
-                <div className="w-full max-w-sm">
-                   <button onClick={handleStartQuiz} disabled={!allTasksDone || quizLoading} className={cn("w-full py-6 rounded-3xl font-black text-xl transition-all flex items-center justify-center gap-4 cursor-pointer", allTasksDone ? "bg-skillio-600 text-white hover:scale-105 shadow-2xl shadow-skillio-900/20" : "bg-slate-200 text-slate-400 cursor-not-allowed")}>
-                     {quizLoading ? <Loader2 className="animate-spin" /> : <><PlayCircle size={28} /> Mulai Kuis Sekarang</>}
-                   </button>
+
+                {dayProg.quiz_passed && (
+                  <div className="w-full max-w-md bg-slate-50/80 border border-slate-100 rounded-2xl p-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                       <div className="w-10 h-10 bg-white rounded-xl flex flex-col items-center justify-center shadow-sm border border-slate-100">
+                          <span className="text-[8px] font-black text-slate-400 leading-none mb-0.5">SKOR</span>
+                          <span className="text-xs font-black text-skillio-600 leading-none">{dayProg.quiz_score}%</span>
+                       </div>
+                       <div className="h-6 w-px bg-slate-200" />
+                       <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1.5">
+                             <CheckCircle2 size={14} className="text-emerald-500" />
+                             <span className="text-[11px] font-black text-slate-700">{Math.round((dayProg.quiz_score / 100) * 5)}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                             <XCircle size={14} className="text-red-400" />
+                             <span className="text-[11px] font-black text-slate-700">{5 - Math.round((dayProg.quiz_score / 100) * 5)}</span>
+                          </div>
+                       </div>
+                    </div>
+                    <div className="px-3 py-1 bg-emerald-500 text-white rounded-lg text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
+                      <ShieldCheck size={10} /> LULUS
+                    </div>
+                  </div>
+                )}
+
+                <div className="w-full max-w-sm pt-2">
+                   <button 
+                      onClick={handleStartQuiz} 
+                      disabled={(!allTasksDone && !dayProg.quiz_passed) || quizLoading} 
+                      className={cn(
+                        "w-full py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 cursor-pointer", 
+                        (allTasksDone || dayProg.quiz_passed) ? "bg-skillio-600 text-white hover:scale-105 shadow-xl shadow-skillio-900/20" : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                      )}
+                    >
+                      {quizLoading ? <Loader2 className="animate-spin" size={24} /> : (
+                        <>
+                          <PlayCircle size={24} /> 
+                          {dayProg.quiz_passed ? "Ulangi Kuis" : "Mulai Kuis"}
+                        </>
+                      )}
+                    </button>
                 </div>
               </motion.div>
             )}

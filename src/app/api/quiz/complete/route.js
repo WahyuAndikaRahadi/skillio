@@ -48,11 +48,19 @@ export async function POST(req) {
       newStreak = 1;
     }
 
-    // 3. Update Everything in Transaction
-    // Use upsert trick for UserDayProgress by checking first
+    // 3. Logic for Progress Update (Retake & High Score)
     const existingProgress = await prisma.userDayProgress.findFirst({
       where: { user_roadmap_id: userRoadmap.id, day_number: day_number }
     });
+    
+    const isPassedNow = score >= 60;
+    const wasAlreadyPassed = existingProgress?.quiz_passed || false;
+    const previousBestScore = existingProgress?.quiz_score || 0;
+
+    // We only update the score if it's better than before
+    const finalScoreToStore = Math.max(score, previousBestScore);
+    // User is passed if they just passed OR if they were already passed
+    const finalPassStatus = wasAlreadyPassed || isPassedNow;
 
     await prisma.$transaction([
       // A. Progress
@@ -61,33 +69,34 @@ export async function POST(req) {
         create: {
           user_roadmap_id: userRoadmap.id,
           day_number: day_number,
-          quiz_passed: true,
+          quiz_passed: isPassedNow,
           quiz_score: score,
           tasks_completed: true,
           completed_tasks: [],
           completed_at: new Date()
         },
         update: {
-          quiz_passed: true,
-          quiz_score: score,
+          quiz_passed: finalPassStatus,
+          quiz_score: finalScoreToStore,
           tasks_completed: true,
           completed_at: new Date()
         }
       }),
 
-      // B. Increment current_day if applicable
-      prisma.userRoadmap.updateMany({
-        where: { id: userRoadmap.id, current_day: day_number },
-        data: { current_day: { increment: 1 } }
-      }),
+      // B. Increment current_day if they JUST passed it for the first time
+      ...(isPassedNow && !wasAlreadyPassed ? [
+        prisma.userRoadmap.updateMany({
+          where: { id: userRoadmap.id, current_day: day_number },
+          data: { current_day: { increment: 1 } }
+        }),
+        // C. XP (Only for first pass)
+        prisma.user.update({
+          where: { id: session.user.id },
+          data: { xp: { increment: 50 } }
+        })
+      ] : []),
 
-      // C. XP
-      prisma.user.update({
-        where: { id: session.user.id },
-        data: { xp: { increment: 50 } }
-      }),
-
-      // D. Streak
+      // D. Streak (Update whenever they are active, even if retake)
       prisma.streak.update({
         where: { user_id: session.user.id },
         data: {

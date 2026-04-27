@@ -43,7 +43,7 @@ export async function POST(req) {
 
     // 3. Generate expansion if not found
     console.log(`[AI] Generating expansion for Day ${day_number}: ${title}`);
-    const expandedContent = await generateDayExpansion(title, material);
+    const expandedContent = await generateDayExpansion(day_number, title, material);
 
     // 4. Save expansion back to the curriculum JSON for future use (Global Cache)
     if (curriculum && curriculum.days) {
