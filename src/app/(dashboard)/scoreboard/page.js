@@ -108,7 +108,7 @@ function PodiumCard({ user, rank, platformH }) {
 
       <p
         className={cn(
-          "font-black tracking-tight text-white text-center leading-tight max-w-[110px] break-words",
+          "font-bold tracking-tight text-white text-center leading-tight max-w-[110px] break-words",
           isFirst ? "text-sm" : "text-xs"
         )}
       >
@@ -231,41 +231,54 @@ export default async function ScoreboardPage() {
   // ── Banner (parallax background layer) ──────────────────────────────────────
   const banner = (
     <div
-      className="w-full px-8 pt-8 pb-16"
+      className="relative w-full px-8 pt-10 pb-16 overflow-hidden"
       style={{
-        background:
-          "linear-gradient(135deg, #173d5c 0%, #1f547e 40%, #2b6ea6 100%)",
-        minHeight: "380px",
+        background: "linear-gradient(to bottom right, #3b82f6, #1d4ed8, #1e40af)",
+        minHeight: "440px",
       }}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <Trophy size={13} className="text-yellow-300" />
-        <span className="text-[10px] font-black tracking-[0.22em] uppercase text-white/50">
-          Top 10 Global
-        </span>
+      {/* Decorative Elements */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 blur-[100px] rounded-full -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-400/20 blur-[120px] rounded-full translate-x-1/4 translate-y-1/4" />
+        <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
       </div>
 
-      <h1
-        className="text-3xl font-black tracking-tighter text-white mb-1"
-        style={{ fontFamily: "var(--font-outfit), sans-serif" }}
-      >
-        Papan Skor Skillio
-      </h1>
-      <p className="text-white/50 text-sm font-medium mb-10 max-w-md">
-        Terus kumpulkan XP dari kuis dan tantangan harian untuk naik ke puncak!
-      </p>
-
-      {podium.length > 0 && (
-        <div className="flex items-end justify-center gap-4 md:gap-10 max-w-md mx-auto">
-          {podium.map(({ user, rank, platformH }) => (
-            <div key={user.id} className="flex-1">
-              <PodiumCard user={user} rank={rank} platformH={platformH} />
-            </div>
-          ))}
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-4 bg-white/10 backdrop-blur-md border border-white/20 w-fit px-4 py-1.5 rounded-full">
+          <Trophy size={14} className="text-yellow-300 drop-shadow-[0_0_8px_rgba(253,224,71,0.5)]" />
+          <span className="text-[9px] font-black tracking-[0.3em] uppercase text-white">
+            Top 10 Global
+          </span>
         </div>
-      )}
+
+        <h1
+          className="text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-2 leading-tight font-outfit"
+        >
+          Papan Skor <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-white to-blue-200 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+            Skillio
+          </span>
+        </h1>
+        <p className="text-white/60 text-sm font-medium mb-12 max-w-md">
+          Terus kumpulkan XP dari kuis dan tantangan harian untuk naik ke puncak!
+        </p>
+
+        {podium.length > 0 && (
+          <div className="flex items-end justify-center gap-4 md:gap-10 max-w-lg mx-auto relative">
+             {/* Highlight effect behind podium */}
+             <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white/10 to-transparent blur-2xl rounded-full" />
+            
+            {podium.map(({ user, rank, platformH }) => (
+              <div key={user.id} className="flex-1 relative z-10">
+                <PodiumCard user={user} rank={rank} platformH={platformH} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
+
 
   // ── Table (foreground card that slides over the banner) ──────────────────────
   const table = (
