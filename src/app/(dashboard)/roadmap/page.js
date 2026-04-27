@@ -61,10 +61,10 @@ export default async function RoadmapCatalogPage() {
   });
 
   // Check if user already has an active roadmap
-  const activeRoadmap = await prisma.userRoadmap.findFirst({
+  const activeRoadmaps = await prisma.userRoadmap.findMany({
     where: { user_id: session.user.id, status: "active" },
     include: { category: true }
   });
 
-  return <RoadmapCatalogClient groupedCategories={groupedCategories} activeRoadmap={activeRoadmap} />;
+  return <RoadmapCatalogClient groupedCategories={groupedCategories} activeRoadmaps={activeRoadmaps} />;
 }

@@ -229,32 +229,23 @@ export const generateFullRoadmap = async (career) => {
 
 export async function generateDayExpansion(dayNumber, dayTitle, dayMaterial) {
   const prompt = `
-    Role: Senior Mentor Profesional di Skillio.
-    Tugas: Berikan bimbingan dan PENJELASAN MENDALAM (Deep Dive) untuk materi hari ini.
+    Role: Senior Tech Mentor & Architect di Skillio.
+    Tugas: Berikan bimbingan "DAGING" dan PENJELASAN MENDALAM yang sangat solid untuk materi hari ini. JANGAN berikan penjelasan permukaan yang membosankan.
     
     KONTEKS TIMELINE: Hari ke-${dayNumber}
     JUDUL MATERI: ${dayTitle}
     RINGKASAN MATERI: ${dayMaterial}
 
-    GAYA BAHASA: 
-    - Gunakan sapaan profesional yang hangat (misal: "Halo! Di hari ke-${dayNumber} ini, kita akan...", "Selamat datang di sesi mendalam hari ini...").
-    - Bertindaklah seperti mentor nyata yang sedang mengajar di depan kelas, bukan sekadar mesin perangkum.
-    - Gunakan "Anda" sebagai sapaan sopan.
-    - Tetap teknis, praktis, dan berikan insight standar industri.
+    GAYA BAHASA & STRUKTUR: 
+    - Gunakan gaya bahasa mentor senior yang sedang memberikan coaching 1-on-1 kepada murid pilihannya. Bahasa harus mengalir, berwibawa, namun sangat mencerahkan.
+    - WAJIB terdiri dari MAKSIMAL 2 PARAGRAF SAJA.
+    - SETIAP PARAGRAF HARUS SANGAT PANJANG, PADAT, DAN BERISI (DAGING). Minimal 500 karakter per paragraf.
+    - DILARANG KERAS menggunakan LIST, POIN, NOMOR (1., 2., dst), atau BULLET POINT (- atau *). Semuanya harus dalam bentuk narasi paragraf yang mengalir.
+    - DILARANG menggunakan simbol markdown seperti #, ##, atau **. Gunakan teks polos saja.
     
-    STRUKTUR BIMBINGAN (explanation):
-    1. Konsep Fundamental & Urgensi: Jelaskan mengapa di hari ke-${dayNumber} ini kita harus menguasai ${dayTitle}. Apa hubungannya dengan perjalanan 30 hari kita?
-    2. Mekanisme Detail & Teknis: Bedah cara kerjanya secara mendalam. Berikan langkah-langkah atau logika teknis yang solid.
-    3. Best Practices & Standar Industri: Berikan "rahasia dapur" atau tips yang biasa digunakan profesional di lapangan.
-    4. Kesalahan Umum & Mitigasi: Apa yang biasanya membuat pemula gagal di materi ini? Bagaimana cara menghindarinya?
-    5. Analogi & Motivasi: Berikan analogi yang kuat dan pesan penyemangat untuk menyelesaikan misi hari ini.
-
-    SYARAT OUTPUT:
-    - Penjelasan (explanation) harus minimal 1000 karakter dan maksimal 1500 karakter.
-    - JANGAN GUNAKAN SYMBOL MARKDOWN SEPERTI #, ##, *, **, atau -.
-    - WAJIB gunakan DUA kali baris baru (Double Newline) di antara setiap poin penomoran (1., 2., dst) agar teks sangat mudah dibaca.
-    - Berikan minimal 3 sumber belajar (resources) berkualitas tinggi (artikel, dokumentasi, atau kursus gratis).
-    - YouTube query harus sangat spesifik untuk membantu praktik.
+    KONTEN PARAGRAF 1 (The Core & Industry Insight): Bedah konsep ${dayTitle} dari sudut pandang fundamental dan bagaimana ini menjadi tulang punggung di industri nyata. Jelaskan mekanisme teknisnya secara mendalam (under the hood) sehingga murid benar-benar paham cara kerjanya, bukan sekadar tahu cara pakainya.
+    
+    KONTEN PARAGRAF 2 (Strategy & Secret Sauce): Berikan strategi eksekusi, rahasia standar industri yang jarang diketahui pemula, serta bagaimana menghindari jebakan Batman yang sering membuat orang gagal di materi ini. Tutup dengan pesan filosofis yang membakar semangat murid untuk menyelesaikan misi hari ini.
 
     WAJIB OUTPUT DALAM JSON MURNI:
     {

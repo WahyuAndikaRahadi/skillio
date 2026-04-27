@@ -41,7 +41,7 @@ export default async function RoadmapPage() {
 
   return (
     <LearningRoom 
-      activeRoadmap={activeRoadmap}
+      activeRoadmaps={activeRoadmaps}
       completedRoadmaps={completedRoadmaps}
       userName={session.user.name}
       stats={{

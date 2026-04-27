@@ -597,7 +597,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                          <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-white/20 rounded-2xl backdrop-blur-md flex items-center justify-center overflow-hidden border border-white/30">
                                <img 
-                                 src="https://api.dicebear.com/7.x/avataaars/svg?seed=mentor&backgroundColor=b6e3f4" 
+                                 src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=ua&backgroundColor=b6e3f4" 
                                  alt="AI Mentor" 
                                  className="w-full h-full object-cover scale-110" 
                                />

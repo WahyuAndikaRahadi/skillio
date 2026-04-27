@@ -31,14 +31,32 @@ const getCategoryTheme = (categoryName) => {
   return categoryThemes.default;
 };
 
-export default function RoadmapCatalogClient({ groupedCategories, activeRoadmap }) {
+export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps = [] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [loadingCategory, setLoadingCategory] = useState(null);
   const [activeDomain, setActiveDomain] = useState(groupedCategories[0]?.title || "");
   const router = useRouter();
 
   const handleSelectCategory = async (category) => {
-    if (!confirm(`Apakah kamu yakin ingin memulai roadmap untuk ${category.name}?`)) return;
+    const Swal = (await import("sweetalert2")).default;
+    const result = await Swal.fire({
+      title: `<span class="font-black text-slate-900">Mulai Roadmap Baru?</span>`,
+      html: `<p class="text-slate-500 font-medium">Apakah kamu yakin ingin memulai roadmap untuk <b>${category.name}</b>?</p>`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Mulai!',
+      cancelButtonText: 'Nanti Dulu',
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#94a3b8',
+      buttonsStyling: false,
+      customClass: {
+        popup: 'rounded-[32px] p-8 border-none shadow-2xl',
+        confirmButton: 'px-8 py-3.5 bg-skillio-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-skillio-700 transition-all mx-2',
+        cancelButton: 'px-8 py-3.5 bg-slate-100 text-slate-500 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all mx-2'
+      }
+    });
+
+    if (!result.isConfirmed) return;
 
     setLoadingCategory(category.id);
     try {
@@ -49,14 +67,26 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmap 
       });
 
       if (res.ok) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Roadmap berhasil dipilih!',
+          showConfirmButton: false,
+          timer: 3000
+        });
         router.push("/belajar");
       } else {
-        alert("Gagal memilih roadmap. Silakan coba lagi.");
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal memilih roadmap',
+          text: 'Silakan coba lagi nanti.',
+          confirmButtonColor: '#3b82f6'
+        });
         setLoadingCategory(null);
       }
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan sistem.");
       setLoadingCategory(null);
     }
   };
@@ -135,29 +165,34 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmap 
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 pb-20 relative z-10">
         
-        {/* ═══ ACTIVE ROADMAP INDICATOR ═══ */}
-        {activeRoadmap && (
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="mb-12 flex items-center justify-between bg-white border-2 border-primary-blue/20 p-6 rounded-[32px] shadow-xl shadow-blue-500/5 group"
-          >
-            <div className="flex items-center gap-5">
-               <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-primary-blue border border-blue-100 group-hover:scale-110 transition-transform">
-                  <BookOpen size={24} />
-               </div>
-               <div>
-                  <h3 className="font-black text-slate-900 leading-none mb-1.5">Roadmap Aktif</h3>
-                  <p className="text-sm text-slate-500 font-bold">{activeRoadmap.category.name}</p>
-               </div>
-            </div>
-            <Link 
-              href="/belajar" 
-              className="flex items-center gap-2 bg-primary-blue text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
-            >
-              Lanjutkan <ChevronRight size={16} />
-            </Link>
-          </motion.div>
+        {/* ═══ ACTIVE ROADMAPS INDICATOR ═══ */}
+        {activeRoadmaps.length > 0 && (
+          <div className="mb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {activeRoadmaps.map((roadmap) => (
+              <motion.div
+                key={roadmap.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center justify-between bg-white border-2 border-primary-blue/20 p-6 rounded-[32px] shadow-xl shadow-blue-500/5 group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-primary-blue border border-blue-100 group-hover:scale-110 transition-transform">
+                    <BookOpen size={20} />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-black text-slate-900 leading-none mb-1 text-sm truncate">Aktif</h3>
+                    <p className="text-xs text-slate-500 font-bold truncate max-w-[120px]">{roadmap.category.name}</p>
+                  </div>
+                </div>
+                <Link 
+                  href={`/belajar/${roadmap.id}`}
+                  className="flex items-center gap-1.5 bg-primary-blue text-white px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+                >
+                  Lanjut <ChevronRight size={14} />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         )}
 
         <div className="flex flex-col lg:flex-row gap-12">
@@ -282,7 +317,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmap 
                 {/* Grid Catalog */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
                   {filteredItems.map((category, idx) => {
-                    const isActive = activeRoadmap?.category_id === category.id;
+                    const isActive = activeRoadmaps.some(r => r.category_id === category.id);
                     const isLoading = loadingCategory === category.id;
                     const theme = getCategoryTheme(category.name);
                     const Icon = theme.icon;
@@ -329,17 +364,17 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmap 
                               <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Peluang Karir: Tinggi</span>
                            </div>
                            
-                           {isActive ? (
-                             <Link href="/belajar" className="flex items-center gap-2 text-primary-blue font-black text-sm hover:underline">
+                           {activeRoadmaps.some(r => r.category_id === category.id) ? (
+                             <Link href={`/belajar/${activeRoadmaps.find(r => r.category_id === category.id)?.id}`} className="flex items-center gap-2 text-primary-blue font-black text-sm hover:underline">
                                Lanjut Belajar <ChevronRight size={18} />
                              </Link>
                            ) : (
                              <button
                                onClick={() => handleSelectCategory(category)}
-                               disabled={isLoading || activeRoadmap}
+                               disabled={isLoading || activeRoadmaps.length >= 3}
                                className={cn(
                                  "flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all",
-                                 activeRoadmap 
+                                 activeRoadmaps.length >= 3 
                                    ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
                                    : "bg-slate-50 text-slate-900 group-hover:bg-primary-blue group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-500/30"
                                )}
