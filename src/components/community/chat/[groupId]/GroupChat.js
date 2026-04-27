@@ -190,11 +190,27 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                      >
                         <div className={cn("max-w-[85%] md:max-w-[70%] rounded-[24px] px-5 py-3.5 relative text-sm", isMe ? "bg-[#2b6ea6] text-white rounded-br-sm shadow-md" : "bg-white text-[#0d2133] rounded-bl-sm border border-[#dbe7f2] shadow-sm")}>
                            {!isMe && <div className="text-[11px] font-bold font-display text-[#2b6ea6] mb-1 uppercase tracking-widest">{msg.user.name}</div>}
-                           {msg.image_url && <img src={msg.image_url} alt="Attachment" className="w-full max-h-[300px] object-cover rounded-xl mb-2" />}
-                           <div className="flex flex-col gap-1">
-                             <span className="leading-relaxed break-words">{msg.content}</span>
-                             <span className={cn("text-[10px] font-bold uppercase tracking-widest mt-1 text-right", isMe ? "text-white/70" : "text-[#92b7d6]")}>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                           </div>
+                            {msg.image_url && <img src={msg.image_url} alt="Attachment" className="w-full max-h-[300px] object-cover rounded-xl mb-2 shadow-sm border border-black/5" />}
+                            {msg.file_url && (
+                              <div className={cn("mb-2 p-3 rounded-xl flex items-center justify-between gap-3 border transition-all", isMe ? "bg-white/10 border-white/20 hover:bg-white/20" : "bg-slate-50 border-slate-100 hover:bg-slate-100")}>
+                                <div className="flex items-center gap-3 overflow-hidden">
+                                  <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center shrink-0", isMe ? "bg-white/20 text-white" : "bg-primary-blue/10 text-primary-blue")}>
+                                    <FileText size={20} />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className="text-[11px] font-black truncate">{msg.file_name || "Dokumen"}</p>
+                                    <p className="text-[9px] font-bold opacity-60 uppercase tracking-widest">Klik untuk unduh</p>
+                                  </div>
+                                </div>
+                                <a href={msg.file_url} target="_blank" rel="noopener noreferrer" className={cn("p-2 rounded-lg transition-colors", isMe ? "hover:bg-white/20 text-white" : "hover:bg-primary-blue/10 text-primary-blue")}>
+                                  <Download size={18} />
+                                </a>
+                              </div>
+                            )}
+                            <div className="flex flex-col gap-1">
+                              {msg.content && <span className="leading-relaxed break-words">{msg.content}</span>}
+                              <span className={cn("text-[10px] font-bold uppercase tracking-widest mt-1 text-right", isMe ? "text-white/70" : "text-[#92b7d6]")}>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
                         </div>
                      </motion.div>
                    </React.Fragment>
@@ -204,12 +220,124 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
             </div>
           </div>
 
+          {/* Attachment Preview Area */}
+          <AnimatePresence>
+            {showAttachments && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="bg-white border-t border-[#dbe7f2] px-6 py-4 space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#92b7d6]">Lampiran</p>
+                  <button onClick={() => setShowAttachments(false)} className="text-[#92b7d6] hover:text-[#e11d48]"><X size={14} /></button>
+                </div>
+                
+                <div className="flex gap-4">
+                  {!imageUrl && !fileUrl ? (
+                    <>
+                      <div className="flex-1 group relative">
+                        <div className="w-full h-24 bg-[#f3f7fb] rounded-2xl border-2 border-dashed border-[#dbe7f2] flex flex-col items-center justify-center gap-2 group-hover:bg-[#ebf2f8] group-hover:border-[#2b6ea6]/30 transition-all cursor-pointer">
+                          <ImageIcon size={24} className="text-[#92b7d6] group-hover:text-[#2b6ea6]" />
+                          <span className="text-[10px] font-black uppercase text-[#92b7d6] group-hover:text-[#2b6ea6]">Kirim Gambar</span>
+                        </div>
+                        <div className="absolute inset-0 opacity-0 cursor-pointer">
+                          <UploadButton
+                            endpoint="imageUploader"
+                            onClientUploadComplete={(res) => { if (res?.[0]) setImageUrl(res[0].url); }}
+                            onUploadError={(err) => alert(err.message)}
+                            appearance={{ button: "w-full h-full p-0", allowedContent: "hidden" }}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1 group relative">
+                        <div className="w-full h-24 bg-[#f3f7fb] rounded-2xl border-2 border-dashed border-[#dbe7f2] flex flex-col items-center justify-center gap-2 group-hover:bg-[#ebf2f8] group-hover:border-[#2b6ea6]/30 transition-all cursor-pointer">
+                          <FileText size={24} className="text-[#92b7d6] group-hover:text-[#2b6ea6]" />
+                          <span className="text-[10px] font-black uppercase text-[#92b7d6] group-hover:text-[#2b6ea6]">Kirim File</span>
+                        </div>
+                        <div className="absolute inset-0 opacity-0 cursor-pointer">
+                          <UploadButton
+                            endpoint="imageUploader" // Using imageUploader for simplicity, or change if you have a specific file endpoint
+                            onClientUploadComplete={(res) => { 
+                              if (res?.[0]) {
+                                setFileUrl(res[0].url);
+                                setFileName(res[0].name);
+                              }
+                            }}
+                            onUploadError={(err) => alert(err.message)}
+                            appearance={{ button: "w-full h-full p-0", allowedContent: "hidden" }}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full relative bg-[#f3f7fb] p-4 rounded-2xl flex items-center justify-between border border-[#dbe7f2]">
+                      <div className="flex items-center gap-3">
+                        {imageUrl ? (
+                          <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-white shadow-sm">
+                            <img src={imageUrl} alt="preview" className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-[#2b6ea6] flex items-center justify-center text-white">
+                            <FileText size={20} />
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-xs font-black text-[#0d2133] truncate max-w-[200px]">{imageUrl ? "Gambar Terlampir" : fileName}</p>
+                          <p className="text-[10px] font-bold text-[#92b7d6] uppercase tracking-tighter">Siap dikirim</p>
+                        </div>
+                      </div>
+                      <button onClick={() => { setImageUrl(""); setFileUrl(""); setFileName(""); }} className="p-2 hover:bg-white rounded-xl text-[#e11d48] transition-all"><X size={18} /></button>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Input Chat */}
           <div className="bg-white border-t border-[#dbe7f2] px-4 py-4 flex items-end gap-3 z-30 shrink-0">
-             <button type="button" onClick={() => setShowAttachments(!showAttachments)} className={cn("p-3 rounded-2xl transition-all shrink-0 mb-0.5", showAttachments || imageUrl || fileUrl ? "bg-[#2b6ea6] text-white" : "bg-[#f3f7fb] text-[#1f547e] hover:bg-[#dbe7f2]")}><Paperclip size={22} /></button>
+             <button 
+               type="button" 
+               onClick={() => setShowAttachments(!showAttachments)} 
+               className={cn(
+                 "p-3 rounded-2xl transition-all shrink-0 mb-0.5", 
+                 showAttachments || imageUrl || fileUrl ? "bg-[#2b6ea6] text-white" : "bg-[#f3f7fb] text-[#1f547e] hover:bg-[#dbe7f2]"
+               )}
+             >
+               <Paperclip size={22} />
+             </button>
              <form onSubmit={handleSendMessage} className="flex-1 flex gap-3 relative">
-                <textarea value={newMessage} onChange={(e) => { setNewMessage(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }} placeholder="Ketik pesan..." className="w-full bg-[#f8fbfd] border border-[#dbe7f2] rounded-[20px] pl-5 pr-14 py-3.5 text-sm text-[#0d2133] focus:outline-none focus:ring-2 focus:ring-[#2b6ea6]/20 resize-none overflow-y-auto custom-scrollbar" rows={1} style={{ minHeight: '52px' }} />
-                <button type="submit" disabled={(!newMessage.trim() && !imageUrl && !fileUrl) || isSending} className="absolute right-2 bottom-1.5 p-2.5 bg-[#2b6ea6] text-white rounded-xl hover:bg-[#1f547e] disabled:opacity-0 transition-all">{isSending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}</button>
+                <textarea 
+                  value={newMessage} 
+                  onChange={(e) => { 
+                    setNewMessage(e.target.value); 
+                    e.target.style.height = 'auto'; 
+                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; 
+                  }} 
+                  onKeyDown={(e) => { 
+                    if (e.key === 'Enter' && !e.shiftKey) { 
+                      e.preventDefault(); 
+                      handleSendMessage(e); 
+                    } 
+                  }} 
+                  placeholder="Ketik pesan..." 
+                  className="w-full bg-[#f8fbfd] border border-[#dbe7f2] rounded-[20px] pl-5 pr-14 py-3.5 text-sm text-[#0d2133] focus:outline-none focus:ring-2 focus:ring-[#2b6ea6]/20 resize-none overflow-y-auto custom-scrollbar" 
+                  rows={1} 
+                  style={{ minHeight: '52px' }} 
+                />
+                <button 
+                  type="submit" 
+                  disabled={(!newMessage.trim() && !imageUrl && !fileUrl) || isSending} 
+                  className={cn(
+                    "absolute right-2 bottom-1.5 p-2.5 bg-[#2b6ea6] text-white rounded-xl hover:bg-[#1f547e] transition-all",
+                    ((!newMessage.trim() && !imageUrl && !fileUrl) || isSending) ? "opacity-40 cursor-not-allowed" : "opacity-100"
+                  )}
+                >
+                  {isSending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                </button>
              </form>
           </div>
        </div>

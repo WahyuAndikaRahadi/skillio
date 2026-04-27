@@ -178,6 +178,11 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
             <div>
               <h4 className="font-bold text-dark-blue flex items-center gap-2 text-sm">
                 {post.user.name}
+                {post.category && (
+                  <span className="text-[10px] font-black uppercase tracking-tighter px-2 py-0.5 rounded bg-blue-50 text-primary-blue flex items-center gap-1">
+                    <Hash size={10} /> {post.category.name}
+                  </span>
+                )}
                 {post.type === 'question' && (
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-50 text-orange-600">Pertanyaan</span>
                 )}

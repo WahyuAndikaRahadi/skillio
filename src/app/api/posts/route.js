@@ -12,6 +12,7 @@ export async function GET(req) {
       where: categoryId ? { category_id: categoryId } : {},
       include: {
         user: { select: { id: true, name: true, image: true } },
+        category: { select: { id: true, name: true, icon: true } },
         comments: { 
           where: { parent_id: null }, // Only top-level
           include: { 

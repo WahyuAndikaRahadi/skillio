@@ -200,8 +200,12 @@ export default function FeedPage() {
                     onClick={() => router.push(`/community?groupId=${group.id}`)} 
                     className="w-full flex items-center gap-3 p-2 rounded-2xl hover:bg-white hover:shadow-sm transition-all group"
                   >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-black shadow-sm ${colors[i % colors.length]}`}>
-                      {group.name.substring(0, 2).toUpperCase()}
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-black shadow-sm overflow-hidden ${colors[i % colors.length]}`}>
+                      {group.image_url ? (
+                        <img src={group.image_url} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        group.name.substring(0, 2).toUpperCase()
+                      )}
                     </div>
                     <div className="flex-1 text-left min-w-0">
                       <p className="text-sm font-bold text-slate-900 truncate group-hover:text-primary-blue transition-colors">
