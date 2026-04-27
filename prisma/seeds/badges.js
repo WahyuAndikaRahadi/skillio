@@ -52,8 +52,8 @@ const BADGES = [
     requirement: { type: "streak", days: 7 }
   },
   {
-    name: "Penyelesai Pertama",
-    description: "Luar biasa! Kamu telah menyelesaikan roadmap pertamamu di Skillio.",
+    name: "Sertifikat Kelulusan",
+    description: "Sertifikat resmi yang membuktikan penguasaanmu dalam bidang tertentu setelah menyelesaikan roadmap 30 hari.",
     image_url: "https://api.dicebear.com/7.x/bottts/svg?seed=trophy&backgroundColor=ffd5dc",
     type: "completion",
     requirement: { type: "roadmaps_completed", count: 1 }
@@ -64,6 +64,20 @@ const BADGES = [
     image_url: "https://api.dicebear.com/7.x/bottts/svg?seed=king&backgroundColor=c0aede",
     type: "multi_roadmap",
     requirement: { type: "roadmaps_completed", count: 3 }
+  },
+  {
+    name: "Sang Multitasker",
+    description: "Luar biasa! Kamu sanggup menjalankan 3 bidang belajar sekaligus tanpa rasa takut.",
+    image_url: "https://api.dicebear.com/7.x/bottts/svg?seed=multi&backgroundColor=b6e3f4",
+    type: "special",
+    requirement: { type: "multi_active", count: 3 }
+  },
+  {
+    name: "Pelajar Polimatik",
+    description: "Memiliki minat yang luas! Kamu telah memulai perjalanan di 3 bidang yang berbeda.",
+    image_url: "https://api.dicebear.com/7.x/bottts/svg?seed=poly&backgroundColor=ffdfbf",
+    type: "achievement",
+    requirement: { type: "multi_start", count: 3 }
   }
 ];
 

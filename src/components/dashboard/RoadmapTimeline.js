@@ -11,6 +11,10 @@ import {
 import { FaYoutube } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 const cleanAiText = (text) => {
   if (!text) return "";
@@ -264,7 +268,15 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
       setQuizFinished(false);
       setViewMode('quiz');
     } catch (err) {
-      alert("Gagal memuat kuis.");
+      MySwal.fire({
+        icon: 'error',
+        title: '<span class="font-black text-slate-900">Oops...</span>',
+        html: '<p class="text-slate-500 font-medium">Gagal memuat kuis. Silakan coba lagi nanti.</p>',
+        confirmButtonColor: '#3b82f6',
+        customClass: {
+          popup: 'rounded-[32px] p-8'
+        }
+      });
     } finally {
       setQuizLoading(false);
     }
@@ -287,19 +299,35 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
       setQuizFinished(true);
       const finalScore = Math.round((score / quizzes.length) * 100);
       
-      // Optimistic Update: Langsung tandai hijau dan buka hari berikutnya
+      const isPassed = finalScore >= 60;
+      
+      // Optimistic Update: Only mark as passed if they actually passed
       const now = new Date().toISOString();
       setProgress(prev => {
         const updated = [...prev];
         const idx = updated.findIndex(p => p.day_number === selectedDay.day_number);
         if (idx !== -1) {
-          updated[idx] = { ...updated[idx], quiz_passed: true, completed_at: now };
+          updated[idx] = { 
+            ...updated[idx], 
+            quiz_passed: updated[idx].quiz_passed || isPassed, 
+            quiz_score: Math.max(updated[idx].quiz_score || 0, finalScore),
+            completed_at: now 
+          };
         } else {
-          updated.push({ day_number: selectedDay.day_number, quiz_passed: true, completed_at: now, completed_tasks: [] });
+          updated.push({ 
+            day_number: selectedDay.day_number, 
+            quiz_passed: isPassed, 
+            quiz_score: finalScore,
+            completed_at: now, 
+            completed_tasks: [] 
+          });
         }
         return updated;
       });
-      setCurrentDay(prev => prev + 1);
+
+      if (isPassed && currentDay === selectedDay.day_number) {
+        setCurrentDay(prev => prev + 1);
+      }
 
       setSavingResult(true);
       try {
@@ -341,11 +369,66 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                 </div>
              </div>
              <h2 className="text-4xl font-black text-slate-900 mb-3">Misi Selesai!</h2>
-             <p className="text-slate-500 font-bold mb-10">Skor Anda: {finalScore}/100</p>
-             <div className="bg-slate-50 rounded-3xl p-8 mb-10 border border-slate-100">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">XP Didapatkan</p>
-                <h3 className="text-5xl font-black text-skillio-600">+50 XP</h3>
+             <p className="text-slate-500 font-bold mb-6">Skor Anda: {finalScore}/100</p>
+             
+             <div className="flex flex-col gap-3 mb-10">
+                <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">XP Didapatkan</p>
+                  <h3 className="text-4xl font-black text-skillio-600">+50 XP</h3>
+                </div>
+
+                {isPassed && (
+                  <button 
+                    onClick={async () => {
+                      const result = await MySwal.fire({
+                        title: '<span class="font-black text-slate-900">Bagikan ke Komunitas?</span>',
+                        html: '<p class="text-slate-500 font-medium">Tunjukkan pencapaianmu hari ini ke teman-teman di Skillio!</p>',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Bagikan!',
+                        cancelButtonText: 'Nanti Saja',
+                        confirmButtonColor: '#3b82f6',
+                        cancelButtonColor: '#94a3b8',
+                        buttonsStyling: false,
+                        customClass: {
+                          popup: 'rounded-[40px] p-8 border-none shadow-2xl',
+                          confirmButton: 'px-8 py-3.5 bg-skillio-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-skillio-700 transition-all mx-2',
+                          cancelButton: 'px-8 py-3.5 bg-slate-100 text-slate-500 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all mx-2'
+                        }
+                      });
+
+                      if (result.isConfirmed) {
+                        try {
+                          const res = await fetch("/api/social/post", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              content: `Berhasil menyelesaikan materi hari ke-${selectedDay.day_number} di bidang ${roadmap.category.name} dengan skor ${finalScore}! 🚀🔥`,
+                              type: "achievement"
+                            })
+                          });
+                          if (res.ok) {
+                            MySwal.fire({
+                              toast: true,
+                              position: 'top-end',
+                              icon: 'success',
+                              title: 'Berhasil dibagikan!',
+                              showConfirmButton: false,
+                              timer: 3000
+                            });
+                          }
+                        } catch (err) {
+                          console.error("Gagal share ke social feed");
+                        }
+                      }
+                    }}
+                    className="flex items-center justify-center gap-2 py-4 bg-blue-50 text-primary-blue rounded-2xl font-black text-sm border border-blue-100 hover:bg-blue-100 transition-all"
+                  >
+                    <Star size={18} /> Bagikan ke Komunitas
+                  </button>
+                )}
              </div>
+
              <button onClick={() => { setViewMode('roadmap'); setSelectedDay(null); window.scrollTo(0, 0); }} className="w-full bg-gradient-to-r from-skillio-500 to-blue-600 text-white py-5 rounded-2xl font-black text-lg shadow-2xl shadow-skillio-500/30 hover:shadow-skillio-500/40 transition-all cursor-pointer">
                Kembali ke Roadmap
              </button>

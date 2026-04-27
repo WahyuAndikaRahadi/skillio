@@ -36,41 +36,11 @@ export async function POST(req) {
       where: { user_id: session.user.id, status: "completed" },
     });
 
-    // --- Badge Award Logic ---
-    const badgesToAward = [];
+    // --- Badge Award Logic (Using Central Engine) ---
+    const { checkAndAwardBadges } = await import("@/lib/badges");
+    const awarded = await checkAndAwardBadges(session.user.id, "roadmaps_completed", { count: completedCount });
 
-    // "Penyelesai Pertama" — first completed roadmap
-    if (completedCount === 1) {
-      badgesToAward.push("Penyelesai Pertama");
-    }
-    // "Penjelajah Ganda" — 2 roadmaps (Optional, if added to seed)
-    if (completedCount === 2) {
-      badgesToAward.push("Penjelajah Ganda");
-    }
-    // "Master Trilogi" — 3 roadmaps
-    if (completedCount === 3) {
-      badgesToAward.push("Master Trilogi");
-    }
-    // "Kuasai Dunia" — 5 roadmaps (Optional, if added to seed)
-    if (completedCount === 5) {
-      badgesToAward.push("Kuasai Dunia");
-    }
-
-    for (const slug of badgesToAward) {
-      const badge = await prisma.badge.findFirst({ where: { name: slug } });
-      if (badge) {
-        const existing = await prisma.userBadge.findFirst({
-          where: { user_id: session.user.id, badge_id: badge.id },
-        });
-        if (!existing) {
-          await prisma.userBadge.create({
-            data: { user_id: session.user.id, badge_id: badge.id },
-          });
-        }
-      }
-    }
-
-    return NextResponse.json({ success: true, completedCount, badgesAwarded: badgesToAward });
+    return NextResponse.json({ success: true, completedCount, badgesAwarded: awarded });
   } catch (error) {
     console.error("Complete roadmap error:", error);
     return NextResponse.json({ message: "Server error", detail: error.message }, { status: 500 });

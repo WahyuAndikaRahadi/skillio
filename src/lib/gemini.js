@@ -1,36 +1,61 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Daftar API Key untuk rotasi jika salah satu limit/error
+// Daftar API Key untuk rotasi (Sistem Eliminasi: Mulai dari 4 ke 1)
 const API_KEYS = [
-  process.env.GEMINI_API_KEY,
-  process.env.GEMINI_API_KEY2,
+  process.env.GEMINI_API_KEY4,
   process.env.GEMINI_API_KEY3,
-  process.env.GEMINI_API_KEY4
+  process.env.GEMINI_API_KEY2,
+  process.env.GEMINI_API_KEY
 ].filter(Boolean);
 
 let currentKeyIndex = 0;
 
-const getModel = (key) => {
-  const genAI = new GoogleGenerativeAI(key || API_KEYS[currentKeyIndex]);
+/**
+ * Mendapatkan instance model Gemini.
+ * @param {string} type - Tipe model ('lite' atau 'roadmap')
+ * @param {number} keyIndex - Index API key yang digunakan
+ */
+const getModelInstance = (type = "lite", keyIndex = currentKeyIndex) => {
+  const genAI = new GoogleGenerativeAI(API_KEYS[keyIndex]);
+  
+  // Model khusus berdasarkan permintaan user
+  const modelName = type === "roadmap" 
+    ? "gemini-3-flash-preview" 
+    : "gemini-3.1-flash-lite-preview";
+
   return genAI.getGenerativeModel({ 
-    model: "gemini-3-flash-preview",
+    model: modelName,
     generationConfig: {
       responseMimeType: "application/json",
     }
   });
-
 };
 
-export let model = getModel();
+/**
+ * Wrapper fungsi untuk menangani limit dengan sistem eliminasi (Key 4 -> 1)
+ */
+async function callGemini(prompt, type = "lite") {
+  let lastError = null;
+  
+  // Kita coba mulai dari index yang sekarang sampai habis (sistem eliminasi)
+  for (let i = currentKeyIndex; i < API_KEYS.length; i++) {
+    try {
+      const model = getModelInstance(type, i);
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      
+      // Jika berhasil, kita simpan index ini sebagai index aktif
+      currentKeyIndex = i;
+      return response.text();
+    } catch (error) {
+      console.error(`[AI] Gagal menggunakan API Key #${4 - i} (${API_KEYS.length - i}):`, error.message);
+      lastError = error;
+      // Lanjut ke i berikutnya (eliminasi key saat ini)
+    }
+  }
 
-// Fungsi untuk rotasi key jika gagal
-const rotateKey = () => {
-  if (API_KEYS.length <= 1) return false;
-  currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
-  model = getModel(API_KEYS[currentKeyIndex]);
-  console.log(`[AI] Berhasil rotasi ke API KEY #${currentKeyIndex + 1}`);
-  return true;
-};
+  throw new Error(`Gagal memproses AI setelah mencoba semua API Key. Error terakhir: ${lastError?.message}`);
+}
 
 
 const extractJson = (text) => {
@@ -82,9 +107,8 @@ export const generateQuizQuestions = async (context, phase) => {
     HANYA OUTPUT JSON.
   `;
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  return extractJson(response.text());
+  const text = await callGemini(prompt, "lite");
+  return extractJson(text);
 };
 
 const PREDEFINED_CAREERS = `
@@ -119,9 +143,8 @@ export const analyzeCareerRecommendation = async (allAnswers) => {
     Bahasa: Indonesia Profesional (Anda).
   `;
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  return extractJson(response.text());
+  const text = await callGemini(prompt, "lite");
+  return extractJson(text);
 };
 
 export const generateFullRoadmap = async (career) => {
@@ -164,37 +187,16 @@ export const generateFullRoadmap = async (career) => {
     5. Penjelasan kuis (explanation) harus menggunakan gaya bahasa mentor yang mendukung (misal: "Bagus sekali! Kamu benar karena...", atau "Sayang sekali, ingat bahwa...").
   `;
 
-  let retryCount = 0;
-  const maxRetries = API_KEYS.length;
-
-  while (retryCount < maxRetries) {
-    try {
-      console.log(`[AI] Mencoba generate roadmap dengan Key #${currentKeyIndex + 1}...`);
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      
-      if (!text) throw new Error("AI memberikan respons kosong");
-      
-      const parsed = extractJson(text);
-      
-      if (parsed.days && parsed.days.length < 25) {
-        throw new Error("Output terpotong oleh AI (kurang dari 25 hari)");
-      }
-      
-      console.log(`[AI] Berhasil generate roadmap (${parsed.days.length} hari).`);
-      return parsed;
-    } catch (error) {
-      console.error(`[AI] Kesalahan pada Key #${currentKeyIndex + 1}:`, error.message);
-      retryCount++;
-      if (retryCount < maxRetries) {
-        if (!rotateKey()) throw error;
-      } else {
-        throw error;
-      }
-    }
+  console.log(`[AI] Memulai generate roadmap khusus dengan model roadmap...`);
+  const text = await callGemini(prompt, "roadmap");
+  const parsed = extractJson(text);
+  
+  if (parsed.days && parsed.days.length < 25) {
+    throw new Error("Output terpotong oleh AI (kurang dari 25 hari)");
   }
-  throw new Error("Gagal generate roadmap setelah mencoba semua API Key.");
+  
+  console.log(`[AI] Berhasil generate roadmap (${parsed.days.length} hari).`);
+  return parsed;
 };
 
 
@@ -239,8 +241,7 @@ export async function generateDayExpansion(dayNumber, dayTitle, dayMaterial) {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const text = await callGemini(prompt, "lite");
     const data = extractJson(text);
 
     // Validasi data

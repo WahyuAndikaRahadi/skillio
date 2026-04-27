@@ -27,16 +27,31 @@ export async function checkAndAwardBadges(userId, triggerType, context = {}) {
 
       let qualified = false;
 
-      // Logic based on triggerType
+      // Logic based on triggerType (matches requirement.type in DB)
       switch (triggerType) {
         case 'day_complete':
           // Badge: Pemula Berani (Day 1)
           if (req.day === context.day) qualified = true;
           break;
           
-        case 'streak_check':
-          // Badge: Konsisten 7 Hari, Streak Legenda
+        case 'streak':
+          // Badge: Konsisten 7 Hari
           if (context.streak >= req.days) qualified = true;
+          break;
+
+        case 'multi_active':
+          // Badge: Sang Multitasker
+          if (context.count >= req.count) qualified = true;
+          break;
+
+        case 'multi_start':
+          // Badge: Pelajar Polimatik
+          if (context.count >= req.count) qualified = true;
+          break;
+
+        case 'roadmaps_completed':
+          // Badge: Sertifikat Kelulusan, Master Trilogi
+          if (context.count >= req.count) qualified = true;
           break;
 
         case 'days_completed':
@@ -49,27 +64,27 @@ export async function checkAndAwardBadges(userId, triggerType, context = {}) {
           break;
 
         case 'ai_messages':
-          // Badge: AI Enthusiast
+          // Badge: Penjelajah Hebat
           if (context.count >= req.count) qualified = true;
           break;
 
         case 'community_posts':
-          // Badge: Social Butterfly
+          // Badge: Kupu Kupu Sosial
           if (context.count >= req.count) qualified = true;
           break;
 
         case 'community_comments':
-          // Badge: Community Helper
+          // Badge: Penolong Komunitas
           if (context.count >= req.count) qualified = true;
           break;
 
         case 'night_activity':
-          // Badge: Night Owl (Count of activities between 00:00 - 04:00)
+          // Badge: Burung Hantu Malam
           if (context.count >= req.count) qualified = true;
           break;
 
         case 'quiz_speed':
-          // Badge: Speed Runner (Completed within X seconds with perfect score)
+          // Badge: Pelari Cepat
           if (context.seconds <= req.seconds && context.score === 100) qualified = true;
           break;
       }

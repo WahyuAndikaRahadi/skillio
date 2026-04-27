@@ -125,7 +125,7 @@ export async function POST(req) {
     });
     
     // Streak badges
-    await checkAndAwardBadges(session.user.id, "streak_check", { streak: updatedUser.streak?.current_streak });
+    await checkAndAwardBadges(session.user.id, "streak", { streak: updatedUser.streak?.current_streak });
     
     // Total days completed badges (e.g., Setengah Jalan - 15 days)
     const totalDaysCompleted = await prisma.userDayProgress.count({
@@ -135,24 +135,6 @@ export async function POST(req) {
       }
     });
     await checkAndAwardBadges(session.user.id, "days_completed", { count: totalDaysCompleted });
-
-    // 6. Auto-post to Social Feed
-    if (score >= 80) {
-      try {
-        const { pusherServer } = await import("@/lib/pusher");
-        const autoPost = await prisma.communityPost.create({
-          data: {
-            user_id: session.user.id,
-            content: `Berhasil menyelesaikan materi hari ke-${day_number} dengan skor ${score}! 🚀🔥`,
-            type: "achievement",
-          },
-          include: { user: { select: { name: true, image: true } } }
-        });
-        await pusherServer.trigger("community-feed", "new-post", autoPost);
-      } catch (postError) {
-        console.error("Auto-post failed:", postError);
-      }
-    }
 
     return NextResponse.json({ 
       message: "Quiz completed!", 

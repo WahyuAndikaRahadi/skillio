@@ -61,15 +61,21 @@ export async function POST(req) {
       }
     }
 
-    // 4. Nonaktifkan roadmap lain milik user
-    await prisma.userRoadmap.updateMany({
-      where: { 
-        user_id: session.user.id, 
-        status: "active",
-        NOT: { roadmap_id: roadmap.id }
-      },
-      data: { status: "paused" }
+    // 4. Manajemen Limit Aktif (Maksimal 3 Bidang)
+    const activeRoadmaps = await prisma.userRoadmap.findMany({
+      where: { user_id: session.user.id, status: "active" },
+      orderBy: { started_at: 'asc' }
     });
+
+    // Jika sudah ada 3 yang aktif dan yang baru ini bukan salah satunya, 
+    // pause yang paling lama (paling pertama dimulai)
+    if (activeRoadmaps.length >= 3 && !activeRoadmaps.find(r => r.roadmap_id === roadmap.id)) {
+      await prisma.userRoadmap.update({
+        where: { id: activeRoadmaps[0].id },
+        data: { status: "paused" }
+      });
+      console.log(`[Limit] Melebihi 3 bidang, roadmap ${activeRoadmaps[0].id} dipause.`);
+    }
 
     // 5. Assign user ke roadmap ini (UPSERT manual karena tidak ada unique constraint majemuk)
     const existingUserRoadmap = await prisma.userRoadmap.findFirst({
@@ -92,6 +98,21 @@ export async function POST(req) {
         }
       });
     }
+
+    // 6. Check for Multi-Roadmap Badges
+    const { checkAndAwardBadges } = await import("@/lib/badges");
+    
+    // Check for multi_active
+    const totalActive = await prisma.userRoadmap.count({
+      where: { user_id: session.user.id, status: "active" }
+    });
+    await checkAndAwardBadges(session.user.id, "multi_active", { count: totalActive });
+
+    // Check for multi_start (Total roadmaps ever started)
+    const totalStarted = await prisma.userRoadmap.count({
+      where: { user_id: session.user.id }
+    });
+    await checkAndAwardBadges(session.user.id, "multi_start", { count: totalStarted });
 
     return NextResponse.json({ 
       message: "Berhasil memilih bidang belajar", 

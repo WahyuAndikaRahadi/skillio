@@ -54,6 +54,16 @@ const LoginForm = () => {
       if (result?.error) {
         setError("Email atau password salah");
       } else {
+        const Swal = (await import("sweetalert2")).default;
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Selamat datang kembali!",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
         router.push("/dashboard");
       }
     } catch (err) {

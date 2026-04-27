@@ -91,11 +91,16 @@ const TopBar = ({ onMenuClick }) => {
         <div className="flex items-center gap-3 md:gap-6">
           <div className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-xl border shadow-sm transition-all duration-500 hidden sm:flex",
-            stats.streak > 0
-              ? "bg-orange-50 text-orange-600 border-orange-100"
-              : "bg-slate-50 text-slate-400 border-slate-100"
+            stats.streak >= 30 ? "bg-blue-50 text-blue-600 border-blue-100" :
+            stats.streak >= 15 ? "bg-purple-50 text-purple-600 border-purple-100" :
+            stats.streak > 0 ? "bg-orange-50 text-orange-600 border-orange-100" :
+            "bg-slate-50 text-slate-400 border-slate-100"
           )}>
-            <Flame size={20} className={cn(stats.streak > 0 && "fill-orange-600")} />
+            <Flame size={20} className={cn(
+              stats.streak >= 30 ? "fill-blue-600" :
+              stats.streak >= 15 ? "fill-purple-600" :
+              stats.streak > 0 ? "fill-orange-600" : ""
+            )} />
             <span className="font-black text-sm">{stats.streak} Hari</span>
           </div>
 
@@ -237,9 +242,37 @@ const TopBar = ({ onMenuClick }) => {
                     </Link>
 
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         setIsProfileDropdownOpen(false);
-                        signOut({ callbackUrl: "/" });
+                        const Swal = (await import("sweetalert2")).default;
+                        const result = await Swal.fire({
+                          title: '<span class="font-black text-slate-900">Keluar dari Skillio?</span>',
+                          html: '<p class="text-slate-500 font-medium">Kamu akan diarahkan ke halaman login.</p>',
+                          icon: 'question',
+                          showCancelButton: true,
+                          confirmButtonText: 'Ya, Keluar',
+                          cancelButtonText: 'Batal',
+                          confirmButtonColor: '#ef4444',
+                          cancelButtonColor: '#94a3b8',
+                          buttonsStyling: false,
+                          customClass: {
+                            popup: 'rounded-[32px] p-8 border-none shadow-2xl',
+                            confirmButton: 'px-8 py-3.5 bg-red-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-red-600 transition-all mx-2',
+                            cancelButton: 'px-8 py-3.5 bg-slate-100 text-slate-500 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all mx-2'
+                          }
+                        });
+
+                        if (result.isConfirmed) {
+                          Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Berhasil keluar!',
+                            showConfirmButton: false,
+                            timer: 2000
+                          });
+                          signOut({ callbackUrl: "/" });
+                        }
                       }}
                       className="flex items-center gap-3 p-4 w-full text-red-500 hover:bg-red-50/50 transition-colors font-bold text-sm"
                     >

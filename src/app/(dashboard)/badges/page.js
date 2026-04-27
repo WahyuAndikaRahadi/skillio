@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   Award,
   Lock,
@@ -45,8 +46,10 @@ const getBadgeTheme = (badgeName) => {
 
 export default function BadgesPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [badges, setBadges] = useState([]);
   const [userBadgeIds, setUserBadgeIds] = useState(new Set());
+  const [activeRoadmapId, setActiveRoadmapId] = useState(null);
   const [completedRoadmaps, setCompletedRoadmaps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("lencana"); // lencana, misi, sertifikat
@@ -61,6 +64,7 @@ export default function BadgesPage() {
           setBadges(data.allBadges);
           setUserBadgeIds(new Set(data.earnedBadgeIds));
           setCompletedRoadmaps(data.completedRoadmaps || []);
+          setActiveRoadmapId(data.activeRoadmapId);
         }
 
       } catch (err) {
@@ -184,7 +188,10 @@ export default function BadgesPage() {
                    transition={{ delay: 0.6 }}
                    className="pt-4"
                 >
-                   <button className="px-6 py-3.5 bg-white text-blue-700 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10">
+                   <button 
+                     onClick={() => setActiveTab("misi")}
+                     className="px-6 py-3.5 bg-white text-blue-700 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10"
+                   >
                      Lihat Semua Misi
                    </button>
                 </motion.div>
@@ -309,7 +316,18 @@ export default function BadgesPage() {
                         <p className="text-sm text-slate-500 font-medium mb-4 leading-relaxed">{badge.description}</p>
                         <div className="flex items-center justify-between pt-4 border-t border-slate-50">
                           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Progress: 0%</span>
-                          <button className="text-xs font-black text-primary-blue bg-blue-50 px-4 py-2 rounded-xl hover:bg-primary-blue hover:text-white transition-all">Jalankan Misi</button>
+                          <button 
+                            onClick={() => {
+                              if (badge.requirement?.type === "roadmaps_completed" || !activeRoadmapId) {
+                                router.push("/roadmap");
+                              } else {
+                                router.push(`/belajar/${activeRoadmapId}`);
+                              }
+                            }}
+                            className="text-xs font-black text-primary-blue bg-blue-50 px-4 py-2 rounded-xl hover:bg-primary-blue hover:text-white transition-all"
+                          >
+                            Jalankan Misi
+                          </button>
                         </div>
                       </div>
                     </motion.div>
@@ -334,7 +352,12 @@ export default function BadgesPage() {
                     </div>
                     <h3 className="text-xl font-black text-slate-400 mb-2">Belum Ada Sertifikat</h3>
                     <p className="text-slate-400 font-medium max-w-sm mx-auto">Selesaikan 30 hari belajarmu untuk mendapatkan sertifikat profesional pertamamu!</p>
-                    <button className="mt-8 px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20">Mulai Belajar Sekarang</button>
+                    <button 
+                      onClick={() => router.push("/roadmap")}
+                      className="mt-8 px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20"
+                    >
+                      Mulai Belajar Sekarang
+                    </button>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -532,6 +555,24 @@ export default function BadgesPage() {
                             <motion.button
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
+                              onClick={() => {
+                                const shareUrl = `${window.location.origin}/profile/${session?.user?.id || ''}`;
+                                const shareData = {
+                                  title: `Saya meraih lencana ${badge.name}!`,
+                                  text: `Lihat pencapaian saya di Skillio: ${badge.description}`,
+                                  url: shareUrl,
+                                };
+
+                                if (navigator.share) {
+                                  navigator.share(shareData).catch(() => {
+                                    navigator.clipboard.writeText(shareUrl);
+                                    alert("Link profil berhasil disalin ke clipboard!");
+                                  });
+                                } else {
+                                  navigator.clipboard.writeText(shareUrl);
+                                  alert("Link profil berhasil disalin ke clipboard!");
+                                }
+                              }}
                               className={cn(
                                 "w-full flex items-center justify-center gap-2 py-3 md:py-3.5 font-black rounded-2xl transition-all",
                                 "bg-gradient-to-r from-skillio-600 to-skillio-500 text-white hover:shadow-lg hover:shadow-skillio-600/30",
