@@ -131,7 +131,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                    {group?.image_url ? <img src={group.image_url} alt="group" className="w-full h-full object-cover rounded-[16px]"/> : group?.name?.[0]}
                 </div>
                 <div className="flex flex-col">
-                   <h2 className="text-[17px] font-black text-[#0d2133] flex items-center gap-1.5">{group?.name} {group?.privacy === "private" && <Lock size={14} className="text-[#92b7d6]" />}</h2>
+                   <h2 className="text-[17px] font-black text-[#0d2133] flex items-center gap-1.5 font-display">{group?.name} {group?.privacy === "private" && <Lock size={14} className="text-[#92b7d6]" />}</h2>
                    <p className="text-[12px] font-bold font-display text-[#1f547e] flex items-center gap-1.5 opacity-80">
                      <span className={cn("w-2 h-2 rounded-full", onlineCount > 0 ? "bg-[#68b9b2] animate-pulse" : "bg-slate-300")}></span> {onlineCount} Online
                    </p>
@@ -218,7 +218,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
          <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 340, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="flex-shrink-0 border-l border-[#dbe7f2] bg-white flex flex-col z-40 overflow-hidden shadow-[-10px_0_30px_rgba(23,61,92,0.03)]">
            <div className="h-[76px] bg-white flex items-center px-6 gap-4 border-b border-[#dbe7f2] shrink-0">
               <button onClick={() => setIsSidebarOpen(false)} className="text-[#1f547e] hover:bg-[#f3f7fb] p-2 rounded-xl"><X size={20} /></button>
-              <h2 className="text-[16px] text-[#0d2133] font-black">Info Komunitas</h2>
+              <h2 className="text-[16px] text-[#0d2133] font-black font-display">Info Komunitas</h2>
            </div>
            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
               <div className="flex flex-col items-center group relative">
@@ -259,7 +259,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                     </div>
                   )}
                 </div>
-                <h1 className="text-lg text-[#0d2133] font-black text-center">{group?.name}</h1>
+                <h1 className="text-lg text-[#0d2133] font-black text-center font-display">{group?.name}</h1>
               </div>
 
              {group?.description && <div><p className="text-[11px] font-black text-[#92b7d6] uppercase tracking-widest mb-2">Deskripsi</p><p className="text-sm text-[#0d2133] font-medium">{group.description}</p></div>}

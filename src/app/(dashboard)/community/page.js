@@ -62,7 +62,7 @@ export default function CommunityPage() {
 
   return (
     // Full viewport, no outer padding — fills the layout shell exactly
-    <div className="flex h-[calc(100vh-56px)] md:h-[calc(100vh-80px)] overflow-hidden bg-white relative">
+    <div className="flex h-[calc(100vh-56px)] md:h-[calc(100vh-80px)] overflow-hidden bg-white relative font-sans">
 
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
