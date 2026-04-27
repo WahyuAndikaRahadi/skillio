@@ -15,7 +15,8 @@ import {
   Edit3,
   Mail,
   Calendar,
-  Share2
+  Share2,
+  Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -23,9 +24,10 @@ import Link from "next/link";
 import { UploadButton } from "@/lib/uploadthing";
 
 export default function ProfilePage() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [stats, setStats] = useState({ xp: 0, streak: 0, badges: [], roadmapsCount: 0 });
   const [loading, setLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -100,13 +102,18 @@ export default function ProfilePage() {
             {/* Avatar Section */}
             <div className="relative group/avatar">
               <div className="w-32 h-32 md:w-48 md:h-48 rounded-[45px] bg-white/20 backdrop-blur-2xl p-1.5 shadow-2xl ring-1 ring-white/30 overflow-hidden">
-                <div className="w-full h-full rounded-[38px] overflow-hidden bg-slate-100 flex items-center justify-center border-4 border-white/10 group-hover/avatar:scale-105 transition-transform duration-500">
+                <div className="w-full h-full rounded-[38px] overflow-hidden bg-slate-100 flex items-center justify-center border-4 border-white/10 group-hover/avatar:scale-105 transition-transform duration-500 relative">
                   {session?.user?.image ? (
                     <img src={session.user.image} alt={session.user.name} className="w-full h-full object-cover" />
                   ) : (
                     <span className="text-6xl font-black text-primary-blue">
                       {session?.user?.name?.[0]?.toUpperCase() || "S"}
                     </span>
+                  )}
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                       <Loader2 className="w-10 h-10 text-white animate-spin" />
+                    </div>
                   )}
                 </div>
               </div>
@@ -119,17 +126,38 @@ export default function ProfilePage() {
                  <div className="opacity-0 w-[200%] h-[200%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer flex items-center justify-center scale-[3]">
                    <UploadButton
                      endpoint="imageUploader"
+                     onUploadBegin={() => setIsUploading(true)}
                      onClientUploadComplete={async (res) => {
                        if (res && res[0]) {
                          const newUrl = res[0].url;
-                         await fetch("/api/user/update-image", {
-                           method: "POST",
-                           headers: { "Content-Type": "application/json" },
-                           body: JSON.stringify({ imageUrl: newUrl })
-                         });
-                         window.location.reload();
+                         try {
+                           const response = await fetch("/api/user/update-image", {
+                             method: "POST",
+                             headers: { "Content-Type": "application/json" },
+                             body: JSON.stringify({ imageUrl: newUrl })
+                           });
+
+                           if (response.ok) {
+                             // Refresh session client-side
+                             await update({ image: newUrl });
+                             const Swal = (await import("sweetalert2")).default;
+                             Swal.fire({
+                               toast: true,
+                               position: "top-end",
+                               icon: "success",
+                               title: "Foto profil diperbarui!",
+                               showConfirmButton: false,
+                               timer: 2000
+                             });
+                           }
+                         } catch (err) {
+                           console.error(err);
+                         } finally {
+                           setIsUploading(false);
+                         }
                        }
                      }}
+                     onUploadError={() => setIsUploading(false)}
                    />
                  </div>
               </div>
