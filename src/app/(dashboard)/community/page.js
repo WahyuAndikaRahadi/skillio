@@ -79,7 +79,7 @@ export default function CommunityPage() {
 
       {/* ── LEFT PANEL ────────────────────────────────────────────────────── */}
       <div className={cn(
-        "absolute inset-y-0 left-0 z-[70] w-80 shrink-0 flex flex-col border-r border-skillio-100 bg-white transition-transform duration-300 lg:relative lg:translate-x-0",
+        "absolute inset-y-0 left-0 z-[70] lg:z-10 w-80 shrink-0 flex flex-col border-r border-skillio-100 bg-white transition-transform duration-300 lg:relative lg:translate-x-0",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full",
         activeGroupId && "lg:hidden"
       )}>
@@ -268,18 +268,19 @@ export default function CommunityPage() {
             </div>
 
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-white">
-              <div className="relative z-10">
-                {/* Prop onJoin dikirim ke GroupList */}
-                <GroupList 
-                  categoryId={selectedCategory} 
-                  viewMode={viewMode}
-                  onJoin={(id) => {
-                    setActiveGroupId(id);
-                    setViewMode("joined");
-                  }} 
-                />
-
+            <div className="flex-1 relative bg-white overflow-hidden">
+              <div className="absolute inset-0 overflow-y-auto custom-scrollbar">
+                <div className="relative z-10 min-h-full flex flex-col">
+                  {/* Prop onJoin dikirim ke GroupList */}
+                  <GroupList 
+                    categoryId={selectedCategory} 
+                    viewMode={viewMode}
+                    onJoin={(id) => {
+                      setActiveGroupId(id);
+                      setViewMode("joined");
+                    }} 
+                  />
+                </div>
               </div>
             </div>
           </>

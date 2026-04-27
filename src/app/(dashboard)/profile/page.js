@@ -207,14 +207,26 @@ export default function ProfilePage() {
               </div>
 
               <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
-                 <button className="px-8 py-4 bg-white text-primary-blue rounded-[24px] font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-xl shadow-black/20">
-                    <Share2 size={18} /> Bagikan Profil
-                 </button>
                  <button 
-                   onClick={() => signOut()}
-                   className="px-8 py-4 bg-white/10 text-white rounded-[24px] font-black text-sm uppercase tracking-widest hover:bg-white/20 backdrop-blur-md transition-all flex items-center gap-2 border border-white/20 active:scale-95"
+                   onClick={async () => {
+                     const shareUrl = `${window.location.origin}/profile/${session?.user?.id || ""}`;
+                     await navigator.clipboard.writeText(shareUrl);
+                     const Swal = (await import("sweetalert2")).default;
+                     Swal.fire({
+                       toast: true,
+                       position: "top-end",
+                       icon: "success",
+                       title: "Link profil disalin!",
+                       showConfirmButton: false,
+                       timer: 2000,
+                       customClass: {
+                         popup: 'rounded-2xl'
+                       }
+                     });
+                   }}
+                   className="px-8 py-4 bg-white text-primary-blue rounded-[24px] font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-xl shadow-black/20"
                  >
-                    <LogOut size={18} /> Keluar
+                    <Share2 size={18} /> Bagikan Profil
                  </button>
               </div>
             </div>

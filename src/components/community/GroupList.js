@@ -7,8 +7,10 @@ import {
   Globe,
   Plus,
   ChevronRight,
+  ChevronDown,
   Loader2,
   MoreVertical,
+  X
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -169,10 +171,10 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
       confirmButtonText: "Ya, Gabung!",
       cancelButtonText: "Batal",
       confirmButtonColor: "#2b6ea6",
-      cancelButtonColor: "#f1f5f9",
+      cancelButtonColor: "#ef4444",
       customClass: {
         confirmButton: "rounded-xl font-bold px-6 py-3",
-        cancelButton: "rounded-xl font-bold px-6 py-3 text-slate-500",
+        cancelButton: "rounded-xl font-bold px-6 py-3 text-white",
         popup: "rounded-[32px] p-8",
       },
       buttonsStyling: true,
@@ -184,13 +186,162 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
   };
 
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-8 font-sans relative flex-1 flex flex-col">
       {isLoading ? (
         <div className="text-center py-20">
           <Loader2 className="w-10 h-10 text-primary-blue animate-spin mx-auto mb-4" />
           <p className="font-bold text-slate-400">Menjelajahi komunitas...</p>
         </div>
+      ) : showCreateModal ? (
+        /* Inline Create Group Card - Takes over when creating */
+        <AnimatePresence mode="wait">
+          <motion.div
+            key="create-form"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="m-4 overflow-hidden bg-white rounded-[32px] border border-primary-blue/20 shadow-xl shadow-blue-500/5"
+          >
+            {/* Header Decoration */}
+            <div className="h-1.5 bg-gradient-to-r from-primary-blue via-blue-400 to-indigo-500" />
+            
+            <div className="p-7 md:p-9">
+              <div className="flex items-center justify-between mb-8">
+                <div className="space-y-1">
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight">Buat Grup Baru</h2>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pimpin komunitas belajarmu</p>
+                </div>
+                <button 
+                  onClick={() => setShowCreateModal(false)}
+                  className="p-2.5 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-xl transition-colors hover:bg-slate-100"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateGroup} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Nama Grup</label>
+                    <input
+                      required
+                      value={newGroupName}
+                      onChange={(e) => setNewGroupName(e.target.value)}
+                      placeholder="Misal: Web Dev Enthusiast"
+                      className="w-full px-4 py-3.5 bg-slate-50 rounded-xl border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-blue/20 font-black text-sm text-slate-900 placeholder-slate-300"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Kategori</label>
+                    <div className="relative">
+                      <select
+                        value={newGroupCategory}
+                        onChange={(e) => setNewGroupCategory(e.target.value)}
+                        className="w-full px-4 py-3.5 bg-slate-50 rounded-xl border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-blue/20 font-black text-sm text-slate-900 appearance-none cursor-pointer"
+                      >
+                        <option value="">Pilih Kategori</option>
+                        {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                      </select>
+                      <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Tipe Privasi</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setNewGroupPrivacy("public")}
+                      className={cn(
+                        "flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left",
+                        newGroupPrivacy === "public" ? "border-primary-blue bg-blue-50/30" : "border-slate-100 bg-white"
+                      )}
+                    >
+                      <div className={cn("p-2 rounded-lg", newGroupPrivacy === "public" ? "bg-primary-blue text-white" : "bg-slate-50 text-slate-400")}>
+                        <Globe size={16} />
+                      </div>
+                      <div>
+                        <p className={cn("text-[10px] font-black uppercase", newGroupPrivacy === "public" ? "text-primary-blue" : "text-slate-500")}>Publik</p>
+                        <p className="text-[8px] font-bold text-slate-400">Semua bisa join</p>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setNewGroupPrivacy("private")}
+                      className={cn(
+                        "flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left",
+                        newGroupPrivacy === "private" ? "border-primary-blue bg-blue-50/30" : "border-slate-100 bg-white"
+                      )}
+                    >
+                      <div className={cn("p-2 rounded-lg", newGroupPrivacy === "private" ? "bg-primary-blue text-white" : "bg-slate-50 text-slate-400")}>
+                        <Lock size={16} />
+                      </div>
+                      <div>
+                        <p className={cn("text-[10px] font-black uppercase", newGroupPrivacy === "private" ? "text-primary-blue" : "text-slate-500")}>Privat</p>
+                        <p className="text-[8px] font-bold text-slate-400">Butuh password</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {newGroupPrivacy === "private" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2 overflow-hidden"
+                    >
+                      <label className="text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Password</label>
+                      <input
+                        required
+                        type="password"
+                        value={newGroupPassword}
+                        onChange={(e) => setNewGroupPassword(e.target.value)}
+                        placeholder="Password grup..."
+                        className="w-full px-4 py-3.5 bg-slate-50 rounded-xl border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-blue/20 font-black text-sm text-slate-900 tracking-widest"
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Visi & Misi</label>
+                  <textarea
+                    required
+                    value={newGroupDesc}
+                    onChange={(e) => setNewGroupDesc(e.target.value)}
+                    placeholder="Deskripsi grup..."
+                    rows={3}
+                    className="w-full px-4 py-3.5 bg-slate-50 rounded-xl border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-blue/20 font-medium text-sm text-slate-900 resize-none"
+                  />
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateModal(false)}
+                    className="flex-1 py-3.5 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 rounded-xl transition-all"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isCreating}
+                    className="flex-[2] py-3.5 bg-primary-blue text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all disabled:opacity-50"
+                  >
+                    {isCreating ? <Loader2 className="animate-spin mx-auto w-4 h-4" /> : "Buat Grup Sekarang"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       ) : (
+        /* Normal Group List View */
         <div className="flex flex-col gap-3 p-4 bg-[#f8fbfd] min-h-full">
           {displayedGroups.map((group) => {
             const isMember = group.members && group.members.length > 0;
@@ -255,21 +406,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                        </button>
                     ) : (
                       <>
-                        {(session?.user?.id === group.created_by || session?.user?.role === "admin") && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (confirm("Hapus grup?")) {
-                                fetch(`/api/community/groups/${group.id}`, { method: 'DELETE' }).then(res => {
-                                  if (res.ok) fetchGroups();
-                                });
-                              }
-                            }}
-                            className="p-1.5 text-slate-300 hover:text-red-500 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                          >
-                            <MoreVertical size={14} />
-                          </button>
-                        )}
+                        {/* Delete option removed based on user request */}
                         <div className="w-8 h-8 rounded-full flex items-center justify-center text-primary-blue opacity-0 group-hover:opacity-100 group-hover:bg-primary-blue/5 transition-all">
                           <ChevronRight size={18} />
                         </div>
@@ -296,174 +433,87 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
               </p>
             </div>
           )}
-
         </div>
       )}
-
-      {/* Create Group Modal */}
-      <AnimatePresence>
-        {showCreateModal && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowCreateModal(false)}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg bg-white rounded-[32px] p-10 shadow-2xl overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#E6F0F9] rounded-full -translate-y-1/2 translate-x-1/2"></div>
-
-              <h2 className="text-2xl font-black text-[#1E293B] mb-2 font-display">Buat Grup Baru</h2>
-              <p className="text-slate-400 font-medium mb-8">Pimpin komunitas belajarmu sendiri.</p>
-
-              <form onSubmit={handleCreateGroup} className="space-y-5">
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest ml-1">Nama Grup</label>
-                  <input
-                    required
-                    value={newGroupName}
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                    placeholder="Misal: Web Dev Enthusiast"
-                    className="w-full px-5 py-3.5 bg-[#F8FAFC] rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#2A75C4] font-bold text-[#1E293B]"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest ml-1">Kategori</label>
-                  <select
-                    value={newGroupCategory}
-                    onChange={(e) => setNewGroupCategory(e.target.value)}
-                    className="w-full px-5 py-3.5 bg-[#F8FAFC] rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#2A75C4] font-bold text-[#1E293B] appearance-none"
-                  >
-                    <option value="">Pilih Kategori (Opsional)</option>
-                    {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest ml-1">Privasi</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setNewGroupPrivacy("public")}
-                      className={cn(
-                        "flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 font-bold transition-all text-sm",
-                        newGroupPrivacy === "public" ? "border-[#2A75C4] bg-[#E6F0F9] text-[#2A75C4]" : "border-slate-100 text-slate-400"
-                      )}
-                    >
-                      <Globe size={18} /> Publik
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setNewGroupPrivacy("private")}
-                      className={cn(
-                        "flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 font-bold transition-all text-sm",
-                        newGroupPrivacy === "private" ? "border-[#2A75C4] bg-[#E6F0F9] text-[#2A75C4]" : "border-slate-100 text-slate-400"
-                      )}
-                    >
-                      <Lock size={18} /> Privat
-                    </button>
-                  </div>
-                </div>
-
-                <AnimatePresence>
-                  {newGroupPrivacy === "private" && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="space-y-2 overflow-hidden"
-                    >
-                      <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest ml-1 mt-2 block">Password Grup</label>
-                      <input
-                        required
-                        type="password"
-                        value={newGroupPassword}
-                        onChange={(e) => setNewGroupPassword(e.target.value)}
-                        placeholder="Buat password untuk grup ini..."
-                        className="w-full px-5 py-3.5 bg-[#F8FAFC] rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#2A75C4] font-bold text-[#1E293B]"
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest ml-1">Deskripsi</label>
-                  <textarea
-                    required
-                    value={newGroupDesc}
-                    onChange={(e) => setNewGroupDesc(e.target.value)}
-                    placeholder="Jelaskan visi grup ini..."
-                    rows={3}
-                    className="w-full px-5 py-3.5 bg-[#F8FAFC] rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#2A75C4] font-medium text-[#1E293B] resize-none"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isCreating}
-                  className="w-full mt-2 py-4 bg-[#2A75C4] text-white rounded-xl font-black shadow-md hover:bg-[#1A406B] transition-all disabled:opacity-50 active:scale-[0.98]"
-                >
-                  {isCreating ? <Loader2 className="animate-spin mx-auto" /> : "Buat Sekarang"}
-                </button>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* Join Private Group Modal */}
       <AnimatePresence>
         {joinGroupId && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+          <div className="absolute inset-0 z-[9999] flex items-center justify-center p-6">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => { setJoinGroupId(null); setJoinPassword(""); }}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-sm bg-white rounded-[32px] p-8 shadow-2xl overflow-hidden text-center"
+              exit={{ opacity: 0, scale: 0.95, y: 30 }}
+              className="relative w-full max-w-md bg-white rounded-[40px] shadow-[0_32px_64px_rgba(0,0,0,0.2)] overflow-hidden border border-slate-100"
             >
-              <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Lock size={28} />
+              {/* Technical Header Decoration */}
+              <div className="h-2 bg-gradient-to-r from-red-500 via-orange-400 to-amber-500" />
+              
+              <div className="p-10 md:p-12 text-center">
+                <div className="w-20 h-20 bg-red-50 text-red-500 rounded-[28px] flex items-center justify-center mx-auto mb-8 shadow-inner">
+                  <Lock size={32} />
+                </div>
+
+                <div className="space-y-2 mb-10">
+                  <h2 className="text-2xl font-black text-slate-900 tracking-tight font-display">Komunitas Privat</h2>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Masukkan password akses untuk bergabung</p>
+                </div>
+
+                <form onSubmit={(e) => { e.preventDefault(); handleJoin(joinGroupId, joinPassword); }} className="space-y-6">
+                  <div className="space-y-2.5 text-left">
+                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Password Akses</label>
+                    <div className="relative">
+                      <input
+                        required
+                        type="password"
+                        value={joinPassword}
+                        onChange={(e) => setJoinPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500/20 font-black text-slate-900 text-center tracking-[0.5em] placeholder-slate-300 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex flex-col gap-3">
+                    <button
+                      type="submit"
+                      disabled={isJoining}
+                      className="w-full group relative overflow-hidden py-5 bg-gradient-to-r from-red-500 to-red-700 text-white rounded-[24px] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-red-500/25 active:scale-[0.98] transition-all disabled:opacity-50"
+                    >
+                      <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {isJoining ? (
+                        <Loader2 className="animate-spin mx-auto w-5 h-5" />
+                      ) : (
+                        <span className="flex items-center justify-center gap-2">
+                          Buka Akses <ChevronRight size={16} />
+                        </span>
+                      )}
+                    </button>
+                    
+                    <button 
+                      type="button"
+                      onClick={() => { setJoinGroupId(null); setJoinPassword(""); }}
+                      className="w-full py-4 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-colors"
+                    >
+                      Batal
+                    </button>
+                  </div>
+                </form>
               </div>
-
-              <h2 className="text-xl font-black text-[#1E293B] mb-2">Grup Privat</h2>
-              <p className="text-sm text-slate-400 font-medium mb-8">Masukkan password untuk bergabung.</p>
-
-              <form onSubmit={(e) => { e.preventDefault(); handleJoin(joinGroupId, joinPassword); }} className="space-y-6">
-                <input
-                  required
-                  type="password"
-                  value={joinPassword}
-                  onChange={(e) => setJoinPassword(e.target.value)}
-                  placeholder="Password..."
-                  className="w-full px-5 py-3.5 bg-[#F8FAFC] rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#2A75C4] font-bold text-[#1E293B] text-center tracking-widest"
-                />
-
-                <button
-                  type="submit"
-                  disabled={isJoining}
-                  className="w-full py-4 bg-[#2A75C4] text-white rounded-xl font-black shadow-md hover:bg-[#1A406B] transition-all disabled:opacity-50 active:scale-[0.98] flex items-center justify-center"
-                >
-                  {isJoining ? <Loader2 className="animate-spin" /> : "Masuk"}
-                </button>
-              </form>
+              
+              {/* Bottom Decoration */}
+              <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-50/50" />
             </motion.div>
           </div>
         )}
       </AnimatePresence>
     </div>
   );
-}
+}

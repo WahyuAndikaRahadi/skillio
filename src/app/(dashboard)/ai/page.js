@@ -171,7 +171,7 @@ export default function AiMentorPage() {
     <div 
       className={cn(
         "fixed left-0 right-0 bottom-0 flex flex-col bg-slate-50 overflow-hidden z-10 transition-all duration-500",
-        !isImmersiveMode ? "top-20 lg:left-72" : "top-12 lg:left-0"
+        !isImmersiveMode ? "top-20 lg:left-64" : "top-12 lg:left-0"
       )}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}

@@ -25,6 +25,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
   const [onlineCount, setOnlineCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   
   const scrollRef = useRef(null);
   
@@ -221,45 +222,156 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
               <h2 className="text-[16px] text-[#0d2133] font-black font-display">Info Komunitas</h2>
            </div>
            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
-              <div className="flex flex-col items-center group relative">
-                <div className="w-28 h-28 rounded-[28px] bg-[#dbe7f2] text-[#2b6ea6] flex justify-center items-center text-4xl font-black mb-4 relative overflow-hidden">
-                  {group?.image_url ? (
-                    <img src={group.image_url} alt="group" className="w-full h-full object-cover rounded-[28px]"/>
-                  ) : (
-                    group?.name?.[0]
-                  )}
-                  
-                  {/* Overlay Upload hanya untuk Admin */}
+              <div className="flex flex-col items-center">
+                <div className="relative group/avatar mb-6">
+                  <div className="w-32 h-32 rounded-[35px] bg-[#dbe7f2] text-[#2b6ea6] flex justify-center items-center text-4xl font-black relative overflow-hidden border-4 border-white shadow-xl">
+                    {group?.image_url ? (
+                      <img src={group.image_url} alt="group" className="w-full h-full object-cover"/>
+                    ) : (
+                      group?.name?.[0]
+                    )}
+                    
+                    {isUploading && (
+                      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                         <Loader2 className="w-8 h-8 text-white animate-spin" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Edit Bubble on Avatar */}
                   {(group?.created_by === session?.user?.id || session?.user?.role === "admin") && (
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer">
-                      <UploadButton
-                        endpoint="imageUploader"
-                        onClientUploadComplete={async (res) => {
-                          const url = res?.[0]?.url;
-                          if (url) {
-                            const updateRes = await fetch(`/api/community/groups/${groupId}`, {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ imageUrl: url })
-                            });
-                            if (updateRes.ok) {
-                              const updated = await updateRes.json();
-                              setGroup(prev => ({ ...prev, image_url: updated.image_url }));
-                            }
-                          }
-                        }}
-                        appearance={{
-                          button: "bg-transparent text-white border-none shadow-none w-full h-full text-[10px] font-bold p-0 m-0",
-                          allowedContent: "hidden"
-                        }}
-                        content={{
-                          button: "Ganti Foto"
-                        }}
-                      />
+                    <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary-blue text-white rounded-2xl flex items-center justify-center shadow-lg border-4 border-white cursor-pointer hover:scale-110 transition-all overflow-hidden">
+                       <ImageIcon size={18} />
+                       <div className="absolute inset-0 opacity-0 cursor-pointer">
+                         <UploadButton
+                            endpoint="imageUploader"
+                            onUploadBegin={() => setIsUploading(true)}
+                            onClientUploadComplete={async (res) => {
+                              const url = res?.[0]?.url;
+                              if (url) {
+                                const Swal = (await import("sweetalert2")).default;
+                                
+                                // Show premium loading alert
+                                Swal.fire({
+                                  title: 'Menyinkronkan...',
+                                  text: 'Foto grup sedang diperbarui.',
+                                  allowOutsideClick: false,
+                                  showConfirmButton: false,
+                                  didOpen: () => {
+                                    Swal.showLoading();
+                                  },
+                                  customClass: {
+                                    popup: 'rounded-[32px] p-10'
+                                  }
+                                });
+
+                                try {
+                                  const updateRes = await fetch(`/api/community/groups/${groupId}`, {
+                                    method: "PATCH",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ imageUrl: url })
+                                  });
+                                  if (updateRes.ok) {
+                                    const updated = await updateRes.json();
+                                    setGroup(prev => ({ ...prev, image_url: updated.image_url }));
+                                    
+                                    Swal.fire({
+                                      toast: true,
+                                      position: 'top-end',
+                                      icon: 'success',
+                                      title: 'Foto grup diperbarui!',
+                                      showConfirmButton: false,
+                                      timer: 2000,
+                                      customClass: {
+                                        popup: 'rounded-2xl'
+                                      }
+                                    });
+                                  }
+                                } catch (err) {
+                                  Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan saat memperbarui foto.' });
+                                } finally {
+                                  setIsUploading(false);
+                                }
+                              }
+                            }}
+                            onUploadError={() => {
+                              setIsUploading(false);
+                            }}
+                            appearance={{ button: "w-full h-full p-0 m-0", allowedContent: "hidden" }}
+                         />
+                       </div>
                     </div>
                   )}
                 </div>
-                <h1 className="text-lg text-[#0d2133] font-black text-center font-display">{group?.name}</h1>
+
+                <div className="text-center space-y-1">
+                  <h1 className="text-xl text-[#0d2133] font-black font-display tracking-tight">{group?.name}</h1>
+                  {(group?.created_by === session?.user?.id || session?.user?.role === "admin") && (
+                    <div className="pt-2">
+                       <div className="inline-block relative overflow-hidden group/btn">
+                         <button className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-blue bg-primary-blue/10 px-4 py-2 rounded-full hover:bg-primary-blue hover:text-white transition-all flex items-center gap-2">
+                           <ImageIcon size={12} /> Ubah Foto Komunitas
+                         </button>
+                         <div className="absolute inset-0 opacity-0 cursor-pointer">
+                            <UploadButton
+                              endpoint="imageUploader"
+                              onUploadBegin={() => setIsUploading(true)}
+                              onClientUploadComplete={async (res) => {
+                                const url = res?.[0]?.url;
+                                if (url) {
+                                  const Swal = (await import("sweetalert2")).default;
+                                  
+                                  // Show premium loading alert
+                                  Swal.fire({
+                                    title: 'Menyinkronkan...',
+                                    text: 'Foto grup sedang diperbarui.',
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    didOpen: () => {
+                                      Swal.showLoading();
+                                    },
+                                    customClass: {
+                                      popup: 'rounded-[32px] p-10'
+                                    }
+                                  });
+
+                                  try {
+                                    const updateRes = await fetch(`/api/community/groups/${groupId}`, {
+                                      method: "PATCH",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ imageUrl: url })
+                                    });
+                                    if (updateRes.ok) {
+                                      const updated = await updateRes.json();
+                                      setGroup(prev => ({ ...prev, image_url: updated.image_url }));
+                                      
+                                      Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: 'Foto grup diperbarui!',
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                        customClass: {
+                                          popup: 'rounded-2xl'
+                                        }
+                                      });
+                                    }
+                                  } catch (err) {
+                                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan saat memperbarui foto.' });
+                                  } finally {
+                                    setIsUploading(false);
+                                  }
+                                }
+                              }}
+                              onUploadError={() => setIsUploading(false)}
+                              appearance={{ button: "w-full h-full p-0 m-0", allowedContent: "hidden" }}
+                            />
+                         </div>
+                       </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
              {group?.description && <div><p className="text-[11px] font-black text-[#92b7d6] uppercase tracking-widest mb-2">Deskripsi</p><p className="text-sm text-[#0d2133] font-medium">{group.description}</p></div>}
