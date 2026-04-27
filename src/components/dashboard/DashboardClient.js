@@ -114,7 +114,7 @@ export default function DashboardClient({
       >
         <div>
           <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-            {greeting}, {firstName}! 👋
+            {greeting}, {firstName}! 
           </h1>
           <p className="text-slate-400 font-medium mt-1">
             {hasRoadmap
@@ -123,16 +123,6 @@ export default function DashboardClient({
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 bg-white p-1.5 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-orange-50 rounded-xl">
-            <Flame className="text-orange-500" size={18} />
-            <span className="font-black text-orange-600 text-sm">{currentStreak}</span>
-          </div>
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-skillio-50 rounded-xl">
-            <Zap className="text-skillio-500" size={18} />
-            <span className="font-black text-skillio-600 text-sm">{xp} XP</span>
-          </div>
-        </div>
       </motion.div>
 
       {/* ═══ HERO PROGRESS CARD (if has roadmap) ═══ */}

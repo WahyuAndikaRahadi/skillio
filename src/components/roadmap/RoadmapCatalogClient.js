@@ -99,109 +99,190 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
   return (
     <div className="min-h-screen bg-slate-50/50">
       
-      {/* ═══ PREMIUM SHOWROOM HEADER ═══ */}
-      <div className="relative pt-6 px-6 md:px-10 mb-12">
+      {/* ═══ PREMIUM SHOWROOM HEADER (Matched with Lencana Style) ═══ */}
+      <div className="relative pt-6 px-6 md:px-10 mb-8 md:mb-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative group"
         >
-          {/* Main Card Header */}
-          <div className="relative overflow-hidden rounded-[40px] md:rounded-[60px] bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800 border border-blue-400/30 shadow-[0_20px_50px_rgba(59,130,246,0.2)]">
+          {/* Main Card */}
+          <div className="relative overflow-hidden rounded-[50px] md:rounded-[70px] bg-gradient-to-br from-primary-blue to-blue-700 border border-blue-400/30 shadow-[0_20px_50px_rgba(59,130,246,0.3)]">
             
-            {/* Animated Background */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <motion.div 
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-                  transition={{ duration: 10, repeat: Infinity }}
-                  className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl" 
-                />
-                <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+            {/* Immersive Animated Background */}
+            <div className="absolute inset-0 z-0">
+               <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800" />
+               <motion.div 
+                 animate={{ 
+                   scale: [1, 1.2, 1],
+                   opacity: [0.3, 0.5, 0.3],
+                   rotate: [0, 90, 0]
+                 }}
+                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                 className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl" 
+               />
+               <motion.div 
+                 animate={{ 
+                   scale: [1, 1.5, 1],
+                   opacity: [0.2, 0.4, 0.2],
+                   rotate: [0, -90, 0]
+                 }}
+                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                 className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)] blur-3xl" 
+               />
+               
+               {/* Pattern overlay */}
+               <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             </div>
 
-            <div className="relative z-10 p-6 md:p-10 lg:p-12 flex flex-col items-center text-center">
+            <div className="relative z-10 p-8 md:p-10 lg:p-12 flex flex-col lg:flex-row items-center gap-12">
               
-              <div className="space-y-4">
+              {/* Left Content */}
+              <div className="flex-1 text-center lg:text-left space-y-6">
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-2xl border border-white/20 px-4 py-1.5 rounded-full"
+                  className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-2xl border border-white/20 px-5 py-2 rounded-full"
                 >
-                  <Sparkles size={12} className="text-yellow-300" />
-                  <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white">Eksplorasi Karir</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-300 animate-pulse" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Eksplorasi Karir</span>
                 </motion.div>
 
-                <div className="space-y-3">
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tighter">
+                <div className="space-y-4">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tighter"
+                  >
                     Temukan Jalur <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-white to-blue-200 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                       Masa Depanmu
                     </span>
-                  </h1>
-                  <p className="text-sm md:text-base text-white/70 font-medium max-w-lg mx-auto leading-relaxed">
+                  </motion.h1>
+                  
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-base md:text-lg text-white/80 font-medium max-w-lg leading-relaxed"
+                  >
                     Pilih satu dari 50+ bidang profesional digital. Kami siapkan roadmap 30 hari yang terstruktur untuk membantumu menguasainya dari nol.
-                  </p>
+                  </motion.p>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-                   <div className="flex items-center gap-2 text-white/80 text-[10px] font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
-                      <Target size={14} className="text-blue-300" /> 50+ Roadmap
+                <motion.div 
+                   initial={{ opacity: 0, y: 20 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ delay: 0.6 }}
+                   className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2"
+                >
+                   <div className="flex items-center gap-2.5 text-white/90 text-xs font-black bg-white/10 border border-white/20 px-4 py-2.5 rounded-xl backdrop-blur-md">
+                      <Target size={16} className="text-blue-300" /> 50 Roadmap
                    </div>
-                   <div className="flex items-center gap-2 text-white/80 text-[10px] font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
-                      <Zap size={14} className="text-yellow-300" /> 30 Hari Belajar
+                   <div className="flex items-center gap-2.5 text-white/90 text-xs font-black bg-white/10 border border-white/20 px-4 py-2.5 rounded-xl backdrop-blur-md">
+                      <Zap size={16} className="text-yellow-300" /> 30 Hari Belajar
                    </div>
-                   <div className="flex items-center gap-2 text-white/80 text-[10px] font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
-                      <Rocket size={14} className="text-emerald-300" /> Sertifikat
+                   <div className="flex items-center gap-2.5 text-white/90 text-xs font-black bg-white/10 border border-white/20 px-4 py-2.5 rounded-xl backdrop-blur-md">
+                      <Rocket size={16} className="text-emerald-300" /> Sertifikat
                    </div>
+                </motion.div>
+              </div>
+
+              {/* Right Content - Visual Showcase */}
+              <div className="relative shrink-0 hidden md:block">
+                {/* Floating Elements Container */}
+                <div className="relative w-64 h-64 md:w-80 md:h-80">
+                   {/* Main Icon (Central) */}
+                   <motion.div
+                     animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
+                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                     className="absolute inset-0 flex items-center justify-center z-20"
+                   >
+                     <div className="relative">
+                        <div className="absolute inset-0 bg-blue-400/20 blur-[60px] rounded-full" />
+                        <Rocket size={120} className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.4)]" />
+                     </div>
+                   </motion.div>
+
+                   {/* Orbital Icons */}
+                   {[
+                     { Icon: Code2, color: "text-blue-400", pos: "top-0 left-0", delay: 0 },
+                     { Icon: Palette, color: "text-purple-400", pos: "top-8 right-0", delay: 1 },
+                     { Icon: Database, color: "text-emerald-400", pos: "bottom-8 left-8", delay: 2 },
+                     { Icon: Sparkles, color: "text-yellow-400", pos: "bottom-0 right-8", delay: 1.5 },
+                   ].map((item, i) => (
+                     <motion.div
+                       key={i}
+                       animate={{ 
+                         y: [0, -10, 0],
+                         rotate: [0, 10, 0],
+                         scale: [1, 1.1, 1]
+                       }}
+                       transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut", delay: item.delay }}
+                       className={`absolute ${item.pos} z-30 p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl`}
+                     >
+                       <item.Icon className={item.color} size={22} />
+                     </motion.div>
+                   ))}
+
+                   {/* Count Bubble */}
+                   <motion.div
+                     initial={{ scale: 0 }}
+                     animate={{ scale: 1 }}
+                     transition={{ delay: 0.8, type: "spring" }}
+                     className="absolute -right-2 -bottom-2 z-40 bg-white p-6 rounded-[30px] shadow-2xl border-4 border-blue-800 text-center"
+                   >
+                      <span className="block text-3xl font-black text-[#0F172A] leading-none">50</span>
+                      <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 mt-1 block">Roadmap</span>
+                   </motion.div>
                 </div>
               </div>
-            </div>
 
+            </div>
           </div>
+
+          {/* Decorative floating shapes outside card */}
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-400/20 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none" />
         </motion.div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 pb-20 relative z-10">
         
-        {/* ═══ ACTIVE ROADMAPS INDICATOR ═══ */}
-        {activeRoadmaps.length > 0 && (
-          <div className="mb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activeRoadmaps.map((roadmap) => (
-              <motion.div
-                key={roadmap.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center justify-between bg-white border-2 border-primary-blue/20 p-6 rounded-[32px] shadow-xl shadow-blue-500/5 group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-primary-blue border border-blue-100 group-hover:scale-110 transition-transform">
-                    <BookOpen size={20} />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-black text-slate-900 leading-none mb-1 text-sm truncate">Aktif</h3>
-                    <p className="text-xs text-slate-500 font-bold truncate max-w-[120px]">{roadmap.category.name}</p>
-                  </div>
-                </div>
-                <Link 
-                  href={`/belajar/${roadmap.id}`}
-                  className="flex items-center gap-1.5 bg-primary-blue text-white px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
-                >
-                  Lanjut <ChevronRight size={14} />
-                </Link>
-              </motion.div>
-            ))}
+        {/* ═══ AI TALENT FINDER BANNER (Below Hero Card) ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12 bg-white border border-slate-100 rounded-[35px] p-2 pr-2 md:p-3 md:pr-4 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-slate-200/40 relative overflow-hidden group"
+        >
+          <div className="flex items-center gap-6 flex-1 pl-4">
+             <div className="w-14 h-14 md:w-16 md:h-16 bg-indigo-50 rounded-[24px] flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-105 transition-transform shrink-0">
+               <Sparkles size={28} className="animate-pulse" />
+             </div>
+             <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 mb-1 leading-none">Bingung Memilih Jalur?</p>
+                <h3 className="text-lg md:text-xl font-black text-slate-900 leading-tight">Ikuti kuis ini untuk temukan passion-mu!</h3>
+             </div>
           </div>
-        )}
+          <Link 
+            href="/quiz"
+            className="w-full md:w-auto px-10 py-4 md:py-4.5 bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800 text-white rounded-[24px] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
+          >
+            Mulai Analisis <ChevronRight size={16} />
+          </Link>
+        </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-12">
           
           {/* ═══ SIDE NAVIGATION (DOMAINS) ═══ */}
           <div className="lg:w-72 shrink-0">
-            <div className="sticky top-24 space-y-8">
+            <div className="sticky top-24 space-y-6">
                
-               {/* New Search Location */}
+                {/* New Search Location */}
                <motion.div
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -275,20 +356,6 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                     })}
                   </div>
                </div>
-
-               {/* Quick Support / AI Widget */}
-               <div className="p-6 bg-gradient-to-br from-blue-600 to-primary-blue rounded-[32px] text-white shadow-2xl relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:rotate-12 transition-transform">
-                     <MousePointer2 size={40} />
-                  </div>
-                  <div className="relative z-10">
-                     <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-2">Bingung Pilih?</p>
-                     <h4 className="text-sm font-black mb-4 leading-relaxed">Biarkan AI Mentor membantumu menemukan minat!</h4>
-                     <Link href="/ai" className="inline-flex items-center gap-2 text-xs font-black text-white bg-white/20 backdrop-blur-md px-4 py-2 rounded-xl hover:bg-white/30 transition-all">
-                        Mulai Diskusi <ChevronRight size={14} />
-                     </Link>
-                  </div>
-               </div>
             </div>
           </div>
 
@@ -303,19 +370,19 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                 transition={{ duration: 0.4 }}
                 className="space-y-10"
               >
-                {/* Domain Header */}
-                <div className="relative">
-                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
-                      <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{activeDomain}</h2>
-                      <span className="bg-slate-200/50 text-slate-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
-                        {filteredItems.length} Roadmap
-                      </span>
-                   </div>
-                   <p className="text-slate-500 font-medium text-lg max-w-2xl">{currentGroup?.description}</p>
-                </div>
+                 {/* Domain Header */}
+                 <div className="relative">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
+                       <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{activeDomain}</h2>
+                       <span className="bg-slate-200/50 text-slate-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
+                         {filteredItems.length} Roadmap
+                       </span>
+                    </div>
+                    <p className="text-slate-500 font-medium text-lg max-w-2xl">{currentGroup?.description}</p>
+                 </div>
 
-                {/* Grid Catalog */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+                 {/* Grid Catalog */}
+                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
                   {filteredItems.map((category, idx) => {
                     const isActive = activeRoadmaps.some(r => r.category_id === category.id);
                     const isLoading = loadingCategory === category.id;
@@ -335,21 +402,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                             : "border-slate-100 hover:border-primary-blue/30 hover:shadow-2xl hover:shadow-slate-300/30"
                         )}
                       >
-                        <div className="flex items-start justify-between mb-8">
-                           <div className={cn(
-                             "w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-lg",
-                             isActive ? "bg-primary-blue text-white" : "bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-primary-blue"
-                           )}>
-                              <Icon size={32} />
-                           </div>
-                           {isActive && (
-                             <div className="bg-blue-600 text-white p-1.5 rounded-full shadow-lg">
-                                <CheckCircle2 size={16} />
-                             </div>
-                           )}
-                        </div>
-
-                        <div className="flex-1 space-y-3 mb-8">
+                        <div className="flex-1 space-y-3 mb-8 pt-4">
                            <h3 className="text-2xl font-black text-slate-900 leading-tight group-hover:text-primary-blue transition-colors">
                               {category.name}
                            </h3>

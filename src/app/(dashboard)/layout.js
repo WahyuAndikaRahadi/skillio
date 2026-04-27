@@ -13,7 +13,15 @@ export default function DashboardLayout({ children }) {
   const { isImmersiveMode } = useAppStore();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-slate-50/30 relative overflow-hidden">
+      {/* ═══ PREMIUM MESH GRADIENT BACKGROUND ═══ */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute top-[20%] -right-[5%] w-[30%] h-[40%] bg-blue-500/5 rounded-full blur-[100px]" />
+        <div className="absolute -bottom-[10%] left-[20%] w-[50%] h-[50%] bg-purple-500/5 rounded-full blur-[140px]" />
+        <div className="absolute inset-0 opacity-[0.015] bg-[url('https://www.transparenttextures.com/patterns/grid-me.png')]" />
+      </div>
+
       {!isImmersiveMode && <Sidebar />}
       
       {/* Mobile Sidebar Overlay */}

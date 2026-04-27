@@ -25,6 +25,7 @@ const registerSchema = z.object({
 const RegisterForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [step, setStep] = useState("register"); // 'register' or 'verify'
   const [registeredEmail, setRegisteredEmail] = useState("");
@@ -96,6 +97,7 @@ const RegisterForm = () => {
   };
 
   const handleGoogleLogin = () => {
+    setIsGoogleLoading(true);
     signIn("google", { callbackUrl: "/dashboard" });
   };
 
@@ -175,6 +177,21 @@ const RegisterForm = () => {
 
   return (
     <div className="w-full">
+      {/* Full Screen Loading Overlay */}
+      {isGoogleLoading && (
+        <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl">
+           <div className="flex flex-col items-center gap-6">
+              <div className="relative">
+                 <div className="absolute inset-0 bg-skillio-500/20 blur-2xl rounded-full" />
+                 <Loader2 className="w-12 h-12 text-skillio-600 animate-spin relative" />
+              </div>
+              <div className="text-center space-y-2">
+                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Menghubungkan ke Google...</h3>
+                 <p className="text-sm font-bold text-slate-500 italic">"Satu langkah lagi menuju masa depanmu."</p>
+              </div>
+           </div>
+        </div>
+      )}
       <div className="mb-10 lg:hidden">
         <Link href="/" className="inline-flex items-center gap-3 group">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20 group-hover:scale-110 transition-transform">

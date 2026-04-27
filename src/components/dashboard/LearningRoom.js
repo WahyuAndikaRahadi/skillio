@@ -25,7 +25,7 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
 
         <Link 
           href="/roadmap"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-skillio-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-skillio-500/20 hover:bg-skillio-700 transition-all"
+          className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-primary-blue to-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all"
         >
           <Plus size={18} />
           Tambah Bidang Baru
@@ -137,37 +137,53 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
 
         {/* Sidebar Stats */}
         <div className="space-y-6">
-          <div className="bg-skillio-600 rounded-3xl p-6 text-white shadow-xl shadow-skillio-500/20">
-            <h3 className="text-sm font-black uppercase tracking-widest mb-6 opacity-80">Statistik Belajar</h3>
-            
-            <div className="space-y-5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Flame size={18} className="text-orange-300" />
-                  <span className="text-xs font-bold">Streak Harian</span>
-                </div>
-                <span className="text-lg font-black">{stats.streak} Hari</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Star size={18} className="text-yellow-300" />
-                  <span className="text-xs font-bold">Total Lencana</span>
-                </div>
-                <span className="text-lg font-black">{stats.badgeCount}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Trophy size={18} className="text-blue-200" />
-                  <span className="text-xs font-bold">Roadmap Lulus</span>
-                </div>
-                <span className="text-lg font-black">{completedRoadmaps.length}</span>
-              </div>
+          <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800 text-white shadow-xl shadow-blue-500/20 group">
+            {/* Immersive Animated Background (Matched with Showroom) */}
+            <div className="absolute inset-0 z-0">
+               <motion.div 
+                 animate={{ 
+                   scale: [1, 1.2, 1],
+                   opacity: [0.3, 0.4, 0.3],
+                   rotate: [0, 90, 0]
+                 }}
+                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                 className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] blur-3xl" 
+               />
+               <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             </div>
-            
-            <div className="mt-8 pt-6 border-t border-white/10">
-               <p className="text-[10px] font-bold text-white/60 leading-relaxed italic text-center">
-                 "Teruslah melangkah, satu hari satu keahlian baru."
-               </p>
+
+            <div className="relative z-10 p-6">
+              <h3 className="text-sm font-black uppercase tracking-widest mb-6 opacity-80">Statistik Belajar</h3>
+              
+              <div className="space-y-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Flame size={18} className="text-orange-300" />
+                    <span className="text-xs font-bold">Streak Harian</span>
+                  </div>
+                  <span className="text-lg font-black">{stats.streak} Hari</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Star size={18} className="text-yellow-300" />
+                    <span className="text-xs font-bold">Total Lencana</span>
+                  </div>
+                  <span className="text-lg font-black">{stats.badgeCount}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Trophy size={18} className="text-blue-200" />
+                    <span className="text-xs font-bold">Roadmap Lulus</span>
+                  </div>
+                  <span className="text-lg font-black">{completedRoadmaps.length}</span>
+                </div>
+              </div>
+              
+              <div className="mt-8 pt-6 border-t border-white/10">
+                 <p className="text-[10px] font-bold text-white/60 leading-relaxed italic text-center">
+                   "Teruslah melangkah, satu hari satu keahlian baru."
+                 </p>
+              </div>
             </div>
           </div>
 
