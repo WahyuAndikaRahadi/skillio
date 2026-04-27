@@ -24,10 +24,13 @@ export const metadata = {
   },
 };
 
+import Preloader from "@/components/layout/Preloader";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased`}>
+        <Preloader />
         <AuthProvider>
           {children}
         </AuthProvider>
