@@ -6,8 +6,7 @@ import { Bot, User, Send, Loader2, Sparkles, Plus, File, X } from "lucide-react"
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
-
-
+import Swal from "sweetalert2";
 
 export default function AiMentorPage() {
   const [messages, setMessages] = useState([
@@ -51,7 +50,12 @@ export default function AiMentorPage() {
   const handleFilesAdded = (newFiles) => {
     const totalFiles = selectedFiles.length + newFiles.length;
     if (totalFiles > 3) {
-      alert("Maksimal 3 file yang dapat diunggah sekaligus.");
+      Swal.fire({
+        icon: "warning",
+        title: "Batas Unggah",
+        text: "Maksimal 3 file yang dapat diunggah sekaligus.",
+        confirmButtonColor: "#2563eb",
+      });
       const availableSlots = 3 - selectedFiles.length;
       if (availableSlots > 0) {
         setSelectedFiles(prev => [...prev, ...newFiles.slice(0, availableSlots)]);

@@ -6,6 +6,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { CheckCircle2, Download, Copy, Check, ShieldCheck, Award } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const CERT_W = 1120;
 const CERT_H = 792;
@@ -75,7 +76,12 @@ const CertificateView = ({ certData }) => {
       pdf.save(`Skillio-Certificate-${certData.participantName.replace(/\s+/g, "-")}.pdf`);
     } catch (e) {
       console.error("PDF error:", e);
-      alert("Gagal mengunduh sertifikat, coba lagi.");
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Unduh",
+        text: "Sertifikat gagal dibuat, silakan coba beberapa saat lagi.",
+        confirmButtonColor: "#2563eb",
+      });
     } finally {
       setIsDownloading(false);
     }

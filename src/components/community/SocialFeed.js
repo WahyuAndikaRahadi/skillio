@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { pusherClient } from "@/lib/pusher-client";
 import { useSession } from "next-auth/react";
 import { UploadButton } from "@/lib/uploadthing";
+import Swal from "sweetalert2";
 
 const CommentItem = ({ comment, postId, onReply }) => {
   return (
@@ -82,16 +83,41 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
   const canDelete = currentUserId === post.user_id || userRole === "admin";
 
   const handleDeletePost = async () => {
-    if (!confirm("Yakin ingin menghapus postingan ini?")) return;
+    const result = await Swal.fire({
+      title: "Hapus Postingan?",
+      text: "Postingan yang dihapus tidak bisa dikembalikan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal"
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       const res = await fetch("/api/posts/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ post_id: post.id })
       });
-      if (res.ok) onDeletePost(post.id);
+      if (res.ok) {
+        onDeletePost(post.id);
+        Swal.fire({
+          icon: "success",
+          title: "Terhapus!",
+          text: "Postinganmu berhasil dihapus.",
+          timer: 1500,
+          showConfirmButton: false
+        });
+      }
     } catch (err) {
-      alert("Terjadi kesalahan.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Terjadi kesalahan saat menghapus postingan."
+      });
     }
   };
 
@@ -462,7 +488,13 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
                         <UploadButton
                           endpoint="imageUploader"
                           onClientUploadComplete={(res) => { if (res && res[0]) setImageUrl(res[0].url); }}
-                          onUploadError={(error) => alert(`Upload ERROR! ${error.message}`)}
+                          onUploadError={(error) => {
+                            Swal.fire({
+                              icon: "error",
+                              title: "Upload Gagal",
+                              text: error.message
+                            });
+                          }}
                           appearance={{ button: "bg-primary-blue text-white font-medium px-4 py-1.5 rounded-lg text-xs w-auto" }}
                         />
                       </div>

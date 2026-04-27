@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { pusherClient } from "@/lib/pusher-client";
 import { useSession } from "next-auth/react";
 import { UploadButton } from "@/lib/uploadthing";
+import Swal from "sweetalert2";
 
 // Ubah parameter dari { params } menjadi props biasa { groupId, onBack }
 export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
@@ -60,8 +61,13 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
         const msgRes = await fetch(`/api/community/groups/${groupId}/messages`);
         const msgData = await msgRes.json();
         if (msgRes.ok) setMessages(msgData);
-        else if (msgRes.status === 403) {
-           alert("Anda bukan anggota grup ini!");
+        if (msgRes.status === 403) {
+           Swal.fire({
+             icon: "error",
+             title: "Akses Ditolak",
+             text: "Anda bukan anggota grup ini!",
+             confirmButtonColor: "#2563eb",
+           });
            onBack(); // Kembali ke list jika gagal
         }
       } catch (err) {
@@ -246,7 +252,14 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                           <UploadButton
                             endpoint="imageUploader"
                             onClientUploadComplete={(res) => { if (res?.[0]) setImageUrl(res[0].url); }}
-                            onUploadError={(err) => alert(err.message)}
+                            onUploadError={(err) => {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Upload Gagal",
+                                text: err.message,
+                                confirmButtonColor: "#2563eb",
+                              });
+                            }}
                             appearance={{ button: "w-full h-full p-0", allowedContent: "hidden" }}
                           />
                         </div>
@@ -266,7 +279,14 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                                 setFileName(res[0].name);
                               }
                             }}
-                            onUploadError={(err) => alert(err.message)}
+                            onUploadError={(err) => {
+                              Swal.fire({
+                                icon: "error",
+                                title: "Upload Gagal",
+                                text: err.message,
+                                confirmButtonColor: "#2563eb",
+                              });
+                            }}
                             appearance={{ button: "w-full h-full p-0", allowedContent: "hidden" }}
                           />
                         </div>
@@ -548,7 +568,18 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
               <div className="pt-6 space-y-3">
                 <button 
                   onClick={async () => { 
-                    if (confirm("Anda yakin ingin keluar dari grup ini?")) { 
+                    const result = await Swal.fire({
+                      title: "Keluar Grup?",
+                      text: "Anda yakin ingin keluar dari grup ini?",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#ef4444",
+                      cancelButtonColor: "#64748b",
+                      confirmButtonText: "Ya, Keluar!",
+                      cancelButtonText: "Batal"
+                    });
+
+                    if (result.isConfirmed) { 
                       const res = await fetch(`/api/community/groups/${groupId}/join`, { method: "DELETE" }); 
                       if (res.ok) onBack(); 
                     } 
@@ -561,7 +592,18 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                 {(group?.created_by === session?.user?.id || session?.user?.role === "admin") && (
                   <button 
                     onClick={async () => { 
-                      if (confirm("Hapus grup permanen?")) { 
+                      const result = await Swal.fire({
+                        title: "Hapus Grup?",
+                        text: "Hapus grup permanen? Tindakan ini tidak bisa dibatalkan!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#ef4444",
+                        cancelButtonColor: "#64748b",
+                        confirmButtonText: "Ya, Hapus!",
+                        cancelButtonText: "Batal"
+                      });
+
+                      if (result.isConfirmed) { 
                         await fetch(`/api/community/groups/${groupId}`, { method: "DELETE" }); 
                         onBack(); 
                       } 

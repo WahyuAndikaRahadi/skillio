@@ -98,7 +98,12 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
         fetchGroups();
       } else {
         const errData = await res.json();
-        alert(errData.message || "Gagal buat grup");
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Buat Grup",
+          text: errData.message || "Pastikan semua data terisi dengan benar.",
+          confirmButtonColor: "#2563eb",
+        });
       }
     } catch (err) {
       console.error("Gagal buat grup");
@@ -124,13 +129,23 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
           // Ganti router.push menjadi onJoin
           onJoin(groupId); // <--- PERUBAHAN DI SINI
         } else {
-          alert(data.message);
+          Swal.fire({
+            icon: "error",
+            title: "Gagal Bergabung",
+            text: data.message,
+            confirmButtonColor: "#2563eb",
+          });
         }
       } else {
         if (data.requirePassword) {
           setJoinGroupId(groupId);
         } else {
-          alert(data.message || "Terjadi kesalahan.");
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: data.message || "Terjadi kesalahan sistem.",
+            confirmButtonColor: "#2563eb",
+          });
         }
       }
     } catch (err) {

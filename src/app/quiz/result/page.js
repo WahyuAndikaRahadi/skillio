@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import Swal from "sweetalert2";
 
 const ResultPage = () => {
   const router = useRouter();
@@ -48,7 +49,14 @@ const ResultPage = () => {
         body: JSON.stringify({ career }),
       });
       if (response.ok) router.push("/belajar");
-      else alert("Gagal membuat roadmap. Coba lagi ya!");
+      else {
+        Swal.fire({
+          icon: "error",
+          title: "Gagal Membuat Roadmap",
+          text: "Maaf, terjadi kendala teknis. Silakan coba lagi ya!",
+          confirmButtonColor: "#2563eb",
+        });
+      }
     } catch (err) {
       console.error(err);
     } finally {

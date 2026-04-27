@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Swal from "sweetalert2";
 
 // Badge category themes with icons
 const badgeThemes = {
@@ -566,11 +567,31 @@ export default function BadgesPage() {
                                 if (navigator.share) {
                                   navigator.share(shareData).catch(() => {
                                     navigator.clipboard.writeText(shareUrl);
-                                    alert("Link profil berhasil disalin ke clipboard!");
+                                    Swal.fire({
+                                      toast: true,
+                                      position: 'top-end',
+                                      icon: 'success',
+                                      title: 'Link disalin!',
+                                      showConfirmButton: false,
+                                      timer: 2000,
+                                      customClass: {
+                                        popup: 'rounded-2xl'
+                                      }
+                                    });
                                   });
                                 } else {
                                   navigator.clipboard.writeText(shareUrl);
-                                  alert("Link profil berhasil disalin ke clipboard!");
+                                  Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Link disalin!',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    customClass: {
+                                      popup: 'rounded-2xl'
+                                    }
+                                  });
                                 }
                               }}
                               className={cn(
