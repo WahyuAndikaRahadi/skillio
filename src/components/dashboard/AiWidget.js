@@ -140,11 +140,19 @@ export default function AiWidget() {
     setMessages(newMessages);
     setIsLoading(true);
 
+    const history = messages.map(m => ({
+      role: m.role,
+      content: m.content
+    }));
+
     try {
       const res  = await fetch("/api/ai/chat", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ messages: newMessages }),
+        body:    JSON.stringify({ 
+          message: userMessage,
+          history: history
+        }),
       });
       const data = await res.json();
 

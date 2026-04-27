@@ -18,9 +18,9 @@ export const metadata = {
   title: "Skillio | Temukan Karier Impianmu dalam 30 Hari",
   description: "Skillio adalah platform belajar berbasis AI yang membantu anak muda Indonesia menemukan bidang yang paling sesuai dan menguasainya dalam 30 hari.",
   icons: {
-    icon: "/images/skillio-logo.png",
-    shortcut: "/images/skillio-logo.png",
-    apple: "/images/skillio-logo.png",
+    icon: "/images/favicon.png",
+    shortcut: "/images/favicon.png",
+    apple: "/images/favicon.png",
   },
 };
 
