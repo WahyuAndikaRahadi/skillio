@@ -385,7 +385,25 @@ export default function BadgesPage() {
               {/* Earned Badges - Featured Section */}
 
 
-              {earnedBadges.length > 0 && (
+              {earnedBadges.length === 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }} 
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white border-2 border-dashed border-slate-200 rounded-[40px] p-20 text-center mb-24"
+                >
+                  <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <Trophy size={40} className="text-slate-300" />
+                  </div>
+                  <h3 className="text-xl font-black text-slate-400 mb-2">Koleksi Lencana Kosong</h3>
+                  <p className="text-slate-400 font-medium max-w-sm mx-auto mb-8">Anda belum memiliki lencana. Selesaikan misi pertama Anda untuk memajang lencana prestisius di sini!</p>
+                  <button 
+                    onClick={() => setActiveTab("misi")}
+                    className="px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all"
+                  >
+                    Lihat Misi Tersedia
+                  </button>
+                </motion.div>
+              ) : (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -447,6 +465,7 @@ export default function BadgesPage() {
                               className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12"
                             />
                           </div>
+
 
 
                           <div className="relative z-10 flex flex-col h-full">
@@ -538,98 +557,6 @@ export default function BadgesPage() {
                 </motion.div>
               )}
 
-              {/* Locked Badges - Aspirational Section */}
-              {lockedBadges.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.6 }}
-                >
-                  <motion.h2
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.7 }}
-                    className="text-3xl md:text-4xl font-black text-slate-900 mb-12 flex items-center gap-3"
-                  >
-                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 to-slate-500 text-white">
-                      🔒
-                    </span>
-                    Misi Berikutnya
-                  </motion.h2>
-
-                  {/* Locked Badges - Compact Grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                    {lockedBadges.map((badge, idx) => {
-                      const theme = getBadgeTheme(badge.name);
-
-                      return (
-                        <motion.div
-                          key={badge.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true, margin: "-50px" }}
-                          transition={{ delay: idx * 0.04, duration: 0.4 }}
-                          whileHover={{ y: -4, scale: 1.01 }}
-                          className="group relative bg-white rounded-[24px] md:rounded-[32px] border-2 border-slate-200 p-4 md:p-6 transition-all overflow-hidden hover:border-slate-300 hover:shadow-lg hover:shadow-slate-300/20"
-                        >
-                          <div className="relative z-10 flex flex-col items-center text-center h-full">
-                            {/* Icon Badge */}
-                            <motion.div
-                              initial={{ scale: 0, rotate: -90 }}
-                              whileInView={{ scale: 1, rotate: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ delay: idx * 0.04 + 0.1, type: "spring", stiffness: 120 }}
-                              className="relative mb-4 flex justify-center"
-                            >
-                              <div className={cn(
-                                `w-20 h-20 md:w-24 md:h-24 rounded-2xl md:rounded-3xl flex items-center justify-center transition-all duration-500 shadow-md grayscale group-hover:grayscale-0`,
-                                `bg-gradient-to-br ${theme.lightGradient} ${theme.accent}`
-                              )}>
-                                <img
-                                  src={badge.image_url}
-                                  alt={badge.name}
-                                  className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-50 group-hover:opacity-100 transition-opacity"
-                                />
-                              </div>
-
-                              <motion.div
-                                className="absolute -top-1 -right-1 bg-slate-500 text-white p-1 rounded-full shadow-md"
-                              >
-                                <Lock size={14} />
-                              </motion.div>
-                            </motion.div>
-
-                            {/* Text Content */}
-                            <motion.h3
-                              initial={{ opacity: 0 }}
-                              whileInView={{ opacity: 1 }}
-                              viewport={{ once: true }}
-                              transition={{ delay: idx * 0.04 + 0.15 }}
-                              className="text-sm md:text-base font-black text-slate-700 mb-2 leading-tight"
-                            >
-                              {badge.name}
-                            </motion.h3>
-                            <motion.p
-                              initial={{ opacity: 0 }}
-                              whileInView={{ opacity: 1 }}
-                              viewport={{ once: true }}
-                              transition={{ delay: idx * 0.04 + 0.2 }}
-                              className="text-xs md:text-sm font-medium text-slate-500 leading-relaxed mb-3"
-                            >
-                              {badge.description}
-                            </motion.p>
-
-                            {/* Locked Indicator */}
-                            <div className="flex items-center justify-center gap-1.5 py-2 text-slate-400 font-black text-xs border-t border-slate-100 mt-auto pt-3 w-full">
-                              <Lock size={12} /> Belum Terbuka
-                            </div>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )}
             </>
           );
         })()}
