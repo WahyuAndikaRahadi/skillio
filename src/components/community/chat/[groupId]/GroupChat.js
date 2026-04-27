@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, MoreHorizontal, Send, Loader2, Lock, Users, MessageSquare, Paperclip, Image as ImageIcon, FileText, X, Download, Search, ShieldAlert } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Send, Loader2, Lock, Users, MessageSquare, Paperclip, Image as ImageIcon, FileText, X, Download, Search, ShieldAlert, Menu } from "lucide-react";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { pusherClient } from "@/lib/pusher-client";
@@ -9,7 +10,8 @@ import { useSession } from "next-auth/react";
 import { UploadButton } from "@/lib/uploadthing";
 
 // Ubah parameter dari { params } menjadi props biasa { groupId, onBack }
-export default function GroupChat({ groupId, onBack }) {
+export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
+
   const { data: session } = useSession();
   
   const [group, setGroup] = useState(null);
@@ -30,12 +32,12 @@ export default function GroupChat({ groupId, onBack }) {
     if (!groupId) return;
     const fetchGroupData = async () => {
       try {
-        const groupsRes = await fetch("/api/community/groups");
-        const allGroups = await groupsRes.json();
-        if (Array.isArray(allGroups)) {
-          const currentGroup = allGroups.find(g => g.id === groupId);
-          setGroup(currentGroup);
+        const groupRes = await fetch(`/api/community/groups/${groupId}`);
+        const groupData = await groupRes.json();
+        if (groupRes.ok) {
+          setGroup(groupData);
         }
+
 
         const msgRes = await fetch(`/api/community/groups/${groupId}/messages`);
         const msgData = await msgRes.json();
@@ -54,7 +56,11 @@ export default function GroupChat({ groupId, onBack }) {
 
     if (pusherClient) {
       const channel = pusherClient.subscribe(`presence-group-${groupId}`);
-      channel.bind("new-message", (data) => setMessages(prev => [...prev, data]));
+      channel.bind("new-message", (data) => setMessages(prev => {
+        // Prevent duplicate: Pusher broadcasts to all subscribers including the sender
+        if (prev.some(msg => msg.id === data.id)) return prev;
+        return [...prev, data];
+      }));
       channel.bind("pusher:subscription_succeeded", (members) => setOnlineCount(members.count));
       channel.bind("pusher:member_added", () => setOnlineCount(prev => prev + 1));
       channel.bind("pusher:member_removed", () => setOnlineCount(prev => prev - 1));
@@ -86,29 +92,47 @@ export default function GroupChat({ groupId, onBack }) {
 
   return (
     // Gunakan h-full agar pas di dalam flex container panel kanan CommunityPage
-    <div className="flex w-full h-full overflow-hidden font-sans bg-transparent">
+    <div className="flex w-full h-full overflow-hidden bg-transparent font-sans">
        <div className="flex-1 flex flex-col min-w-0 relative bg-[#f8fbfd]">
           {/* Header Chat */}
           <div onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="h-[76px] bg-white/90 backdrop-blur-md flex items-center justify-between px-6 cursor-pointer border-b border-[#dbe7f2] shrink-0 z-20">
              <div className="flex items-center gap-4">
-                {/* Tombol Back untuk menutup chat dan kembali ke list */}
-                <button onClick={(e) => { e.stopPropagation(); onBack(); }} className="p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors text-[#1f547e]">
-                   <ArrowLeft size={20} />
-                </button>
+                 {/* Tombol Menu untuk membuka sidebar kategori di mobile */}
+                 <button 
+                   onClick={(e) => { e.stopPropagation(); onToggleSidebar(); }} 
+                   className="lg:hidden p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors text-[#1f547e] -ml-2"
+                 >
+                    <Menu size={20} />
+                 </button>
+
+                 {/* Tombol Back untuk menutup chat dan kembali ke list */}
+                 <button onClick={(e) => { e.stopPropagation(); onBack(); }} className="p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors text-[#1f547e]">
+                    <ArrowLeft size={20} />
+                 </button>
+
                 <div className="w-12 h-12 rounded-[16px] bg-[#dbe7f2] text-[#2b6ea6] flex items-center justify-center font-black text-xl shrink-0">
                    {group?.image_url ? <img src={group.image_url} alt="group" className="w-full h-full object-cover rounded-[16px]"/> : group?.name?.[0]}
                 </div>
                 <div className="flex flex-col">
                    <h2 className="text-[17px] font-black text-[#0d2133] flex items-center gap-1.5">{group?.name} {group?.privacy === "private" && <Lock size={14} className="text-[#92b7d6]" />}</h2>
-                   <p className="text-[12px] font-bold text-[#1f547e] flex items-center gap-1.5 opacity-80">
+                   <p className="text-[12px] font-bold font-display text-[#1f547e] flex items-center gap-1.5 opacity-80">
                      <span className={cn("w-2 h-2 rounded-full", onlineCount > 0 ? "bg-[#68b9b2] animate-pulse" : "bg-slate-300")}></span> {onlineCount} Online
                    </p>
                 </div>
              </div>
              <div className="flex items-center gap-2 text-[#1f547e]">
-                <button onClick={(e) => e.stopPropagation()} className="p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors"><Search size={20} /></button>
-                <button onClick={(e) => e.stopPropagation()} className="p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors"><MoreHorizontal size={20} /></button>
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setIsSidebarOpen(true); 
+                  }} 
+                  className="p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors"
+                >
+                  <MoreHorizontal size={20} />
+                </button>
              </div>
+
+
           </div>
 
           {/* Area Pesan */}
@@ -122,11 +146,11 @@ export default function GroupChat({ groupId, onBack }) {
                  const isMe = msg.user_id === session?.user?.id;
                  return (
                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={msg.id} className={cn("flex w-full", isMe ? "justify-end" : "justify-start")}>
-                      <div className={cn("max-w-[85%] md:max-w-[70%] rounded-[24px] px-5 py-3.5 relative text-[15px]", isMe ? "bg-[#2b6ea6] text-white rounded-br-sm shadow-md" : "bg-white text-[#0d2133] rounded-bl-sm border border-[#dbe7f2] shadow-sm")}>
-                         {!isMe && <div className="text-[11px] font-black text-[#2b6ea6] mb-1.5 uppercase tracking-widest">{msg.user.name}</div>}
+                      <div className={cn("max-w-[85%] md:max-w-[70%] rounded-[24px] px-5 py-3.5 relative text-sm", isMe ? "bg-[#2b6ea6] text-white rounded-br-sm shadow-md" : "bg-white text-[#0d2133] rounded-bl-sm border border-[#dbe7f2] shadow-sm")}>
+                         {!isMe && <div className="text-[11px] font-bold font-display text-[#2b6ea6] mb-1 uppercase tracking-widest">{msg.user.name}</div>}
                          {msg.image_url && <img src={msg.image_url} alt="Attachment" className="w-full max-h-[300px] object-cover rounded-xl mb-2" />}
                          <div className="flex flex-col gap-1">
-                           <span className="font-medium break-words">{msg.content}</span>
+                           <span className="leading-relaxed break-words">{msg.content}</span>
                            <span className={cn("text-[10px] font-bold uppercase tracking-widest mt-1 text-right", isMe ? "text-white/70" : "text-[#92b7d6]")}>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                          </div>
                       </div>
@@ -140,7 +164,7 @@ export default function GroupChat({ groupId, onBack }) {
           <div className="bg-white border-t border-[#dbe7f2] px-4 py-4 flex items-end gap-3 z-30 shrink-0">
              <button type="button" onClick={() => setShowAttachments(!showAttachments)} className={cn("p-3 rounded-2xl transition-all shrink-0 mb-0.5", showAttachments || imageUrl || fileUrl ? "bg-[#2b6ea6] text-white" : "bg-[#f3f7fb] text-[#1f547e] hover:bg-[#dbe7f2]")}><Paperclip size={22} /></button>
              <form onSubmit={handleSendMessage} className="flex-1 flex gap-3 relative">
-                <textarea value={newMessage} onChange={(e) => { setNewMessage(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }} placeholder="Ketik pesan..." className="w-full bg-[#f8fbfd] border border-[#dbe7f2] rounded-[20px] pl-5 pr-14 py-3.5 text-[15px] font-medium text-[#0d2133] focus:outline-none focus:ring-2 focus:ring-[#2b6ea6]/20 resize-none overflow-y-auto custom-scrollbar" rows={1} style={{ minHeight: '52px' }} />
+                <textarea value={newMessage} onChange={(e) => { setNewMessage(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }} placeholder="Ketik pesan..." className="w-full bg-[#f8fbfd] border border-[#dbe7f2] rounded-[20px] pl-5 pr-14 py-3.5 text-sm text-[#0d2133] focus:outline-none focus:ring-2 focus:ring-[#2b6ea6]/20 resize-none overflow-y-auto custom-scrollbar" rows={1} style={{ minHeight: '52px' }} />
                 <button type="submit" disabled={(!newMessage.trim() && !imageUrl && !fileUrl) || isSending} className="absolute right-2 bottom-1.5 p-2.5 bg-[#2b6ea6] text-white rounded-xl hover:bg-[#1f547e] disabled:opacity-0 transition-all">{isSending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}</button>
              </form>
           </div>
@@ -154,19 +178,118 @@ export default function GroupChat({ groupId, onBack }) {
               <h2 className="text-[16px] text-[#0d2133] font-black">Info Komunitas</h2>
            </div>
            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
-             <div className="flex flex-col items-center">
-               <div className="w-28 h-28 rounded-[28px] bg-[#dbe7f2] text-[#2b6ea6] flex justify-center items-center text-4xl font-black mb-4">{group?.image_url ? <img src={group.image_url} alt="group" className="w-full h-full object-cover rounded-[28px]"/> : group?.name?.[0]}</div>
-               <h1 className="text-lg text-[#0d2133] font-black text-center">{group?.name}</h1>
-             </div>
+              <div className="flex flex-col items-center group relative">
+                <div className="w-28 h-28 rounded-[28px] bg-[#dbe7f2] text-[#2b6ea6] flex justify-center items-center text-4xl font-black mb-4 relative overflow-hidden">
+                  {group?.image_url ? (
+                    <img src={group.image_url} alt="group" className="w-full h-full object-cover rounded-[28px]"/>
+                  ) : (
+                    group?.name?.[0]
+                  )}
+                  
+                  {/* Overlay Upload hanya untuk Admin */}
+                  {(group?.created_by === session?.user?.id || session?.user?.role === "admin") && (
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer">
+                      <UploadButton
+                        endpoint="imageUploader"
+                        onClientUploadComplete={async (res) => {
+                          const url = res?.[0]?.url;
+                          if (url) {
+                            const updateRes = await fetch(`/api/community/groups/${groupId}`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ imageUrl: url })
+                            });
+                            if (updateRes.ok) {
+                              const updated = await updateRes.json();
+                              setGroup(prev => ({ ...prev, image_url: updated.image_url }));
+                            }
+                          }
+                        }}
+                        appearance={{
+                          button: "bg-transparent text-white border-none shadow-none w-full h-full text-[10px] font-bold p-0 m-0",
+                          allowedContent: "hidden"
+                        }}
+                        content={{
+                          button: "Ganti Foto"
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                <h1 className="text-lg text-[#0d2133] font-black text-center">{group?.name}</h1>
+              </div>
+
              {group?.description && <div><p className="text-[11px] font-black text-[#92b7d6] uppercase tracking-widest mb-2">Deskripsi</p><p className="text-sm text-[#0d2133] font-medium">{group.description}</p></div>}
-             <div className="space-y-3">
+             
+             <div className="space-y-4">
                  <p className="text-[11px] font-black text-[#92b7d6] uppercase tracking-widest">Informasi</p>
-                 <div className="flex items-center gap-3 bg-[#f3f7fb] p-3.5 rounded-2xl"><Lock size={16} className="text-[#2b6ea6]"/> <p className="text-sm font-bold text-[#0d2133]">Privasi {group?.privacy}</p></div>
-                 <div className="flex items-center gap-3 bg-[#f3f7fb] p-3.5 rounded-2xl"><Users size={16} className="text-[#68b9b2]"/> <p className="text-sm font-bold text-[#0d2133]">{group?._count?.members || 0} Member</p></div>
+                 <div className="flex items-center gap-3 bg-[#f3f7fb] p-3.5 rounded-2xl">
+                   <Lock size={16} className="text-[#2b6ea6]"/> 
+                   <p className="text-sm font-bold text-[#0d2133]">Privasi {group?.privacy}</p>
+                 </div>
+                 <div className="flex items-center gap-3 bg-[#f3f7fb] p-3.5 rounded-2xl">
+                   <Users size={16} className="text-[#68b9b2]"/> 
+                   <p className="text-sm font-bold text-[#0d2133]">{group?._count?.members || 0} Member</p>
+                 </div>
              </div>
-             {group?.created_by === session?.user?.id && (
-               <button onClick={async () => { if (confirm("Hapus grup permanen?")) { await fetch(`/api/community/groups/${groupId}`, { method: "DELETE" }); onBack(); } }} className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-[#fff1f2] text-[#e11d48] rounded-2xl font-bold border border-[#fecdd3]"><ShieldAlert size={16} /> Hapus Grup</button>
-             )}
+
+             {/* Daftar Anggota */}
+             <div className="space-y-4 pt-2">
+                 <p className="text-[11px] font-black text-[#92b7d6] uppercase tracking-widest">Anggota Komunitas</p>
+                 <div className="space-y-3">
+                   {group?.members?.map((m) => (
+                     <div key={m.user.id} className="flex items-center gap-3 group">
+                       <div className="w-10 h-10 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-50">
+                         {m.user.image ? (
+                           <img src={m.user.image} alt={m.user.name} className="w-full h-full object-cover" />
+                         ) : (
+                           <div className="w-full h-full flex items-center justify-center font-bold text-slate-400 text-sm">
+                             {m.user.name[0]}
+                           </div>
+                         )}
+                       </div>
+                       <div className="flex-1 min-w-0">
+                         <p className="text-sm font-bold text-[#0d2133] truncate flex items-center gap-2">
+                           {m.user.name}
+                           {m.user.id === session?.user?.id && <span className="text-[9px] bg-primary-blue/10 text-primary-blue px-1.5 py-0.5 rounded-full">Anda</span>}
+                         </p>
+                         <p className="text-[10px] font-bold text-[#92b7d6] uppercase tracking-tighter">
+                           {m.role === "admin" ? "👑 Admin Komunitas" : "Anggota"}
+                         </p>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+             </div>
+
+              <div className="pt-6 space-y-3">
+                <button 
+                  onClick={async () => { 
+                    if (confirm("Anda yakin ingin keluar dari grup ini?")) { 
+                      const res = await fetch(`/api/community/groups/${groupId}/join`, { method: "DELETE" }); 
+                      if (res.ok) onBack(); 
+                    } 
+                  }} 
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-white text-slate-500 rounded-2xl font-bold border border-slate-200 hover:bg-slate-50 transition-colors"
+                >
+                  <ArrowLeft size={16} /> Keluar Grup
+                </button>
+
+                {(group?.created_by === session?.user?.id || session?.user?.role === "admin") && (
+                  <button 
+                    onClick={async () => { 
+                      if (confirm("Hapus grup permanen?")) { 
+                        await fetch(`/api/community/groups/${groupId}`, { method: "DELETE" }); 
+                        onBack(); 
+                      } 
+                    }} 
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-[#fff1f2] text-[#e11d48] rounded-2xl font-bold border border-[#fecdd3] hover:bg-red-50 transition-colors"
+                  >
+                    <ShieldAlert size={16} /> Hapus Grup
+                  </button>
+                )}
+              </div>
+
            </div>
          </motion.div>
        )}

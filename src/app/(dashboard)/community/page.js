@@ -10,7 +10,11 @@ import {
   Sparkles,
   ChevronRight,
   Hash,
+  Menu,
+  X,
 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+
 import { cn } from "@/lib/utils";
 
 // Fungsi bantuan untuk mengambil singkatan (misal: "Desain Antarmuka" -> "DE")
@@ -26,6 +30,10 @@ export default function CommunityPage() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState("joined"); // 'joined' or 'all'
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+
 
   const searchParams = useSearchParams();
   const urlGroupId = searchParams.get("groupId");
@@ -54,10 +62,34 @@ export default function CommunityPage() {
 
   return (
     // Full viewport, no outer padding — fills the layout shell exactly
-    <div className="flex h-[calc(100vh-56px)] overflow-hidden bg-white">
+    <div className="flex h-[calc(100vh-56px)] md:h-[calc(100vh-80px)] overflow-hidden bg-white relative">
+
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="absolute inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm lg:hidden"
+          />
+        )}
+      </AnimatePresence>
 
       {/* ── LEFT PANEL ────────────────────────────────────────────────────── */}
-      <div className="w-80 shrink-0 flex flex-col border-r border-skillio-100 bg-white">
+      <div className={cn(
+        "absolute inset-y-0 left-0 z-[70] w-80 shrink-0 flex flex-col border-r border-skillio-100 bg-white transition-transform duration-300 lg:relative lg:translate-x-0",
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+
+        {/* Mobile Header (Sidebar) */}
+        <div className="flex items-center justify-between px-4 py-4 lg:hidden border-b border-skillio-50">
+          <span className="font-black text-[#0d2133] tracking-tight uppercase text-xs">Pilih Bidang</span>
+          <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-slate-400 hover:text-slate-600">
+            <X size={20} />
+          </button>
+        </div>
 
         {/* Search bar */}
         <div className="px-4 py-3 border-b border-skillio-100">
@@ -77,11 +109,40 @@ export default function CommunityPage() {
         </div>
 
         {/* Scrollable category list */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
 
-          {/* "All" row */}
+          {/* View Mode Toggle */}
+          <div className="px-4 py-4 grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setViewMode("joined")}
+              className={cn(
+                "py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
+                viewMode === "joined" 
+                  ? "bg-primary-blue text-white border-primary-blue shadow-lg shadow-primary-blue/20" 
+                  : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
+              )}
+            >
+              Grup Saya
+            </button>
+            <button
+              onClick={() => setViewMode("all")}
+              className={cn(
+                "py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
+                viewMode === "all" 
+                  ? "bg-primary-blue text-white border-primary-blue shadow-lg shadow-primary-blue/20" 
+                  : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
+              )}
+            >
+              Cari Grup
+            </button>
+          </div>
+
+          {/* "All" row - hide when in 'joined' mode or use it as 'All My Groups' */}
           <button
-            onClick={() => setSelectedCategory(null)}
+            onClick={() => {
+              setSelectedCategory(null);
+              if (window.innerWidth < 1024) setIsSidebarOpen(false);
+            }}
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 transition-colors text-left",
               !selectedCategory
@@ -110,6 +171,7 @@ export default function CommunityPage() {
             )}
           </button>
 
+
           {/* Divider label */}
           <div className="px-4 pt-4 pb-1">
             <p className="text-[10px] font-black tracking-[0.18em] uppercase text-slate-300">
@@ -124,7 +186,10 @@ export default function CommunityPage() {
             return (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => {
+                  setSelectedCategory(cat.id);
+                  if (window.innerWidth < 1024) setIsSidebarOpen(false);
+                }}
                 className={cn(
                   "w-full flex items-center gap-4 px-5 py-3 transition-colors text-left",
                   isActive
@@ -165,6 +230,7 @@ export default function CommunityPage() {
             onClick={() => {
               // Trigger create modal via GroupList — we'll use a custom event
               window.dispatchEvent(new CustomEvent("skillio:open-create-group"));
+              if (window.innerWidth < 1024) setIsSidebarOpen(false);
             }}
             className="w-full flex items-center justify-center gap-2 py-3 bg-primary-blue text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-accent-blue transition-colors"
           >
@@ -173,35 +239,56 @@ export default function CommunityPage() {
         </div>
       </div>
 
+
       {/* ── RIGHT PANEL (DINAMIS: LIST ATAU CHAT) ────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-[#edf4f8] relative">
         {!activeGroupId ? (
           <>
             {/* Tampilan List Grup */}
-            <div className="px-8 py-6 border-b border-slate-200 bg-white/80 backdrop-blur-xl flex items-center justify-between shrink-0 shadow-sm z-10">
-              <div>
-                <h1 className="text-2xl font-black text-[#0d2133] tracking-tight">
-                  {selectedCategory ? categories.find((c) => c.id === selectedCategory)?.name ?? "Grup" : "Grup Komunitas"}
-                </h1>
-                <p className="text-sm text-[#92b7d6] font-medium mt-1">Temukan tempat belajar dan diskusi yang lebih privat.</p>
+            <div className="px-6 py-5 border-b border-slate-100 bg-white flex items-center justify-between shrink-0 z-10">
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-primary-blue hover:bg-skillio-50 rounded-xl transition-all"
+                >
+                  <Menu size={24} />
+                </button>
+                <div>
+                  <h1 className="text-xl font-black text-[#0d2133] tracking-tight font-display">
+                    {selectedCategory ? categories.find((c) => c.id === selectedCategory)?.name ?? "Grup" : "Grup Komunitas"}
+                  </h1>
+                  <p className="text-[11px] text-[#92b7d6] font-bold uppercase tracking-wider mt-0.5">Komunitas Belajar</p>
+                </div>
               </div>
-              <button onClick={() => window.dispatchEvent(new CustomEvent("skillio:open-create-group"))} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d2133] text-white text-sm font-bold shadow-md hover:bg-[#1f547e] transition-colors">
-                <Sparkles size={16} className="text-white/80" /> Bangun Komunitasmu
+              <button onClick={() => window.dispatchEvent(new CustomEvent("skillio:open-create-group"))} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-blue text-white text-xs font-bold shadow-sm hover:bg-accent-blue transition-colors">
+                <Plus size={14} className="hidden sm:block" /> Buat Grup
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-8 py-8 custom-scrollbar relative">
-              {/* Pattern Background Tipis */}
-              <div className="absolute inset-0 pointer-events-none opacity-40" style={{ backgroundImage: `linear-gradient(rgba(146, 183, 214, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(146, 183, 214, 0.15) 1px, transparent 1px)`, backgroundSize: '40px 40px' }}></div>
+
+            <div className="flex-1 overflow-y-auto custom-scrollbar relative bg-white">
               <div className="relative z-10">
                 {/* Prop onJoin dikirim ke GroupList */}
-                <GroupList categoryId={selectedCategory} onJoin={(id) => setActiveGroupId(id)} />
+                <GroupList 
+                  categoryId={selectedCategory} 
+                  viewMode={viewMode}
+                  onJoin={(id) => {
+                    setActiveGroupId(id);
+                    setViewMode("joined");
+                  }} 
+                />
+
               </div>
             </div>
           </>
         ) : (
           /* Tampilan Chat Room */
-          <GroupChat groupId={activeGroupId} onBack={() => setActiveGroupId(null)} />
+          <GroupChat 
+            groupId={activeGroupId} 
+            onBack={() => setActiveGroupId(null)} 
+            onToggleSidebar={() => setIsSidebarOpen(true)}
+          />
+
         )}
       </div>
     </div>

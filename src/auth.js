@@ -8,7 +8,10 @@ import bcrypt from "bcryptjs";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   adapter: PrismaAdapter(prisma),
+  basePath: "/api/auth",
+  debug: true,
   session: { strategy: "jwt" },
+
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,

@@ -10,12 +10,27 @@ export async function GET(req) {
     const groups = await prisma.communityGroup.findMany({
       include: {
         category: { select: { name: true } },
+        members: {
+          where: { user_id: session.user.id },
+          select: { status: true, role: true }
+        },
         _count: {
           select: { members: { where: { status: "approved" } } }
+        },
+        messages: {
+          take: 1,
+          orderBy: { createdAt: "desc" },
+          select: {
+            content: true,
+            createdAt: true,
+            user: { select: { name: true } }
+          }
         }
       },
+
       orderBy: { createdAt: "desc" }
     });
+
 
     return NextResponse.json(groups);
   } catch (error) {

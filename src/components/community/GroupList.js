@@ -15,7 +15,8 @@ import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-export default function GroupList({ categoryId, onJoin }) {
+export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
+
   const { data: session } = useSession();
   const router = useRouter();
   const [groups, setGroups] = useState([]);
@@ -133,16 +134,29 @@ export default function GroupList({ categoryId, onJoin }) {
     }
   };
 
-  const displayedGroups = categoryId 
-    ? groups.filter((g) => {
-        const targetId = String(categoryId);
-        return (
-          String(g.categoryId) === targetId || 
-          String(g.category_id) === targetId || 
-          String(g.category?.id) === targetId
-        );
-      })
-    : groups;
+  const displayedGroups = groups.filter((g) => {
+    // Filter by Category if selected
+    if (categoryId) {
+      const targetId = String(categoryId);
+      const groupCatId = String(g.categoryId || g.category_id || g.category?.id);
+      if (groupCatId !== targetId) return false;
+    }
+
+    // Filter by View Mode (Joined vs All)
+    const isMember = g.members && g.members.length > 0;
+    
+    if (viewMode === "joined") {
+      if (!isMember) return false;
+    } else {
+      // viewMode === 'all' (Cari Grup)
+      // JANGAN munculkan grup yang sudah kita masuki
+      if (isMember) return false;
+    }
+
+    return true;
+  });
+
+
 
   return (
     <div className="space-y-8">
@@ -152,78 +166,98 @@ export default function GroupList({ categoryId, onJoin }) {
           <p className="font-bold text-slate-400">Menjelajahi komunitas...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* 2. UBAH groups.map MENJADI displayedGroups.map */}
-          {displayedGroups.map((group) => (
-            <motion.div
-              key={group.id}
-              whileHover={{ y: -3 }}
-              className="bg-white rounded-[24px] border border-slate-200 p-6 shadow-sm hover:shadow-md transition-all flex flex-col group"
-            >
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-14 h-14 shrink-0 rounded-[16px] bg-[#E6F0F9] flex items-center justify-center font-black text-2xl text-[#2A75C4] overflow-hidden">
-                  {group.image_url ? <img src={group.image_url} alt="" className="w-full h-full object-cover" /> : group.name[0]}
-                </div>
-                <div className="flex-1 mt-1">
-                  <h4 className="font-black text-[#1E293B] text-lg flex items-center gap-2 leading-tight">
-                    {group.name}
-                    {group.privacy === "private" ? (
-                      <Lock size={14} className="text-[#3b82f6]" />
-                    ) : (
-                      <Globe size={14} className="text-[#3b82f6]" />
-                    )}
-                  </h4>
-                  <p className="text-[11px] font-bold text-[#7EA6CD] uppercase tracking-widest mt-1">
-                    {group.category?.name || "KATEGORI UMUM"}
-                  </p>
-                </div>
-              </div>
+        <div className="flex flex-col gap-3 p-4 bg-[#f8fbfd] min-h-full">
+          {displayedGroups.map((group) => {
+            const isMember = group.members && group.members.length > 0;
+            return (
+              <motion.div
+                key={group.id}
+                onClick={() => isMember ? onJoin(group.id) : handleJoin(group.id)}
+                className="flex items-center gap-4 p-4 bg-white border border-slate-200/60 rounded-2xl hover:border-primary-blue/30 hover:shadow-sm transition-all cursor-pointer group relative"
+              >
 
-              <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6 line-clamp-2">
-                {group.description}
-              </p>
-
-              <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-5">
-                <div className="flex items-center gap-5 text-xs font-bold">
-                  <span className="flex items-center gap-1.5 text-slate-500">
-                    <Users size={16} className="text-[#6366F1]" />
-                    <span className="text-[#6366F1] font-black">{group._count?.members || 0}</span>
-                  </span>
-                  <span className="flex items-center gap-1.5 text-slate-400">
-                    <span className="w-2 h-2 rounded-full bg-[#10B981]"></span>
-                    Aktif
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {(session?.user?.id === group.created_by || session?.user?.role === "admin") && (
-                    <button
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        if (confirm("Yakin ingin menghapus grup ini secara permanen?")) {
-                          try {
-                            const res = await fetch(`/api/community/groups/${group.id}`, { method: 'DELETE' });
-                            if (res.ok) fetchGroups();
-                            else alert("Gagal menghapus grup");
-                          } catch (err) { alert("Terjadi kesalahan"); }
-                        }
-                      }}
-                      className="p-2.5 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                      title="Hapus Grup"
-                    >
-                      <MoreVertical size={16} />
-                    </button>
+                {/* Avatar Style WhatsApp */}
+                <div className="w-14 h-14 shrink-0 rounded-full bg-[#E6F0F9] flex items-center justify-center font-black text-xl text-[#2A75C4] overflow-hidden border-2 border-white shadow-sm">
+                  {group.image_url ? (
+                    <img src={group.image_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    group.name[0]
                   )}
-                  <button
-                    onClick={() => handleJoin(group.id)}
-                    className="flex items-center gap-1 px-5 py-2.5 bg-[#F8FAFC] border border-slate-100 text-slate-400 rounded-xl font-bold text-xs hover:bg-[#F1F5F9] hover:text-slate-600 transition-all"
-                  >
-                    Masuk <ChevronRight size={14} className="opacity-50" />
-                  </button>
                 </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-0.5">
+                    <h4 className="font-bold text-[#1E293B] text-base truncate flex items-center gap-2">
+                      {group.name}
+                      {group.privacy === "private" && <Lock size={12} className="text-slate-400" />}
+                    </h4>
+
+                    <span className="text-[10px] font-bold text-[#7EA6CD] uppercase tracking-wider shrink-0 bg-slate-50 px-2 py-1 rounded-md">
+                      {group.category?.name || "Umum"}
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-400 font-medium truncate pr-10">
+                    {group.messages && group.messages.length > 0 ? (
+                      <>
+                        <span className="text-primary-blue font-bold">{group.messages[0].user.name.split(" ")[0]}: </span>
+                        {group.messages[0].content}
+                      </>
+                    ) : (
+                      group.description || "Bergabunglah dengan komunitas ini untuk berdiskusi."
+                    )}
+                  </p>
+
+                </div>
+
+                {/* Meta & Actions */}
+                <div className="flex flex-col items-end gap-2 shrink-0">
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                     <Users size={14} className="text-primary-blue/60" />
+                     <span className="text-xs font-bold text-primary-blue">{group._count?.members || 0}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-1">
+                    {(session?.user?.id === group.created_by || session?.user?.role === "admin") && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm("Hapus grup?")) {
+                            fetch(`/api/community/groups/${group.id}`, { method: 'DELETE' }).then(res => {
+                              if (res.ok) fetchGroups();
+                            });
+                          }
+                        }}
+                        className="p-1.5 text-slate-300 hover:text-red-500 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                      >
+                        <MoreVertical size={14} />
+                      </button>
+                    )}
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-primary-blue opacity-0 group-hover:opacity-100 group-hover:bg-primary-blue/5 transition-all">
+                      <ChevronRight size={18} />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+
+          {displayedGroups.length === 0 && (
+            <div className="py-24 px-10 text-center flex flex-col items-center justify-center">
+              <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                <Users className="text-slate-200" size={40} />
               </div>
-            </motion.div>
-          ))}
+              <p className="text-slate-400 font-bold text-lg mb-1">
+                {viewMode === "joined" ? "Belum Bergabung" : "Tidak Ada Grup"}
+              </p>
+              <p className="text-slate-300 text-sm max-w-xs mx-auto">
+                {viewMode === "joined" 
+                  ? "Kamu belum bergabung dengan komunitas manapun di kategori ini." 
+                  : "Belum ada grup yang dibuat untuk bidang ini."}
+              </p>
+            </div>
+          )}
+
         </div>
       )}
 

@@ -86,3 +86,30 @@ export async function POST(req, { params }) {
     return NextResponse.json({ message: "Gagal join grup", error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(req, { params }) {
+  try {
+    const session = await auth();
+    if (!session || !session.user?.id) {
+       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const { groupId } = await params;
+
+    // Remove membership
+    await prisma.groupMember.delete({
+      where: {
+        group_id_user_id: {
+          group_id: groupId,
+          user_id: session.user.id
+        }
+      }
+    });
+
+    return NextResponse.json({ message: "Berhasil keluar dari grup" });
+  } catch (error) {
+    console.error("Leave group error:", error);
+    return NextResponse.json({ message: "Gagal keluar dari grup" }, { status: 500 });
+  }
+}
+
