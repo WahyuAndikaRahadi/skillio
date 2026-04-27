@@ -130,6 +130,22 @@ export default function ProfilePage() {
                      onClientUploadComplete={async (res) => {
                        if (res && res[0]) {
                          const newUrl = res[0].url;
+                         const Swal = (await import("sweetalert2")).default;
+                         
+                         // Show loading alert
+                         Swal.fire({
+                           title: 'Menyinkronkan...',
+                           text: 'Sabar ya, foto profilmu sedang diperbarui.',
+                           allowOutsideClick: false,
+                           showConfirmButton: false,
+                           didOpen: () => {
+                             Swal.showLoading();
+                           },
+                           customClass: {
+                             popup: 'rounded-[32px] p-8'
+                           }
+                         });
+
                          try {
                            const response = await fetch("/api/user/update-image", {
                              method: "POST",
@@ -140,7 +156,7 @@ export default function ProfilePage() {
                            if (response.ok) {
                              // Refresh session client-side
                              await update({ image: newUrl });
-                             const Swal = (await import("sweetalert2")).default;
+                             
                              Swal.fire({
                                toast: true,
                                position: "top-end",
@@ -149,15 +165,20 @@ export default function ProfilePage() {
                                showConfirmButton: false,
                                timer: 2000
                              });
+                           } else {
+                             Swal.close();
                            }
                          } catch (err) {
                            console.error(err);
+                           Swal.close();
                          } finally {
                            setIsUploading(false);
                          }
                        }
                      }}
-                     onUploadError={() => setIsUploading(false)}
+                     onUploadError={() => {
+                       setIsUploading(false);
+                     }}
                    />
                  </div>
               </div>
@@ -340,7 +361,7 @@ export default function ProfilePage() {
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-6">Selesaikan misi untuk lencana</p>
                </div>
              ) : (
-               <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {stats.badges.slice(0, 4).map((badge, idx) => {
                     const isEmoji = !badge.image_url?.includes('.') && !badge.image_url?.includes('/');
                     return (
@@ -348,62 +369,35 @@ export default function ProfilePage() {
                         key={idx}
                         whileHover={{ y: -5 }}
                         className={cn(
-                          "p-5 rounded-[30px] border transition-all flex flex-col items-center text-center group relative overflow-hidden",
+                          "p-4 h-[160px] rounded-[32px] border transition-all flex flex-col items-center justify-center text-center group relative overflow-hidden",
                           badge.earned 
-                            ? "bg-white border-slate-100 shadow-lg shadow-slate-100" 
-                            : "bg-slate-50 border-slate-50 opacity-40 grayscale"
+                            ? "bg-white border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50" 
+                            : "bg-slate-50/50 border-slate-100 opacity-40 grayscale"
                         )}
                       >
                          <div className={cn(
-                           "w-16 h-16 mb-4 rounded-2xl flex items-center justify-center text-3xl transition-transform group-hover:scale-110",
+                           "w-14 h-14 mb-3 rounded-2xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110",
                            badge.earned ? "bg-slate-50" : "bg-slate-100"
                          )}>
                             {isEmoji ? (
                               <span>{badge.image_url}</span>
                             ) : (
-                              <img src={badge.image_url} alt={badge.name} className="w-12 h-12 object-contain" />
+                              <img src={badge.image_url} alt={badge.name} className="w-10 h-10 object-contain" />
                             )}
                          </div>
-                         <h4 className="text-[10px] font-black text-slate-900 leading-tight mb-1 uppercase tracking-tight">
-                           {badge.name}
-                         </h4>
-                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.15em]">
-                           {badge.earned ? "Diraih" : "Locked"}
-                         </p>
+                         <div className="space-y-1">
+                           <h4 className="text-[9px] font-black text-slate-900 leading-tight uppercase tracking-tight line-clamp-2 px-1">
+                             {badge.name}
+                           </h4>
+                           <p className="text-[7px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                             {badge.earned ? "Diraih" : "Locked"}
+                           </p>
+                         </div>
                       </motion.div>
                     );
                   })}
-               </div>
+                </div>
              )}
-          </div>
-
-          <div className="bg-white rounded-[50px] border border-slate-100 p-8 md:p-10 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
-             <div className="absolute top-0 left-0 w-2 h-full bg-primary-blue opacity-10 group-hover:opacity-100 transition-opacity" />
-             <h3 className="text-lg font-black text-slate-900 mb-8 flex items-center gap-2">
-                <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400"><ShieldCheck size={18} /></div>
-                Akun & Keamanan
-             </h3>
-             <div className="space-y-4">
-                <div className="flex items-center justify-between p-5 bg-slate-50/50 rounded-[24px] border border-slate-100/50">
-                   <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                      <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Verifikasi</span>
-                   </div>
-                   <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-widest">Aktif</span>
-                </div>
-
-                <div className="flex items-center justify-between p-5 bg-slate-50/50 rounded-[24px] border border-slate-100/50">
-                   <div className="flex items-center gap-3">
-                      <div className="p-2 bg-white rounded-lg shadow-sm">
-                        <Sparkles size={14} className="text-primary-blue" />
-                      </div>
-                      <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Keanggotaan</span>
-                   </div>
-                   <span className="text-[10px] font-black text-primary-blue uppercase tracking-widest">
-                     {session?.user?.role === "admin" ? "Premium" : "Member"}
-                   </span>
-                </div>
-             </div>
           </div>
         </motion.div>
       </div>

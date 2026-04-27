@@ -198,10 +198,10 @@ const TopBar = ({ onMenuClick }) => {
                   {session?.user?.name || "Pengguna"}
                 </p>
                 <p className="text-[10px] font-bold text-primary-blue uppercase tracking-wider">
-                  {session?.user?.role === "admin" ? "Administrator" : "Anggota Basic"}
+                  {session?.user?.role === "admin" ? "Administrator" : "Anggota Skillio"}
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-primary-blue flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 overflow-hidden border-2 border-white shrink-0 group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 overflow-hidden border-2 border-white shrink-0 group-hover:scale-110 transition-transform">
                 {session?.user?.image ? (
                   <img src={session.user.image} alt="Profil" className="w-full h-full object-cover" />
                 ) : (
