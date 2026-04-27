@@ -31,11 +31,6 @@ export async function POST(req) {
       6. JANGAN gunakan format markdown seperti bold (**), header (##), atau list. Gunakan teks polos saja agar tampilan chat tetap bersih.
     `;
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.1-flash-lite-preview",
-      systemInstruction: systemPrompt 
-    });
-
     const contents = [];
     
     for (const msg of history) {
@@ -52,8 +47,45 @@ export async function POST(req) {
       parts: [{ text: message }]
     });
 
-    const result = await model.generateContent({ contents });
-    const responseText = result.response.text();
+    let lastError = null;
+    let responseText = "";
+    const primaryModelName = "gemini-3.1-flash-lite-preview";
+    const fallbackModelName = "gemini-3-flash-preview";
+
+    let success = false;
+    for (let i = API_KEYS.length - 1; i >= 0; i--) {
+      const currentGenAI = new GoogleGenerativeAI(API_KEYS[i]);
+      
+      try {
+        const model = currentGenAI.getGenerativeModel({ 
+          model: primaryModelName,
+          systemInstruction: systemPrompt 
+        });
+        const result = await model.generateContent({ contents });
+        responseText = result.response.text();
+        success = true;
+        break;
+      } catch (primaryError) {
+        console.warn(`[Public Chat] Key #${i+1} primary model failed. Trying fallback...`);
+        try {
+          const model = currentGenAI.getGenerativeModel({ 
+            model: fallbackModelName,
+            systemInstruction: systemPrompt 
+          });
+          const result = await model.generateContent({ contents });
+          responseText = result.response.text();
+          success = true;
+          break;
+        } catch (fallbackError) {
+          console.error(`[Public Chat] Key #${i+1} failed completely.`);
+          lastError = fallbackError;
+        }
+      }
+    }
+
+    if (!success) {
+      throw new Error(lastError?.message || "All models failed.");
+    }
 
     return NextResponse.json({ reply: responseText });
   } catch (error) {

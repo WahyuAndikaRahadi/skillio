@@ -50,11 +50,6 @@ export async function POST(req) {
       6. JANGAN gunakan format markdown (seperti **bold** atau ## header) agar teks tetap bersih di UI chat. Gunakan teks polos dengan spasi paragraf yang baik.
     `;
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.1-flash-lite-preview",
-      systemInstruction: systemPrompt
-    });
-
     // Prepare parts array for multimodal input
     let finalPromptText = message || "";
     const parts = [];
@@ -136,8 +131,51 @@ export async function POST(req) {
       parts: parts
     });
 
-    const result = await model.generateContent({ contents });
-    const responseText = result.response.text();
+    let lastError = null;
+    let responseText = "";
+
+    // Sistem Rotasi Key & Model Fallback (Mulai dari 4 ke 1)
+    const primaryModelName = "gemini-3.1-flash-lite-preview";
+    const fallbackModelName = "gemini-3-flash-preview";
+
+    let success = false;
+    for (let i = API_KEYS.length - 1; i >= 0; i--) {
+      const currentGenAI = new GoogleGenerativeAI(API_KEYS[i]);
+      
+      // 1. Coba Model Utama
+      try {
+        const model = currentGenAI.getGenerativeModel({ 
+          model: primaryModelName,
+          systemInstruction: systemPrompt
+        });
+        const result = await model.generateContent({ contents });
+        responseText = result.response.text();
+        success = true;
+        break;
+      } catch (primaryError) {
+        console.warn(`[AI Widget] Primary Model failed on Key #${i+1}. Trying fallback...`);
+        
+        // 2. Coba Model Fallback
+        try {
+          const model = currentGenAI.getGenerativeModel({ 
+            model: fallbackModelName,
+            systemInstruction: systemPrompt
+          });
+          const result = await model.generateContent({ contents });
+          responseText = result.response.text();
+          success = true;
+          break;
+        } catch (fallbackError) {
+          console.error(`[AI Widget] Key #${i+1} failed completely:`, fallbackError.message);
+          lastError = fallbackError;
+          // Lanjut ke Key berikutnya
+        }
+      }
+    }
+
+    if (!success) {
+      throw new Error(lastError?.message || "Semua model dan API key gagal.");
+    }
 
     const enrichedPrompt = finalPromptText;
 

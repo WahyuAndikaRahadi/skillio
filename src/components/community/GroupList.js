@@ -14,6 +14,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
 
@@ -156,7 +160,28 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
     return true;
   });
 
-
+  const confirmJoin = (group) => {
+    MySwal.fire({
+      title: `<span class="font-display">Gabung Komunitas?</span>`,
+      html: `<p class="text-slate-500 font-medium">Apakah kamu yakin ingin bergabung dengan grup <b>${group.name}</b>?</p>`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya, Gabung!",
+      cancelButtonText: "Batal",
+      confirmButtonColor: "#2b6ea6",
+      cancelButtonColor: "#f1f5f9",
+      customClass: {
+        confirmButton: "rounded-xl font-bold px-6 py-3",
+        cancelButton: "rounded-xl font-bold px-6 py-3 text-slate-500",
+        popup: "rounded-[32px] p-8",
+      },
+      buttonsStyling: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleJoin(group.id);
+      }
+    });
+  };
 
   return (
     <div className="space-y-8 font-sans">
@@ -172,7 +197,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
             return (
               <motion.div
                 key={group.id}
-                onClick={() => isMember ? onJoin(group.id) : handleJoin(group.id)}
+                onClick={() => isMember ? onJoin(group.id) : confirmJoin(group)}
                 className="flex items-center gap-4 p-4 bg-white border border-slate-200/60 rounded-2xl hover:border-primary-blue/30 hover:shadow-sm transition-all cursor-pointer group relative"
               >
 
@@ -218,24 +243,38 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                   </div>
                   
                   <div className="flex items-center gap-1">
-                    {(session?.user?.id === group.created_by || session?.user?.role === "admin") && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (confirm("Hapus grup?")) {
-                            fetch(`/api/community/groups/${group.id}`, { method: 'DELETE' }).then(res => {
-                              if (res.ok) fetchGroups();
-                            });
-                          }
-                        }}
-                        className="p-1.5 text-slate-300 hover:text-red-500 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                      >
-                        <MoreVertical size={14} />
-                      </button>
+                    {!isMember ? (
+                       <button
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           confirmJoin(group);
+                         }}
+                         className="px-4 py-1.5 bg-primary-blue text-white text-xs font-black rounded-lg hover:bg-accent-blue transition-all shadow-sm shadow-blue-500/10"
+                       >
+                         Gabung
+                       </button>
+                    ) : (
+                      <>
+                        {(session?.user?.id === group.created_by || session?.user?.role === "admin") && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (confirm("Hapus grup?")) {
+                                fetch(`/api/community/groups/${group.id}`, { method: 'DELETE' }).then(res => {
+                                  if (res.ok) fetchGroups();
+                                });
+                              }
+                            }}
+                            className="p-1.5 text-slate-300 hover:text-red-500 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                          >
+                            <MoreVertical size={14} />
+                          </button>
+                        )}
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-primary-blue opacity-0 group-hover:opacity-100 group-hover:bg-primary-blue/5 transition-all">
+                          <ChevronRight size={18} />
+                        </div>
+                      </>
                     )}
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-primary-blue opacity-0 group-hover:opacity-100 group-hover:bg-primary-blue/5 transition-all">
-                      <ChevronRight size={18} />
-                    </div>
                   </div>
                 </div>
               </motion.div>

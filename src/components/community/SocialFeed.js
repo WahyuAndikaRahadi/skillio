@@ -14,7 +14,8 @@ import {
   X,
   Code,
   Smile,
-  Calendar
+  Calendar,
+  Hash
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -164,7 +165,7 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all mb-6 relative",
+        "bg-white/70 backdrop-blur-xl rounded-[32px] border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all mb-6 relative overflow-hidden",
         post.type === "question" && "border-orange-200"
       )}
     >
@@ -271,8 +272,9 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
   );
 };
 
-export default function SocialFeed({ categoryId }) {
+export default function SocialFeed({ categoryId, searchQuery = "" }) {
   const { data: session } = useSession();
+  const textareaRef = React.useRef(null);
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState("");
   const [postType, setPostType] = useState("progress");
@@ -280,6 +282,58 @@ export default function SocialFeed({ categoryId }) {
   const [showImageInput, setShowImageInput] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [showMentions, setShowMentions] = useState(false);
+  const [selectedCategoryState, setSelectedCategoryState] = useState(categoryId);
+
+  // Auto-expand textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [newPost]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const res = await fetch("/api/categories");
+      const data = await res.json();
+      if (res.ok) setCategories(data);
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    setSelectedCategoryState(categoryId);
+  }, [categoryId]);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setNewPost(value);
+
+    // Detect # mention
+    const lastWord = value.split(" ").pop();
+    if (lastWord.startsWith("#")) {
+      setMentionQuery(lastWord.slice(1));
+      setShowMentions(true);
+    } else {
+      setShowMentions(false);
+    }
+  };
+
+  const selectCategory = (cat) => {
+    const words = newPost.split(" ");
+    words.pop(); // remove the #query
+    const updatedContent = [...words, `#${cat.name} `].join(" ");
+    setNewPost(updatedContent);
+    setSelectedCategoryState(cat.id);
+    setShowMentions(false);
+  };
+
+  const filteredMentions = categories.filter(cat => 
+    cat.name.toLowerCase().includes(mentionQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -325,13 +379,14 @@ export default function SocialFeed({ categoryId }) {
       const res = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: newPost, type: postType, categoryId, imageUrl: imageUrl || null })
+        body: JSON.stringify({ content: newPost, type: postType, categoryId: selectedCategoryState, imageUrl: imageUrl || null })
       });
       if (res.ok) {
         setNewPost("");
         setImageUrl("");
         setShowImageInput(false);
         setPostType("progress");
+        setSelectedCategoryState(categoryId); // reset to current filter
       }
     } catch (err) {
       console.error("Gagal posting");
@@ -340,22 +395,58 @@ export default function SocialFeed({ categoryId }) {
     }
   };
 
+  // Filter posts based on search query
+  const filteredPosts = posts.filter(post => 
+    post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="space-y-8 shadow-md px-6">
+    <div className="space-y-8 px-6">
       {/* Create Post Input Container (Diperbarui sesuai referensi desain) */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-[32px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         <form onSubmit={handleSubmit}>
           <div className="flex gap-4">
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 font-bold text-slate-500 overflow-hidden">
               {session?.user?.image ? <img src={session.user.image} alt="User" /> : (session?.user?.name ? session.user.name[0] : "U")}
             </div>
             <div className="flex-1 space-y-3">
-              <input
+              <textarea
+                ref={textareaRef}
                 value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                placeholder="Share your knowledge..."
-                className="w-full bg-transparent border-none focus:outline-none text-slate-700 placeholder-slate-400 pt-2 text-sm"
+                onChange={handleInputChange}
+                placeholder="Apa yang sedang kamu pelajari? Gunakan # untuk tag bidang..."
+                className="w-full bg-transparent border-none focus:outline-none text-slate-700 placeholder-slate-400 pt-2 text-sm resize-none overflow-hidden"
               />
+
+              {/* Mention List UI */}
+              <AnimatePresence>
+                {showMentions && filteredMentions.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute z-50 bg-white border border-slate-100 rounded-2xl shadow-xl w-64 mt-2 max-h-60 overflow-y-auto custom-scrollbar p-2"
+                  >
+                    <div className="px-3 py-2 border-b border-slate-50 mb-1">
+                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Pilih Bidang</p>
+                    </div>
+                    {filteredMentions.map(cat => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => selectCategory(cat)}
+                        className="w-full flex items-center gap-3 px-3 py-2 hover:bg-slate-50 rounded-xl transition-all text-left group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-primary-blue flex items-center justify-center group-hover:bg-primary-blue group-hover:text-white transition-colors">
+                          <Hash size={14} />
+                        </div>
+                        <span className="text-xs font-bold text-slate-600 group-hover:text-primary-blue">{cat.name}</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Bagian UploadThing asli Anda yang dipertahankan */}
               <AnimatePresence>
@@ -419,7 +510,7 @@ export default function SocialFeed({ categoryId }) {
             <p className="text-slate-400 text-sm">Memuat feed...</p>
           </div>
         ) : (
-          posts.map((post) => (
+          filteredPosts.map((post) => (
             <PostCard
               key={post.id}
               post={post}

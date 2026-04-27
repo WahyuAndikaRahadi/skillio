@@ -31,30 +31,48 @@ const getModelInstance = (type = "lite", keyIndex = currentKeyIndex) => {
   });
 };
 
-/**
- * Wrapper fungsi untuk menangani limit dengan sistem eliminasi (Key 4 -> 1)
- */
 async function callGemini(prompt, type = "lite") {
   let lastError = null;
   
+  const primaryModel = type === "roadmap" ? "gemini-3-flash-preview" : "gemini-3.1-flash-lite-preview";
+  const fallbackModel = "gemini-3-flash-preview";
+
   // Kita coba mulai dari index yang sekarang sampai habis (sistem eliminasi)
   for (let i = currentKeyIndex; i < API_KEYS.length; i++) {
+    const genAI = new GoogleGenerativeAI(API_KEYS[i]);
+    
+    // Coba Model Utama
     try {
-      const model = getModelInstance(type, i);
+      const model = genAI.getGenerativeModel({ 
+        model: primaryModel,
+        generationConfig: { responseMimeType: "application/json" }
+      });
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      
-      // Jika berhasil, kita simpan index ini sebagai index aktif
       currentKeyIndex = i;
       return response.text();
-    } catch (error) {
-      console.error(`[AI] Gagal menggunakan API Key #${4 - i} (${API_KEYS.length - i}):`, error.message);
-      lastError = error;
-      // Lanjut ke i berikutnya (eliminasi key saat ini)
+    } catch (primaryError) {
+      console.warn(`[AI] Model Utama (${primaryModel}) gagal pada Key #${4-i}. Mencoba Fallback...`);
+      
+      // Coba Model Fallback (Gemini 3 Flash)
+      try {
+        const model = genAI.getGenerativeModel({ 
+          model: fallbackModel,
+          generationConfig: { responseMimeType: "application/json" }
+        });
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        currentKeyIndex = i;
+        return response.text();
+      } catch (fallbackError) {
+        console.error(`[AI] Gagal total pada Key #${4 - i} (${API_KEYS.length - i}):`, fallbackError.message);
+        lastError = fallbackError;
+        // Lanjut ke API key berikutnya
+      }
     }
   }
 
-  throw new Error(`Gagal memproses AI setelah mencoba semua API Key. Error terakhir: ${lastError?.message}`);
+  throw new Error(`Gagal memproses AI setelah mencoba semua API Key dan Model Fallback. Error terakhir: ${lastError?.message}`);
 }
 
 
