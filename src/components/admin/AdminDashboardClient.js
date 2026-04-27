@@ -68,7 +68,15 @@ export default function AdminDashboardClient({ metrics, latestUsers, latestGroup
                 <div key={user.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/20 transition-all">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center font-black text-primary-blue shadow-sm overflow-hidden text-sm">
-                      {user.image ? <img src={user.image} alt={user.name} /> : user.name?.[0] || "?"}
+                      {user.image ? (
+                        <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <img 
+                          src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${user.name || user.id}`} 
+                          alt={user.name} 
+                          className="w-full h-full object-cover bg-blue-50" 
+                        />
+                      )}
                     </div>
                     <div>
                       <p className="font-bold text-dark-blue text-sm">{user.name || "Tanpa Nama"}</p>

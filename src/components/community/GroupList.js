@@ -9,8 +9,9 @@ import {
   ChevronRight,
   ChevronDown,
   Loader2,
-  MoreVertical,
-  X
+  X,
+  Trash2,
+  ShieldAlert
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -152,6 +153,42 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
       console.error("Gagal join");
     } finally {
       setIsJoining(false);
+    }
+  };
+  
+  const handleDeleteGroup = async (group) => {
+    const result = await Swal.fire({
+      title: "Hapus Komunitas?",
+      text: `Hapus grup "${group.name}" secara permanen? Tindakan ini tidak bisa dibatalkan!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal",
+      customClass: {
+        popup: 'rounded-[32px] p-8',
+        confirmButton: 'rounded-xl px-6 py-3 font-bold',
+        cancelButton: 'rounded-xl px-6 py-3 font-bold'
+      }
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`/api/community/groups/${group.id}`, { method: "DELETE" });
+        if (res.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "Terhapus",
+            text: "Grup berhasil dihapus.",
+            timer: 1500,
+            showConfirmButton: false
+          });
+          fetchGroups();
+        }
+      } catch (err) {
+        Swal.fire({ icon: "error", title: "Gagal", text: "Terjadi kesalahan sistem." });
+      }
     }
   };
 
@@ -357,14 +394,14 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
         </AnimatePresence>
       ) : (
         /* Normal Group List View */
-        <div className="flex flex-col gap-3 p-4 bg-transparent min-h-full">
+        <div className="flex flex-col gap-3 p-4 bg-[#f8fbfd] min-h-full">
           {displayedGroups.map((group) => {
             const isMember = group.members && group.members.length > 0;
             return (
               <motion.div
                 key={group.id}
                 onClick={() => isMember ? onJoin(group.id) : confirmJoin(group)}
-                className="flex items-center gap-4 p-4 bg-white border border-slate-100 rounded-2xl hover:border-primary-blue/30 hover:shadow-md transition-all cursor-pointer group relative shadow-sm"
+                className="flex items-center gap-4 p-4 bg-white border border-slate-200/60 rounded-2xl hover:border-primary-blue/30 hover:shadow-sm transition-all cursor-pointer group relative"
               >
 
                 {/* Avatar Style WhatsApp */}
@@ -408,7 +445,19 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                      <span className="text-xs font-bold text-primary-blue">{group._count?.members || 0}</span>
                   </div>
                   
-                  <div className="flex items-center gap-1">
+                    {session?.user?.role === "admin" && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteGroup(group);
+                        }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 transition-all z-10"
+                        title="Hapus Grup (Admin)"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                    
                     {!isMember ? (
                        <button
                          onClick={(e) => {
@@ -420,15 +469,11 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                          Gabung
                        </button>
                     ) : (
-                      <>
-                        {/* Delete option removed based on user request */}
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-primary-blue opacity-0 group-hover:opacity-100 group-hover:bg-primary-blue/5 transition-all">
-                          <ChevronRight size={18} />
-                        </div>
-                      </>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-primary-blue opacity-0 group-hover:opacity-100 group-hover:bg-primary-blue/5 transition-all">
+                        <ChevronRight size={18} />
+                      </div>
                     )}
                   </div>
-                </div>
               </motion.div>
             );
           })}

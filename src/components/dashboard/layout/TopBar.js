@@ -205,7 +205,11 @@ const TopBar = ({ onMenuClick }) => {
                 {session?.user?.image ? (
                   <img src={session.user.image} alt="Profil" className="w-full h-full object-cover" />
                 ) : (
-                  (session?.user?.name?.[0] || "P").toUpperCase()
+                  <img 
+                    src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${session?.user?.name || "guest"}`} 
+                    alt="Profil" 
+                    className="w-full h-full object-cover bg-blue-50" 
+                  />
                 )}
               </div>
             </button>

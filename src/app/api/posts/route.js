@@ -11,15 +11,15 @@ export async function GET(req) {
     const posts = await prisma.communityPost.findMany({
       where: categoryId ? { category_id: categoryId } : {},
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, image: true, role: true } },
         category: { select: { id: true, name: true, icon: true } },
         comments: { 
           where: { parent_id: null }, // Only top-level
           include: { 
-            user: { select: { name: true, image: true } },
+            user: { select: { name: true, image: true, role: true } },
             replies: {
               include: {
-                user: { select: { name: true, image: true } }
+                user: { select: { name: true, image: true, role: true } }
               }
             }
           },
@@ -57,7 +57,7 @@ export async function POST(req) {
         image_url: imageUrl,
       },
       include: {
-        user: { select: { name: true, image: true } },
+        user: { select: { name: true, image: true, role: true } },
       }
     });
 

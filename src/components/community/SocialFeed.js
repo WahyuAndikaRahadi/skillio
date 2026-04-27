@@ -15,7 +15,8 @@ import {
   Code,
   Smile,
   Calendar,
-  Hash
+  Hash,
+  MessageSquareCodeIcon
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -32,8 +33,16 @@ const CommentItem = ({ comment, postId, onReply }) => {
           {comment.user.image ? <img src={comment.user.image} alt="" /> : comment.user.name[0]}
         </div>
         <div className="flex-1">
-          <div className="bg-slate-50 rounded-2xl p-3 px-4 inline-block max-w-full">
-            <h5 className="font-bold text-dark-blue text-xs mb-0.5">{comment.user.name}</h5>
+          <div className={cn(
+            "bg-slate-50 rounded-2xl p-3 px-4 inline-block max-w-full",
+            comment.user.role === "admin" && "bg-blue-50 border border-blue-100 ring-2 ring-blue-500/5"
+          )}>
+            <div className="flex items-center gap-2 mb-0.5">
+              <h5 className="font-bold text-dark-blue text-xs">{comment.user.name}</h5>
+              {comment.user.role === "admin" && (
+                <span className="text-[8px] font-black bg-primary-blue text-white px-1.5 py-0.5 rounded uppercase tracking-widest">Admin</span>
+              )}
+            </div>
             <p className="text-sm text-slate-700 leading-relaxed">{comment.content}</p>
           </div>
           <div className="flex items-center gap-4 mt-1 ml-2">
@@ -57,7 +66,12 @@ const CommentItem = ({ comment, postId, onReply }) => {
                     {reply.user.image ? <img src={reply.user.image} alt="" /> : reply.user.name[0]}
                   </div>
                   <div className="bg-slate-50 rounded-xl p-2 px-3">
-                    <h5 className="font-bold text-dark-blue text-[10px] mb-0.5">{reply.user.name}</h5>
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <h5 className="font-bold text-dark-blue text-[10px]">{reply.user.name}</h5>
+                      {reply.user.role === "admin" && (
+                        <span className="text-[7px] font-black bg-primary-blue text-white px-1 py-0.5 rounded uppercase tracking-tighter">Admin</span>
+                      )}
+                    </div>
                     <p className="text-xs text-slate-700">{reply.content}</p>
                   </div>
                 </div>
@@ -192,9 +206,17 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
       animate={{ opacity: 1, y: 0 }}
       className={cn(
         "bg-white/70 backdrop-blur-xl rounded-[32px] border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all mb-6 relative overflow-hidden",
-        post.type === "question" && "border-orange-200"
+        post.type === "question" && "border-orange-200",
+        post.user.role === "admin" && "border-primary-blue/30 ring-2 ring-primary-blue/5 bg-gradient-to-br from-white to-blue-50/30"
       )}
     >
+      {post.user.role === "admin" && (
+        <div className="absolute top-0 right-0">
+          <div className="bg-primary-blue text-white text-[8px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-bl-2xl shadow-lg">
+            Official Admin
+          </div>
+        </div>
+      )}
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -204,8 +226,13 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
             <div>
               <h4 className="font-bold text-dark-blue flex items-center gap-2 text-sm">
                 {post.user.name}
+                {post.user.role === "admin" && (
+                  <span className="w-4 h-4 bg-primary-blue text-white rounded-full flex items-center justify-center shrink-0" title="Admin Terverifikasi">
+                    <ShieldCheck size={10} strokeWidth={3} />
+                  </span>
+                )}
                 {post.category && (
-                  <span className="text-[10px] font-black uppercase tracking-tighter px-2 py-0.5 rounded bg-blue-50 text-primary-blue flex items-center gap-1">
+                  <span className="text-[10px] font-black uppercase tracking-tighter px-2 py-0.5 rounded bg-blue-50 text-primary-blue flex items-center gap-1 ml-1">
                     <Hash size={10} /> {post.category.name}
                   </span>
                 )}
@@ -249,7 +276,7 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
               {likesCount}
             </button>
             <button onClick={() => setShowComments(!showComments)} className={cn("flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all", showComments ? "text-primary-blue bg-blue-50" : "text-slate-500 hover:bg-slate-50")}>
-              <MessageSquare size={18} />
+              <MessageSquareCodeIcon size={18} />
               {comments.length}
             </button>
           </div>

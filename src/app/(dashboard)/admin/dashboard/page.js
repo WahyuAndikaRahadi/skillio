@@ -9,41 +9,46 @@ export default async function AdminDashboardPage() {
     redirect("/dashboard");
   }
 
-  // 1. Fetch Key Metrics
-  const totalUsers = await prisma.user.count({ where: { role: "user" } });
-  const activeRoadmaps = await prisma.userRoadmap.count({ where: { status: "active" } });
-  const totalGroups = await prisma.communityGroup.count();
-  const totalPosts = await prisma.communityPost.count();
-
-  // 2. Fetch Latest 5 Users
-  const latestUsersRaw = await prisma.user.findMany({
-    where: { role: "user" },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      createdAt: true,
-      image: true
-    }
-  });
+  // Use Promise.all for parallel fetching to improve performance
+  const [
+    totalUsers,
+    activeRoadmaps,
+    totalGroups,
+    totalPosts,
+    latestUsersRaw,
+    latestGroupsRaw
+  ] = await Promise.all([
+    prisma.user.count({ where: { role: "user" } }),
+    prisma.userRoadmap.count({ where: { status: "active" } }),
+    prisma.communityGroup.count(),
+    prisma.communityPost.count(),
+    prisma.user.findMany({
+      where: { role: "user" },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        image: true
+      }
+    }),
+    prisma.communityGroup.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: {
+        _count: {
+          select: { members: true }
+        }
+      }
+    })
+  ]);
 
   const latestUsers = latestUsersRaw.map(user => ({
     ...user,
     createdAt: user.createdAt.toISOString()
   }));
-
-  // 3. Fetch Latest 5 Groups
-  const latestGroupsRaw = await prisma.communityGroup.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 5,
-    include: {
-      _count: {
-        select: { members: true }
-      }
-    }
-  });
 
   // Prisma join workaround to get creator name
   const creatorIds = latestGroupsRaw.map(g => g.created_by);

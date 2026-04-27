@@ -20,7 +20,7 @@ export async function POST(req) {
         parent_id: parent_id || null,
       },
       include: {
-        user: { select: { name: true, image: true } },
+        user: { select: { name: true, image: true, role: true } },
       }
     });
 

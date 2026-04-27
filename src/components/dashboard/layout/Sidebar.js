@@ -12,7 +12,8 @@ import {
   Map,
   Bot,
   BookOpen,
-  Medal
+  Medal,
+  MessageSquare
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -32,6 +33,8 @@ const userMenuItems = [
 const adminMenuItems = [
   { name: "Dashboard Admin", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Kelola Kurikulum", href: "/admin/roadmaps", icon: Map },
+  { name: "Kelola User", href: "/admin/users", icon: Users },
+  { name: "Kelola Komunitas", href: "/admin/groups", icon: MessageSquare },
   { name: "Social Feed", href: "/feed", icon: Globe },
   { name: "Komunitas", href: "/community", icon: Users },
 ];
@@ -88,6 +91,7 @@ const Sidebar = ({ isMobile = false }) => {
             <Link
               key={item.name}
               href={item.href}
+              prefetch={false}
               className="relative block group outline-none"
             >
               <div

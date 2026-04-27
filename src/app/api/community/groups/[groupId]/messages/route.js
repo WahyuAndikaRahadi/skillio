@@ -25,7 +25,7 @@ export async function GET(req, { params }) {
     const messages = await prisma.groupMessage.findMany({
       where: { group_id: groupId },
       include: {
-        user: { select: { id: true, name: true, image: true } }
+        user: { select: { id: true, name: true, image: true, role: true } }
       },
       orderBy: { createdAt: "asc" },
       take: 50
@@ -44,7 +44,7 @@ export async function POST(req, { params }) {
 
     const resolvedParams = await params;
     const { groupId } = resolvedParams;
-    const { content, imageUrl, fileUrl, fileName, attachments } = await req.json();
+    const { content, imageUrl, fileUrl, fileName } = await req.json();
 
     // Check membership
     const member = await prisma.groupMember.findUnique({
@@ -64,11 +64,10 @@ export async function POST(req, { params }) {
         content,
         image_url: imageUrl,
         file_url: fileUrl,
-        file_name: fileName,
-        attachments: attachments || []
+        file_name: fileName
       },
       include: {
-        user: { select: { id: true, name: true, image: true } }
+        user: { select: { id: true, name: true, image: true, role: true } }
       }
     });
 
