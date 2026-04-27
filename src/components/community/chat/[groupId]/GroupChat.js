@@ -27,6 +27,23 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const scrollRef = useRef(null);
+  
+  const formatDateHeader = (date) => {
+    const d = new Date(date);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (d.toDateString() === today.toDateString()) return "Hari Ini";
+    if (d.toDateString() === yesterday.toDateString()) return "Kemarin";
+    
+    return d.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+  };
+
 
   useEffect(() => {
     if (!groupId) return;
@@ -142,21 +159,47 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                {messages.length === 0 && (
                  <div className="w-full flex justify-center my-6"><div className="bg-white/80 border border-[#dbe7f2] text-[#1f547e] text-xs font-bold px-6 py-3 rounded-full flex items-center gap-2"><MessageSquare size={16} /> Mulai percakapan pertamamu!</div></div>
                )}
-               {messages.map((msg) => {
+               {messages.map((msg, index) => {
                  const isMe = msg.user_id === session?.user?.id;
+                 
+                 // Hitung apakah perlu menampilkan separator tanggal
+                 const msgDate = new Date(msg.createdAt).toDateString();
+                 const prevMsgDate = index > 0 ? new Date(messages[index - 1].createdAt).toDateString() : null;
+                 const showDateSeparator = msgDate !== prevMsgDate;
+
                  return (
-                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={msg.id} className={cn("flex w-full", isMe ? "justify-end" : "justify-start")}>
-                      <div className={cn("max-w-[85%] md:max-w-[70%] rounded-[24px] px-5 py-3.5 relative text-sm", isMe ? "bg-[#2b6ea6] text-white rounded-br-sm shadow-md" : "bg-white text-[#0d2133] rounded-bl-sm border border-[#dbe7f2] shadow-sm")}>
-                         {!isMe && <div className="text-[11px] font-bold font-display text-[#2b6ea6] mb-1 uppercase tracking-widest">{msg.user.name}</div>}
-                         {msg.image_url && <img src={msg.image_url} alt="Attachment" className="w-full max-h-[300px] object-cover rounded-xl mb-2" />}
-                         <div className="flex flex-col gap-1">
-                           <span className="leading-relaxed break-words">{msg.content}</span>
-                           <span className={cn("text-[10px] font-bold uppercase tracking-widest mt-1 text-right", isMe ? "text-white/70" : "text-[#92b7d6]")}>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                   <React.Fragment key={msg.id}>
+                     {showDateSeparator && (
+                       <div className="flex justify-center my-8 relative">
+                         <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                           <div className="w-full border-t border-[#dbe7f2]/50"></div>
                          </div>
-                      </div>
-                   </motion.div>
+                         <div className="relative px-4 bg-[#f8fbfd]">
+                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#92b7d6]">
+                             {formatDateHeader(msg.createdAt)}
+                           </span>
+                         </div>
+                       </div>
+                     )}
+                     
+                     <motion.div 
+                       initial={{ opacity: 0, y: 10 }} 
+                       animate={{ opacity: 1, y: 0 }} 
+                       className={cn("flex w-full", isMe ? "justify-end" : "justify-start")}
+                     >
+                        <div className={cn("max-w-[85%] md:max-w-[70%] rounded-[24px] px-5 py-3.5 relative text-sm", isMe ? "bg-[#2b6ea6] text-white rounded-br-sm shadow-md" : "bg-white text-[#0d2133] rounded-bl-sm border border-[#dbe7f2] shadow-sm")}>
+                           {!isMe && <div className="text-[11px] font-bold font-display text-[#2b6ea6] mb-1 uppercase tracking-widest">{msg.user.name}</div>}
+                           {msg.image_url && <img src={msg.image_url} alt="Attachment" className="w-full max-h-[300px] object-cover rounded-xl mb-2" />}
+                           <div className="flex flex-col gap-1">
+                             <span className="leading-relaxed break-words">{msg.content}</span>
+                             <span className={cn("text-[10px] font-bold uppercase tracking-widest mt-1 text-right", isMe ? "text-white/70" : "text-[#92b7d6]")}>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                           </div>
+                        </div>
+                     </motion.div>
+                   </React.Fragment>
                  );
                })}
+
             </div>
           </div>
 

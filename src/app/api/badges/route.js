@@ -20,10 +20,24 @@ export async function GET() {
 
     const earnedBadgeIds = userBadges.map(ub => ub.badge_id);
 
+    // 3. Get completed roadmaps as certificates
+    const completedRoadmaps = await prisma.userRoadmap.findMany({
+      where: { 
+        user_id: session.user.id,
+        status: "completed"
+      },
+      include: {
+        category: { select: { name: true, icon: true } },
+        roadmap: { select: { title: true } }
+      }
+    });
+
     return NextResponse.json({
       allBadges,
-      earnedBadgeIds
+      earnedBadgeIds,
+      completedRoadmaps
     });
+
   } catch (error) {
     console.error("Badges API error:", error);
     return NextResponse.json({ message: "Error" }, { status: 500 });

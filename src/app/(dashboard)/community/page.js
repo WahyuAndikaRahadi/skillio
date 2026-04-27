@@ -80,8 +80,10 @@ export default function CommunityPage() {
       {/* ── LEFT PANEL ────────────────────────────────────────────────────── */}
       <div className={cn(
         "absolute inset-y-0 left-0 z-[70] w-80 shrink-0 flex flex-col border-r border-skillio-100 bg-white transition-transform duration-300 lg:relative lg:translate-x-0",
-        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full",
+        activeGroupId && "lg:hidden"
       )}>
+
 
         {/* Mobile Header (Sidebar) */}
         <div className="flex items-center justify-between px-4 py-4 lg:hidden border-b border-skillio-50">
