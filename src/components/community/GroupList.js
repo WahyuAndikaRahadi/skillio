@@ -159,7 +159,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
 
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 font-sans">
       {isLoading ? (
         <div className="text-center py-20">
           <Loader2 className="w-10 h-10 text-primary-blue animate-spin mx-auto mb-4" />
@@ -188,7 +188,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <h4 className="font-bold text-[#1E293B] text-base truncate flex items-center gap-2">
+                    <h4 className="font-black text-[#1E293B] text-base truncate flex items-center gap-2 font-display">
                       {group.name}
                       {group.privacy === "private" && <Lock size={12} className="text-slate-400" />}
                     </h4>
@@ -280,7 +280,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#E6F0F9] rounded-full -translate-y-1/2 translate-x-1/2"></div>
 
-              <h2 className="text-2xl font-black text-[#1E293B] mb-2">Buat Grup Baru</h2>
+              <h2 className="text-2xl font-black text-[#1E293B] mb-2 font-display">Buat Grup Baru</h2>
               <p className="text-slate-400 font-medium mb-8">Pimpin komunitas belajarmu sendiri.</p>
 
               <form onSubmit={handleCreateGroup} className="space-y-5">
