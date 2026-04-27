@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Search, PlayCircle, CheckCircle2, ChevronRight, BookOpen, Loader2, Code2, Palette, Database, BarChart3, Smartphone, Zap } from "lucide-react";
+import { 
+  Search, CheckCircle2, ChevronRight, BookOpen, Loader2, Code2, 
+  Palette, Database, BarChart3, Smartphone, Zap, Sparkles, 
+  Star, Target, Rocket, MousePointer2, Briefcase
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -14,7 +18,7 @@ const categoryThemes = {
   data: { icon: Database, gradient: "from-emerald-600 to-teal-500", lightGradient: "from-emerald-50 to-teal-50", accent: "text-emerald-600", bgAccent: "bg-emerald-100" },
   mobile: { icon: Smartphone, gradient: "from-orange-600 to-rose-500", lightGradient: "from-orange-50 to-rose-50", accent: "text-orange-600", bgAccent: "bg-orange-100" },
   analytics: { icon: BarChart3, gradient: "from-indigo-600 to-blue-500", lightGradient: "from-indigo-50 to-blue-50", accent: "text-indigo-600", bgAccent: "bg-indigo-100" },
-  default: { icon: Zap, gradient: "from-skillio-500 to-blue-600", lightGradient: "from-skillio-50 to-blue-50", accent: "text-skillio-600", bgAccent: "bg-skillio-100" },
+  default: { icon: Zap, gradient: "from-primary-blue to-blue-600", lightGradient: "from-blue-50 to-indigo-50", accent: "text-primary-blue", bgAccent: "bg-blue-100" },
 };
 
 const getCategoryTheme = (categoryName) => {
@@ -30,6 +34,7 @@ const getCategoryTheme = (categoryName) => {
 export default function RoadmapCatalogClient({ groupedCategories, activeRoadmap }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [loadingCategory, setLoadingCategory] = useState(null);
+  const [activeDomain, setActiveDomain] = useState(groupedCategories[0]?.title || "");
   const router = useRouter();
 
   const handleSelectCategory = async (category) => {
@@ -56,277 +61,311 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmap 
     }
   };
 
+  const currentGroup = groupedCategories.find(g => g.title === activeDomain);
+  const filteredItems = currentGroup?.items.filter(item =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
   return (
-    <div className="relative min-h-screen">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="max-w-7xl mx-auto space-y-16 pb-20 px-6 md:px-10 pt-6 relative z-10">
-
-        {/* ═══ HEADER SECTION ═══ */}
+    <div className="min-h-screen bg-slate-50/50">
+      
+      {/* ═══ PREMIUM SHOWROOM HEADER ═══ */}
+      <div className="relative pt-6 px-6 md:px-10 mb-12">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-8"
+          transition={{ duration: 0.8 }}
+          className="relative group"
         >
-          <div className="space-y-6 max-w-2xl flex-1">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-skillio-500/10 to-blue-500/10 border border-skillio-200/40 backdrop-blur-sm"
-            >
-              <div className="w-2 h-2 rounded-full bg-skillio-500 animate-pulse" />
-              <span className="text-sm font-bold text-skillio-600">Jelajahi 50+ Bidang Profesional</span>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="space-y-4"
-            >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1]">
-                Eksplorasi <span className="bg-gradient-to-r from-skillio-500 to-blue-600 bg-clip-text text-transparent">Roadmap</span> Karir Digital
-              </h1>
-              <p className="text-lg md:text-xl text-slate-600 font-medium leading-relaxed max-w-xl">
-                Temukan jalur karir digital yang paling cocok untukmu dari berbagai bidang profesional. Pilih satu, dan mulai perjalanan transformasi 30 harimu sekarang.
-              </p>
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="relative w-full md:w-96 shrink-0"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-skillio-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Cari bidang digital (Mis: Web, Data, Desain)..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/80 backdrop-blur-sm border-2 border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/20 outline-none transition-all font-semibold text-slate-700 shadow-lg hover:shadow-xl hover:border-slate-300"
-              />
+          {/* Main Card Header */}
+          <div className="relative overflow-hidden rounded-[40px] md:rounded-[60px] bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800 border border-blue-400/30 shadow-[0_20px_50px_rgba(59,130,246,0.2)]">
+            
+            {/* Animated Background */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <motion.div 
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                  transition={{ duration: 10, repeat: Infinity }}
+                  className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl" 
+                />
+                <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             </div>
-          </motion.div>
-        </motion.div>
 
-        {/* ═══ ACTIVE ROADMAP BANNER ═══ */}
-        {activeRoadmap && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-skillio-900 via-skillio-800 to-skillio-700 rounded-3xl" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.1)_0%,transparent_50%)]" />
-            <div className="relative rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-skillio-900/30">
-              <div className="flex items-center gap-6 flex-1">
+            <div className="relative z-10 p-6 md:p-10 lg:p-12 flex flex-col items-center text-center">
+              
+              <div className="space-y-4">
                 <motion.div
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
-                  className="w-20 h-20 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20 shrink-0"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-2xl border border-white/20 px-4 py-1.5 rounded-full"
                 >
-                  <BookOpen className="text-white w-10 h-10" />
+                  <Sparkles size={12} className="text-yellow-300" />
+                  <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white">Eksplorasi Karir</span>
                 </motion.div>
-                <div className="space-y-2">
-                  <p className="text-white/70 font-bold text-sm uppercase tracking-widest">Roadmap Aktif Sekarang</p>
-                  <h2 className="text-2xl md:text-3xl font-black text-white">{activeRoadmap.category.name}</h2>
+
+                <div className="space-y-3">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tighter">
+                    Temukan Jalur <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-white to-blue-200 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                      Masa Depanmu
+                    </span>
+                  </h1>
+                  <p className="text-sm md:text-base text-white/70 font-medium max-w-lg mx-auto leading-relaxed">
+                    Pilih satu dari 50+ bidang profesional digital. Kami siapkan roadmap 30 hari yang terstruktur untuk membantumu menguasainya dari nol.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                   <div className="flex items-center gap-2 text-white/80 text-[10px] font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
+                      <Target size={14} className="text-blue-300" /> 50+ Roadmap
+                   </div>
+                   <div className="flex items-center gap-2 text-white/80 text-[10px] font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
+                      <Zap size={14} className="text-yellow-300" /> 30 Hari Belajar
+                   </div>
+                   <div className="flex items-center gap-2 text-white/80 text-[10px] font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
+                      <Rocket size={14} className="text-emerald-300" /> Sertifikat
+                   </div>
                 </div>
               </div>
-              <Link
-                href="/belajar"
-                className="w-full md:w-auto group px-8 py-4 bg-white text-skillio-900 rounded-2xl font-black hover:shadow-xl hover:shadow-white/20 transition-all flex items-center justify-center gap-2 hover:scale-105"
-              >
-                Lanjutkan Belajar
-                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
             </div>
+
+          </div>
+        </motion.div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 md:px-10 pb-20 relative z-10">
+        
+        {/* ═══ ACTIVE ROADMAP INDICATOR ═══ */}
+        {activeRoadmap && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="mb-12 flex items-center justify-between bg-white border-2 border-primary-blue/20 p-6 rounded-[32px] shadow-xl shadow-blue-500/5 group"
+          >
+            <div className="flex items-center gap-5">
+               <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-primary-blue border border-blue-100 group-hover:scale-110 transition-transform">
+                  <BookOpen size={24} />
+               </div>
+               <div>
+                  <h3 className="font-black text-slate-900 leading-none mb-1.5">Roadmap Aktif</h3>
+                  <p className="text-sm text-slate-500 font-bold">{activeRoadmap.category.name}</p>
+               </div>
+            </div>
+            <Link 
+              href="/belajar" 
+              className="flex items-center gap-2 bg-primary-blue text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+            >
+              Lanjutkan <ChevronRight size={16} />
+            </Link>
           </motion.div>
         )}
 
-        {/* ═══ CATEGORY GROUPS ═══ */}
-        <div className="space-y-20">
-          {groupedCategories.map((group, idx) => {
-            const filteredItems = group.items.filter(item =>
-              item.name.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+        <div className="flex flex-col lg:flex-row gap-12">
+          
+          {/* ═══ SIDE NAVIGATION (DOMAINS) ═══ */}
+          <div className="lg:w-72 shrink-0">
+            <div className="sticky top-24 space-y-8">
+               
+               {/* New Search Location */}
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ delay: 0.4 }}
+                 className="relative group/search"
+               >
+                 <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                    <input
+                      type="text"
+                      placeholder="Cari roadmap..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white border border-slate-100 focus:border-primary-blue/30 outline-none font-bold text-xs transition-all shadow-sm focus:shadow-xl focus:shadow-blue-500/5 placeholder:text-slate-300"
+                    />
+                 </div>
+               </motion.div>
 
-            if (filteredItems.length === 0) return null;
+               <div className="bg-white/50 backdrop-blur-sm border border-white rounded-[32px] p-4 shadow-sm">
+                  <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-4 flex items-center gap-2">
+                     <span className="w-1.5 h-1.5 rounded-full bg-primary-blue" />
+                     Pilih Bidang
+                  </h2>
+                  <div className="flex flex-col gap-1.5">
+                    {groupedCategories.map((group) => {
+                      const icons = {
+                        "Teknologi & Pengembangan": Code2,
+                        "Data & Kecerdasan Buatan": Database,
+                        "Desain & Kreativitas": Palette,
+                        "Konten & Media Digital": Smartphone,
+                        "Bisnis & Pemasaran Digital": BarChart3,
+                        "Keuangan & Legalitas Digital": Target,
+                      };
+                      const Icon = icons[group.title] || Zap;
+                      const isActive = activeDomain === group.title;
 
-            return (
+                      return (
+                        <button
+                          key={group.title}
+                          onClick={() => setActiveDomain(group.title)}
+                          className={cn(
+                            "w-full text-left px-4 py-3 rounded-2xl font-bold text-[13px] transition-all flex items-center justify-between group relative overflow-hidden",
+                            isActive
+                              ? "bg-primary-blue text-white shadow-lg shadow-blue-500/20"
+                              : "text-slate-500 hover:bg-white hover:text-slate-900"
+                          )}
+                        >
+                          <div className="flex items-center gap-3 relative z-10">
+                             <div className={cn(
+                               "w-8 h-8 rounded-xl flex items-center justify-center transition-all",
+                               isActive ? "bg-white/20" : "bg-slate-50 group-hover:bg-blue-50"
+                             )}>
+                                <Icon size={16} className={cn(isActive ? "text-white" : "text-slate-400 group-hover:text-primary-blue")} />
+                             </div>
+                             <span className="truncate max-w-[140px]">{group.title}</span>
+                          </div>
+                          
+                          {isActive && (
+                            <motion.div 
+                              layoutId="activeTab"
+                              className="absolute inset-0 bg-gradient-to-r from-primary-blue to-blue-700 z-0"
+                            />
+                          )}
+
+                          <div className={cn(
+                             "w-1.5 h-1.5 rounded-full transition-all relative z-10",
+                             isActive ? "bg-white scale-110" : "bg-slate-200 opacity-0 group-hover:opacity-100"
+                          )} />
+                        </button>
+                      );
+                    })}
+                  </div>
+               </div>
+
+               {/* Quick Support / AI Widget */}
+               <div className="p-6 bg-gradient-to-br from-blue-600 to-primary-blue rounded-[32px] text-white shadow-2xl relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:rotate-12 transition-transform">
+                     <MousePointer2 size={40} />
+                  </div>
+                  <div className="relative z-10">
+                     <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-2">Bingung Pilih?</p>
+                     <h4 className="text-sm font-black mb-4 leading-relaxed">Biarkan AI Mentor membantumu menemukan minat!</h4>
+                     <Link href="/ai" className="inline-flex items-center gap-2 text-xs font-black text-white bg-white/20 backdrop-blur-md px-4 py-2 rounded-xl hover:bg-white/30 transition-all">
+                        Mulai Diskusi <ChevronRight size={14} />
+                     </Link>
+                  </div>
+               </div>
+            </div>
+          </div>
+
+          {/* ═══ MAIN CATALOG CONTENT ═══ */}
+          <div className="flex-1 min-w-0">
+            <AnimatePresence mode="wait">
               <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6 }}
-                className="space-y-8"
+                key={activeDomain + searchQuery}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.4 }}
+                className="space-y-10"
               >
-                <div className="pb-6 border-b-2 border-slate-200">
-                  <motion.h2
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.1 }}
-                    className="text-3xl font-black text-slate-900 mb-3"
-                  >
-                    {group.title}
-                  </motion.h2>
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                    className="text-slate-600 font-semibold text-lg"
-                  >
-                    {group.description}
-                  </motion.p>
+                {/* Domain Header */}
+                <div className="relative">
+                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
+                      <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{activeDomain}</h2>
+                      <span className="bg-slate-200/50 text-slate-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
+                        {filteredItems.length} Roadmap
+                      </span>
+                   </div>
+                   <p className="text-slate-500 font-medium text-lg max-w-2xl">{currentGroup?.description}</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredItems.map((category, itemIdx) => {
+                {/* Grid Catalog */}
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+                  {filteredItems.map((category, idx) => {
                     const isActive = activeRoadmap?.category_id === category.id;
                     const isLoading = loadingCategory === category.id;
                     const theme = getCategoryTheme(category.name);
-                    const ThemeIcon = theme.icon;
+                    const Icon = theme.icon;
 
                     return (
                       <motion.div
                         key={category.id}
                         initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-50px" }}
-                        transition={{ delay: itemIdx * 0.05, duration: 0.4 }}
-                        whileHover={{ y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
                         className={cn(
-                          "group relative h-full rounded-3xl border-2 transition-all duration-300 overflow-hidden",
-                          isActive
-                            ? "bg-gradient-to-br from-skillio-50/80 to-blue-50/80 border-skillio-300 shadow-xl shadow-skillio-200/30"
-                            : "bg-white/80 backdrop-blur-sm border-slate-200 hover:border-slate-400 hover:shadow-2xl hover:shadow-slate-300/20"
+                          "group relative bg-white border-2 rounded-[35px] p-7 transition-all duration-300 flex flex-col",
+                          isActive 
+                            ? "border-primary-blue ring-4 ring-primary-blue/5 shadow-2xl shadow-blue-500/10" 
+                            : "border-slate-100 hover:border-primary-blue/30 hover:shadow-2xl hover:shadow-slate-300/30"
                         )}
                       >
-                        {/* Background gradient overlay */}
-                        {!isActive && (
-                          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-slate-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        )}
+                        <div className="flex items-start justify-between mb-8">
+                           <div className={cn(
+                             "w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-lg",
+                             isActive ? "bg-primary-blue text-white" : "bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-primary-blue"
+                           )}>
+                              <Icon size={32} />
+                           </div>
+                           {isActive && (
+                             <div className="bg-blue-600 text-white p-1.5 rounded-full shadow-lg">
+                                <CheckCircle2 size={16} />
+                             </div>
+                           )}
+                        </div>
 
-                        <div className="relative p-6 md:p-7 flex flex-col h-full">
-                          {/* Icon Badge */}
-                          <motion.div
-                            initial={{ scale: 0, rotate: -90 }}
-                            whileInView={{ scale: 1, rotate: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: itemIdx * 0.05 + 0.1, type: "spring", stiffness: 120 }}
-                            className={cn(
-                              "w-14 h-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg transition-all duration-300 group-hover:scale-110",
-                              isActive
-                                ? `bg-gradient-to-br ${theme.gradient} text-white`
-                                : `bg-gradient-to-br ${theme.lightGradient} ${theme.accent}`
-                            )}
-                          >
-                            <ThemeIcon className="w-7 h-7" />
-                          </motion.div>
-
-                          {/* Status Badge */}
-                          {isActive && (
-                            <motion.span
-                              initial={{ opacity: 0, scale: 0.8 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-skillio-600 text-white text-xs font-black uppercase tracking-wider rounded-lg mb-4 w-fit shadow-lg"
-                            >
-                              <CheckCircle2 size={14} /> Sedang Aktif
-                            </motion.span>
-                          )}
-
-                          {/* Title and Description */}
-                          <div className="flex-1 mb-6">
-                            <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-tight mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-skillio-600 group-hover:to-blue-600 group-hover:bg-clip-text transition-all duration-300">
+                        <div className="flex-1 space-y-3 mb-8">
+                           <h3 className="text-2xl font-black text-slate-900 leading-tight group-hover:text-primary-blue transition-colors">
                               {category.name}
-                            </h3>
-                          </div>
+                           </h3>
+                           <p className="text-sm text-slate-500 font-medium leading-relaxed line-clamp-3">
+                              Kuasai fundamental dan teknik tingkat lanjut dalam bidang {category.name} melalui kurikulum terstruktur selama 30 hari.
+                           </p>
+                        </div>
 
-                          {/* Action Button */}
-                          {isActive ? (
-                            <Link
-                              href="/belajar"
-                              className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-skillio-600 to-skillio-500 text-white font-black rounded-xl hover:shadow-xl hover:shadow-skillio-600/30 transition-all duration-300 hover:scale-105 group-hover:from-skillio-700 group-hover:to-skillio-600"
-                            >
-                              Lanjut Belajar
-                              <ChevronRight size={18} />
-                            </Link>
-                          ) : (
-                            <motion.button
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={() => handleSelectCategory(category)}
-                              disabled={isLoading || activeRoadmap}
-                              className={cn(
-                                "w-full flex items-center justify-center gap-2 py-3.5 font-black rounded-xl transition-all duration-300 group-hover:scale-105",
-                                activeRoadmap
-                                  ? "bg-slate-100 text-slate-400 cursor-not-allowed opacity-60"
-                                  : "bg-gradient-to-r from-slate-100 to-slate-50 text-slate-700 group-hover:from-slate-900 group-hover:to-slate-800 group-hover:text-white hover:shadow-xl hover:shadow-slate-400/20"
-                              )}
-                            >
-                              {isLoading ? (
-                                <>
-                                  <Loader2 className="animate-spin" size={18} />
-                                  <span>Memproses...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <span>Pilih Roadmap</span>
-                                  <ChevronRight size={18} />
-                                </>
-                              )}
-                            </motion.button>
-                          )}
+                        <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
+                           <div className="flex items-center gap-2">
+                              <Briefcase size={14} className="text-slate-400" />
+                              <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Peluang Karir: Tinggi</span>
+                           </div>
+                           
+                           {isActive ? (
+                             <Link href="/belajar" className="flex items-center gap-2 text-primary-blue font-black text-sm hover:underline">
+                               Lanjut Belajar <ChevronRight size={18} />
+                             </Link>
+                           ) : (
+                             <button
+                               onClick={() => handleSelectCategory(category)}
+                               disabled={isLoading || activeRoadmap}
+                               className={cn(
+                                 "flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all",
+                                 activeRoadmap 
+                                   ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
+                                   : "bg-slate-50 text-slate-900 group-hover:bg-primary-blue group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-500/30"
+                               )}
+                             >
+                                {isLoading ? <Loader2 className="animate-spin" size={14} /> : "Pilih"} <ChevronRight size={16} />
+                             </button>
+                           )}
                         </div>
                       </motion.div>
                     );
                   })}
+
+                  {/* Empty Search within Domain */}
+                  {filteredItems.length === 0 && (
+                    <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-slate-100 rounded-[40px]">
+                       <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                          <Search size={40} className="text-slate-200" />
+                       </div>
+                       <h3 className="text-xl font-black text-slate-400">Tidak ada hasil untuk "{searchQuery}"</h3>
+                       <p className="text-slate-400 font-medium">Coba gunakan kata kunci lain atau pilih domain yang berbeda.</p>
+                    </div>
+                  )}
                 </div>
               </motion.div>
-            );
-          })}
-
-          {/* Empty Search State */}
-          {groupedCategories.every(g => g.items.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0) && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="py-24 text-center"
-            >
-              <motion.div
-                initial={{ scale: 0, rotate: -90 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                className="inline-flex p-6 bg-gradient-to-br from-slate-100 to-slate-50 rounded-full mb-6 shadow-lg"
-              >
-                <Search className="text-slate-300 w-12 h-12" />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="space-y-3"
-              >
-                <h3 className="text-2xl md:text-3xl font-black text-slate-800">Kategori tidak ditemukan</h3>
-                <p className="text-slate-600 font-semibold text-lg">Coba gunakan kata kunci yang lebih spesifik, seperti "Web", "Data", atau "Design".</p>
-              </motion.div>
-            </motion.div>
-          )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>

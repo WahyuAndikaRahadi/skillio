@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }) {
               initial={{ x: -300 }}
               animate={{ x: 0 }}
               exit={{ x: -300 }}
-              className="fixed left-0 top-0 bottom-0 w-72 bg-white z-50 lg:hidden shadow-2xl"
+              className="fixed left-0 top-0 bottom-0 w-64 bg-white z-50 lg:hidden shadow-2xl"
             >
                <Sidebar isMobile={true} />
                <button 
@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }) {
 
       <div className={cn(
         "flex flex-col min-h-screen relative transition-all duration-500",
-        !isImmersiveMode ? "lg:ml-72" : "lg:ml-0"
+        !isImmersiveMode ? "lg:ml-64" : "lg:ml-0"
       )}>
         {!isImmersiveMode && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
         

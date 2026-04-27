@@ -77,7 +77,7 @@ const TopBar = ({ onMenuClick }) => {
   };
 
   return (
-    <header className="h-20 bg-white/80 backdrop-blur-md border-b border-light-blue fixed top-0 right-0 left-0 lg:left-72 z-30 px-6">
+    <header className="h-20 bg-white/80 backdrop-blur-md border-b border-light-blue fixed top-0 right-0 left-0 lg:left-64 z-30 px-6">
       <div className="h-full flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
