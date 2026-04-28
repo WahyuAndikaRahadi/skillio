@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import path from "path";
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_SERVER_HOST,
@@ -10,6 +11,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const currentYear = new Date().getFullYear();
+
 export const sendVerificationEmail = async (email, otp) => {
   try {
     const info = await transporter.sendMail({
@@ -19,6 +22,7 @@ export const sendVerificationEmail = async (email, otp) => {
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 20px; background: #ffffff;">
           <div style="text-align: center; margin-bottom: 20px;">
+             <img src="cid:skillio-logo" alt="Skillio Logo" style="width: 64px; height: 64px; margin-bottom: 10px; object-fit: contain;" />
              <h1 style="color: #2b6ea6; font-size: 32px; font-weight: 900; letter-spacing: -1px; margin: 0;">SKILLIO</h1>
           </div>
           <h2 style="color: #0d2133; text-align: center;">Verifikasi Email Anda</h2>
@@ -35,11 +39,18 @@ export const sendVerificationEmail = async (email, otp) => {
           </p>
           <hr style="border: none; border-top: 1px solid #edf2f7; margin: 30px 0;" />
           <p style="font-size: 12px; color: #a0aec0; text-align: center;">
-            © 2024 Skillio - Transformasi Karier dengan AI <br/>
+            © ${currentYear} Skillio - Transformasi Karier dengan AI <br/>
             Jika Anda tidak merasa mendaftar, abaikan email ini.
           </p>
         </div>
       `,
+      attachments: [
+        {
+          filename: 'skillio-logo.png',
+          path: path.join(process.cwd(), 'public/images/skillio-logo.png'),
+          cid: 'skillio-logo'
+        }
+      ]
     });
 
     return info;
@@ -58,6 +69,7 @@ export const sendPasswordResetEmail = async (email, otp) => {
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 20px; background: #ffffff;">
           <div style="text-align: center; margin-bottom: 20px;">
+             <img src="cid:skillio-logo" alt="Skillio Logo" style="width: 64px; height: 64px; margin-bottom: 10px; object-fit: contain;" />
              <h1 style="color: #2b6ea6; font-size: 32px; font-weight: 900; letter-spacing: -1px; margin: 0;">SKILLIO</h1>
           </div>
           <h2 style="color: #0d2133; text-align: center;">Permintaan Reset Password</h2>
@@ -73,10 +85,17 @@ export const sendPasswordResetEmail = async (email, otp) => {
           </p>
           <hr style="border: none; border-top: 1px solid #edf2f7; margin: 30px 0;" />
           <p style="font-size: 12px; color: #a0aec0; text-align: center;">
-            © 2024 Skillio - Bangun Karier Impianmu
+            © ${currentYear} Skillio - Bangun Karier Impianmu
           </p>
         </div>
       `,
+      attachments: [
+        {
+          filename: 'skillio-logo.png',
+          path: path.join(process.cwd(), 'public/images/skillio-logo.png'),
+          cid: 'skillio-logo'
+        }
+      ]
     });
 
     return info;
