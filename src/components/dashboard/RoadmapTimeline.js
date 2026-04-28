@@ -897,30 +897,30 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                 <div className={cn(
                   "rounded-3xl p-6 shadow-2xl transition-all duration-500",
                   !stats.isActiveToday 
-                    ? "bg-slate-800/50 backdrop-blur-md border border-slate-700" 
+                    ? "bg-gradient-to-br from-blue-400 to-blue-500 border border-white/20" 
                     : "bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 shadow-skillio-500/30"
                 )}>
                    <div className="flex items-center justify-between mb-8">
                       <div className="flex items-center gap-3">
                          <div className={cn(
                            "w-10 h-10 rounded-full flex items-center justify-center border transition-all",
-                           !stats.isActiveToday ? "bg-slate-700 border-slate-600" : "bg-white/10 border-white/20"
+                           !stats.isActiveToday ? "bg-white/10 border-white/20" : "bg-white/10 border-white/20"
                          )}>
                             <Flame className={cn(
                               "transition-all", 
-                              !stats.isActiveToday ? "text-slate-500 grayscale" : "text-orange-400 fill-orange-400 animate-pulse"
+                              !stats.isActiveToday ? "text-white/30 fill-white/20" : "text-orange-400 fill-orange-400 animate-pulse"
                             )} size={20} />
                          </div>
                          <div>
-                            <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">Day Streak</p>
-                            <p className={cn("text-xl font-black", !stats.isActiveToday ? "text-slate-500" : "text-white")}>
+                            <p className="text-[10px] font-black text-white/70 uppercase tracking-widest">Day Streak</p>
+                            <p className="text-xl font-black text-white">
                               {stats.streak}
                             </p>
                          </div>
                       </div>
                       <div className="text-right">
-                         <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">XP Points</p>
-                         <p className={cn("text-xl font-black", !stats.isActiveToday ? "text-slate-500" : "text-skillio-400")}>
+                         <p className="text-[10px] font-black text-white/70 uppercase tracking-widest">XP Points</p>
+                         <p className="text-xl font-black text-white">
                            {stats.xp}
                          </p>
                       </div>
@@ -947,7 +947,9 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xl shadow-slate-100/50">
                   <div className="flex items-center gap-2 mb-6">
                      <Target size={18} className="text-skillio-500" />
-                     <h3 className="font-black text-slate-900">Misi Hari Ini</h3>
+                     <h3 className="font-black text-slate-900">
+                        {getDayProgress(currentDay).quiz_passed ? "Misi Besok Hari" : "Misi Hari Ini"}
+                     </h3>
                   </div>
                   {currentDayData ? (
                      <div className="space-y-4">

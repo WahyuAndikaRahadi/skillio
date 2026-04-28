@@ -202,9 +202,11 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                   {profileData.image ? (
                     <img src={profileData.image} alt={profileData.name} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-6xl font-black text-primary-blue">
-                      {profileData.name?.[0]?.toUpperCase() || "S"}
-                    </span>
+                    <img 
+                      src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${profileData.name || "guest"}`} 
+                      alt={profileData.name} 
+                      className="w-full h-full object-cover bg-blue-50" 
+                    />
                   )}
                   {isUploading && (
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">

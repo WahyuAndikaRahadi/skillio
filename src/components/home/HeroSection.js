@@ -63,7 +63,7 @@ export default function HeroSection() {
             <div className="fade-up flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
               <a
                 href="/auth/login"
-                className="shine-line group inline-flex items-center justify-center gap-2 rounded-2xl bg-skillio-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-skillio-500/20 transition-all hover:bg-skillio-700 hover:shadow-skillio-500/30"
+                className="shine-line group inline-flex items-center justify-center gap-2 rounded-2xl bg-skillio-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-skillio-500/20 transition-[background-color,transform,box-shadow] duration-200 hover:bg-skillio-700 hover:shadow-skillio-500/30 active:scale-95"
               >
                 Mulai Eksplorasi
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />

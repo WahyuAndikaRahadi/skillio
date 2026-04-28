@@ -33,16 +33,16 @@ const Preloader = () => {
         )
       ]);
 
-      // 2. PROGRESS (0.8s - 4s): Loading bar jalan selama 3.2 detik
+      // 2. PROGRESS (0.2s - 0.8s): Loading bar jalan lebih cepat
       await animate(progressBar, 
         { width: "100%" }, 
-        { duration: 3.2, ease: [0.65, 0, 0.35, 1], delay: 0.8 }
+        { duration: 0.6, ease: "easeInOut", delay: 0.2 }
       ).finished;
 
-      // 3. EXIT (4s - 5s): Slide up halus
+      // 3. EXIT (0.8s - 1.2s): Slide up cepat
       await animate(container, 
         { y: "-100%" }, 
-        { duration: 1, ease: [0.87, 0, 0.13, 1] }
+        { duration: 0.4, ease: "easeIn" }
       ).finished;
 
       document.body.style.overflow = '';
@@ -73,8 +73,8 @@ const Preloader = () => {
           <Image 
             src="/images/skillio-logo.png" 
             alt="Skillio Logo" 
-            width={168}
-            height={168}
+            width={80}
+            height={80}
             priority
             className="w-full h-full object-contain relative z-10"
           />
@@ -108,8 +108,8 @@ const Preloader = () => {
         </div>
       </div>
 
-      {/* Subtle Grainy Overlay */}
-      <div className="absolute inset-0 opacity-[0.015] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/felt.png')]" />
+      {/* Subtle Grainy Overlay - Removed external heavy image for performance */}
+      <div className="absolute inset-0 opacity-[0.01] pointer-events-none bg-slate-950/5" />
     </div>
   );
 };
