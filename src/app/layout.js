@@ -22,9 +22,26 @@ export const metadata = {
     shortcut: "/images/favicon.png",
     apple: "/images/favicon.png",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Skillio",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#2b6ea6",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 import Preloader from "@/components/layout/Preloader";
+import PWAInstall from "@/components/layout/PWAInstall";
 
 export default function RootLayout({ children }) {
   return (
@@ -33,6 +50,7 @@ export default function RootLayout({ children }) {
         <Preloader />
         <AuthProvider>
           {children}
+          <PWAInstall />
         </AuthProvider>
       </body>
     </html>
