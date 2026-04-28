@@ -18,4 +18,10 @@ export const useAppStore = create((set) => ({
 
   isImmersiveMode: false,
   setIsImmersiveMode: (mode) => set({ isImmersiveMode: mode }),
+
+  // PWA State
+  deferredPrompt: null,
+  setDeferredPrompt: (prompt) => set({ deferredPrompt: prompt }),
+  isInstalled: false,
+  setIsInstalled: (installed) => set({ isInstalled: installed }),
 }));
