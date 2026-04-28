@@ -128,7 +128,7 @@ const RegisterForm = () => {
           <h1 className="font-display  text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h1>
           <p className="text-slate-500 font-medium">
             Kami telah mengirimkan kode 6 digit ke <br />
-            <span className="text-skillio-600 font-bold">{registeredEmail}</span>
+            <span className="text-skillio-600  font-bold">{registeredEmail}</span>
           </p>
         </div>
 
