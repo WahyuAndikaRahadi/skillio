@@ -1,11 +1,19 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_SERVER_HOST,
+  port: parseInt(process.env.EMAIL_SERVER_PORT || "465"),
+  secure: process.env.EMAIL_SERVER_PORT === "465", // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_SERVER_USER,
+    pass: process.env.EMAIL_SERVER_PASSWORD,
+  },
+});
 
 export const sendVerificationEmail = async (email, otp) => {
   try {
-    const { data, error } = await resend.emails.send({
-      from: "Skillio <onboarding@resend.dev>", // Gunakan domain Anda sendiri jika sudah diverifikasi di Resend
+    const info = await transporter.sendMail({
+      from: `"Skillio" <${process.env.EMAIL_SERVER_USER}>`,
       to: email,
       subject: "Verifikasi Akun Skillio",
       html: `
@@ -34,22 +42,17 @@ export const sendVerificationEmail = async (email, otp) => {
       `,
     });
 
-    if (error) {
-      console.error("Resend Error Details:", error);
-      throw error;
-    }
-
-    return data;
+    return info;
   } catch (e) {
-    console.error("Resend Send Email Error:", e);
+    console.error("Nodemailer Send Email Error:", e);
     throw e;
   }
 };
 
 export const sendPasswordResetEmail = async (email, otp) => {
   try {
-    const { data, error } = await resend.emails.send({
-      from: "Skillio <onboarding@resend.dev>",
+    const info = await transporter.sendMail({
+      from: `"Skillio" <${process.env.EMAIL_SERVER_USER}>`,
       to: email,
       subject: "Reset Password Skillio",
       html: `
@@ -76,10 +79,9 @@ export const sendPasswordResetEmail = async (email, otp) => {
       `,
     });
 
-    if (error) throw error;
-    return data;
+    return info;
   } catch (e) {
-    console.error("Resend Reset Password Error:", e);
+    console.error("Nodemailer Reset Password Error:", e);
     throw e;
   }
 };
