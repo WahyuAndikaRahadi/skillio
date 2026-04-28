@@ -45,7 +45,7 @@ const getBadgeTheme = (badgeName) => {
   return badgeThemes.default;
 };
 
-function BadgesContent() {
+function BadgesContent({ isPublicView = false }) {
   const { data: session } = useSession();
   const router = useRouter();
   const params = useParams();
@@ -116,7 +116,10 @@ function BadgesContent() {
         <div className="absolute bottom-0 left-1/2 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto py-12 px-6 md:px-10 relative z-10">
+      <div className={cn(
+        "max-w-7xl mx-auto px-6 md:px-10 relative z-10",
+        isPublicView ? "py-16" : "py-12"
+      )}>
         {/* Header Section - The "Showroom" */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -164,7 +167,9 @@ function BadgesContent() {
                   className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-2xl border border-white/20 px-5 py-2 rounded-full"
                 >
                   <div className="w-1.5 h-1.5 rounded-full bg-yellow-300 animate-pulse" />
-                  <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Pencapaian Karier</span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">
+                    {isPublicView ? `Lencana ${viewedUser?.name || 'User'}` : "Pencapaian Karier"}
+                  </span>
                 </motion.div>
 
                 <div className="space-y-3">
@@ -185,24 +190,38 @@ function BadgesContent() {
                     transition={{ delay: 0.5 }}
                     className="text-base md:text-lg text-white/80 font-medium max-w-lg leading-relaxed"
                   >
-                    Kumpulkan lencana prestisius dengan menyelesaikan misi dan tantangan. Setiap lencana adalah bukti nyata dedikasi dan kerja keras Anda.
+                    {isPublicView 
+                      ? `Lihat koleksi lencana prestisius yang telah diraih oleh ${viewedUser?.name || 'user'} dalam perjalanan belajarnya di Skillio.`
+                      : "Kumpulkan lencana prestisius dengan menyelesaikan misi dan tantangan. Setiap lencana adalah bukti nyata dedikasi dan kerja keras Anda."
+                    }
                   </motion.p>
                 </div>
 
 
-                <motion.div 
-                   initial={{ opacity: 0, y: 20 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   transition={{ delay: 0.6 }}
-                   className="pt-4"
-                >
-                   <button 
-                     onClick={() => setActiveTab("misi")}
-                     className="px-6 py-3.5 bg-white text-blue-700 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10"
-                   >
-                     Lihat Semua Misi
-                   </button>
-                </motion.div>
+                {!isPublicView && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="pt-4"
+                  >
+                    <button 
+                      onClick={() => setActiveTab("misi")}
+                      className="px-6 py-3.5 bg-white text-blue-700 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10"
+                    >
+                      Lihat Semua Misi
+                    </button>
+                  </motion.div>
+                )}
+
+                {isPublicView && (
+                  <div className="flex justify-center lg:justify-start">
+                     <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/20 shadow-lg">
+                        <Trophy className="text-yellow-300" size={20} />
+                        <span className="text-xs font-black uppercase tracking-widest text-white">Koleksi Terverifikasi</span>
+                     </div>
+                  </div>
+                )}
               </div>
 
 
@@ -266,33 +285,35 @@ function BadgesContent() {
 
 
         {/* Tabs Navigation */}
-        <div className="flex justify-center mb-16">
-          <div className="bg-slate-100/50 backdrop-blur-md p-1.5 rounded-3xl flex gap-1 border border-slate-200">
-            {[
-              { id: "lencana", label: "Koleksi Lencana", icon: Trophy },
-              { id: "misi", label: "Misi Aktif", icon: Target },
-              { id: "sertifikat", label: "Sertifikat Karier", icon: Award }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-sm font-black transition-all",
-                  activeTab === tab.id 
-                    ? "bg-white text-primary-blue shadow-lg shadow-blue-500/10" 
-                    : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
-                )}
-              >
-                <tab.icon size={18} />
-                {tab.label}
-              </button>
-            ))}
+        {!isPublicView && (
+          <div className="flex justify-center mb-16">
+            <div className="bg-slate-100/50 backdrop-blur-md p-1.5 rounded-3xl flex gap-1 border border-slate-200">
+              {[
+                { id: "lencana", label: "Koleksi Lencana", icon: Trophy },
+                { id: "misi", label: "Misi Aktif", icon: Target },
+                { id: "sertifikat", label: "Sertifikat Karier", icon: Award }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    "flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-sm font-black transition-all",
+                    activeTab === tab.id 
+                      ? "bg-white text-primary-blue shadow-lg shadow-blue-500/10" 
+                      : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                  )}
+                >
+                  <tab.icon size={18} />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Tab Content */}
         {(() => {
-          if (activeTab === "misi") {
+          if (activeTab === "misi" && !isPublicView) {
             const lockedBadges = badges.filter(b => !userBadgeIds.has(b.id));
             return (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
@@ -359,13 +380,17 @@ function BadgesContent() {
                       <Award size={40} className="text-slate-300" />
                     </div>
                     <h3 className="text-xl font-black text-slate-400 mb-2">Belum Ada Sertifikat</h3>
-                    <p className="text-slate-400 font-medium max-w-sm mx-auto">Selesaikan 30 hari belajarmu untuk mendapatkan sertifikat profesional pertamamu!</p>
-                    <button 
-                      onClick={() => router.push("/roadmap")}
-                      className="mt-8 px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20"
-                    >
-                      Mulai Belajar Sekarang
-                    </button>
+                    <p className="text-slate-400 font-medium max-w-sm mx-auto">
+                      {isPublicView ? "User ini belum memiliki sertifikat kelulusan." : "Selesaikan 30 hari belajarmu untuk mendapatkan sertifikat profesional pertamamu!"}
+                    </p>
+                    {!isPublicView && (
+                      <button 
+                        onClick={() => router.push("/roadmap")}
+                        className="mt-8 px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20"
+                      >
+                        Mulai Belajar Sekarang
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -395,9 +420,11 @@ function BadgesContent() {
                               <button className="flex-1 bg-slate-900 text-white py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
                                 <Award size={16} /> Lihat Detail
                               </button>
-                              <button className="w-14 h-14 border-2 border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-primary-blue hover:border-primary-blue transition-all">
-                                <Share2 size={20} />
-                              </button>
+                              {!isPublicView && (
+                                <button className="w-14 h-14 border-2 border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-primary-blue hover:border-primary-blue transition-all">
+                                  <Share2 size={20} />
+                                </button>
+                              )}
                            </div>
                         </div>
                       </motion.div>
@@ -410,12 +437,8 @@ function BadgesContent() {
 
           // Default: Lencana
           const earnedBadges = badges.filter(b => userBadgeIds.has(b.id));
-          const lockedBadges = badges.filter(b => !userBadgeIds.has(b.id));
           return (
             <>
-              {/* Earned Badges - Featured Section */}
-
-
               {earnedBadges.length === 0 ? (
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }} 
@@ -426,13 +449,17 @@ function BadgesContent() {
                     <Trophy size={40} className="text-slate-300" />
                   </div>
                   <h3 className="text-xl font-black text-slate-400 mb-2">Koleksi Lencana Kosong</h3>
-                  <p className="text-slate-400 font-medium max-w-sm mx-auto mb-8">Anda belum memiliki lencana. Selesaikan misi pertama Anda untuk memajang lencana prestisius di sini!</p>
-                  <button 
-                    onClick={() => setActiveTab("misi")}
-                    className="px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all"
-                  >
-                    Lihat Misi Tersedia
-                  </button>
+                  <p className="text-slate-400 font-medium max-w-sm mx-auto mb-8">
+                    {isPublicView ? "User ini belum mengoleksi lencana." : "Anda belum memiliki lencana. Selesaikan misi pertama Anda untuk memajang lencana prestisius di sini!"}
+                  </p>
+                  {!isPublicView && (
+                    <button 
+                      onClick={() => setActiveTab("misi")}
+                      className="px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all"
+                    >
+                      Lihat Misi Tersedia
+                    </button>
+                  )}
                 </motion.div>
               ) : (
                 <motion.div
@@ -450,15 +477,12 @@ function BadgesContent() {
                     <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-white">
                       ✨
                     </span>
-                    Pencapaianmu
+                    {isPublicView ? `Lencana ${viewedUser?.name || 'User'}` : "Pencapaianmu"}
                   </motion.h2>
 
-                  {/* Bento Grid Layout - Earned Badges */}
                   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-max">
                     {earnedBadges.map((badge, idx) => {
                       const theme = getBadgeTheme(badge.name);
-
-                      // Create varied sizes using col-span
                       const isLarge = idx === 0 || idx === 1;
                       const colSpan = isLarge ? "md:col-span-2 lg:col-span-2" : "md:col-span-1 lg:col-span-1";
                       const rowSpan = isLarge ? "md:row-span-2" : "";
@@ -477,10 +501,8 @@ function BadgesContent() {
                             rowSpan
                           )}
                         >
-                          {/* Background overlay */}
                           <div className={`absolute inset-0 bg-gradient-to-br ${theme.lightGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                           
-                          {/* Premium Glint Effect */}
                           <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
                             <motion.div
                               animate={{ 
@@ -497,10 +519,7 @@ function BadgesContent() {
                             />
                           </div>
 
-
-
                           <div className="relative z-10 flex flex-col h-full">
-                            {/* Icon Badge - Larger for featured */}
                             <motion.div
                               initial={{ scale: 0, rotate: -90 }}
                               whileInView={{ scale: 1, rotate: 0 }}
@@ -534,8 +553,7 @@ function BadgesContent() {
                               </motion.div>
                             </motion.div>
 
-                            {/* Text Content */}
-                            <div className="flex-1 mb-6">
+                            <div className="flex-1 mb-6 text-center">
                               <motion.h3
                                 initial={{ opacity: 0 }}
                                 whileInView={{ opacity: 1 }}
@@ -559,47 +577,47 @@ function BadgesContent() {
                               </motion.p>
                             </div>
 
-                            {/* Share Button */}
-                            <motion.button
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={async () => {
-                                const shareUrl = `${window.location.origin}/profile/${profileId || session?.user?.id || ''}`;
-                                const shareData = {
-                                  title: `Saya meraih lencana ${badge.name}!`,
-                                  text: `Lihat pencapaian saya di Skillio: ${badge.description}`,
-                                  url: shareUrl,
-                                };
+                            {!isPublicView && (
+                              <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={async () => {
+                                  const shareUrl = `${window.location.origin}/public/badges/${profileId || session?.user?.id || ''}`;
+                                  const shareData = {
+                                    title: `Saya meraih lencana ${badge.name}!`,
+                                    text: `Lihat pencapaian saya di Skillio: ${badge.description}`,
+                                    url: shareUrl,
+                                  };
 
-                                if (navigator.share) {
-                                  try {
-                                    await navigator.share(shareData);
-                                  } catch (err) {
-                                    console.log("Share failed", err);
+                                  if (navigator.share) {
+                                    try {
+                                      await navigator.share(shareData);
+                                    } catch (err) {
+                                      console.log("Share failed", err);
+                                    }
+                                  } else {
+                                    await navigator.clipboard.writeText(shareUrl);
+                                    Swal.fire({
+                                      toast: true,
+                                      position: 'top-end',
+                                      icon: 'success',
+                                      title: 'Link disalin!',
+                                      showConfirmButton: false,
+                                      timer: 2000
+                                    });
                                   }
-                                } else {
-                                  await navigator.clipboard.writeText(shareUrl);
-                                  Swal.fire({
-                                    toast: true,
-                                    position: 'top-end',
-                                    icon: 'success',
-                                    title: 'Link disalin!',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                  });
-                                }
-                              }}
-                              className={cn(
-                                "w-full flex items-center justify-center gap-2 py-3 md:py-3.5 font-black rounded-2xl transition-all",
-                                "bg-gradient-to-r from-skillio-600 to-skillio-500 text-white hover:shadow-lg hover:shadow-skillio-600/30",
-                                isLarge ? "text-base" : "text-sm"
-                              )}
-                            >
-                              <Share2 size={16} /> Bagikan
-                            </motion.button>
+                                }}
+                                className={cn(
+                                  "w-full flex items-center justify-center gap-2 py-3 md:py-3.5 font-black rounded-2xl transition-all",
+                                  "bg-gradient-to-r from-skillio-600 to-skillio-500 text-white hover:shadow-lg hover:shadow-skillio-600/30",
+                                  isLarge ? "text-base" : "text-sm"
+                                )}
+                              >
+                                <Share2 size={16} /> Bagikan
+                              </motion.button>
+                            )}
                           </div>
 
-                          {/* Background Decoration */}
                           <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -613,7 +631,6 @@ function BadgesContent() {
                   </div>
                 </motion.div>
               )}
-
             </>
           );
         })()}

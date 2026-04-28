@@ -75,8 +75,8 @@ function MiniBarChart({ data }) {
 
 export default function DashboardClient({
   userName,
-  xp,
-  currentStreak,
+  xp: initialXp,
+  currentStreak: initialStreak,
   bestStreak,
   badgeCount,
   recentBadges,
@@ -93,6 +93,16 @@ export default function DashboardClient({
   userPostsCount,
 }) {
   const firstName = userName?.split(" ")[0] || "User";
+  const { stats, refreshStats } = useAppStore();
+
+  useEffect(() => {
+    refreshStats();
+  }, [refreshStats]);
+
+  // Use store stats if available, otherwise fallback to initial props
+  const displayXp = stats?.xp ?? initialXp;
+  const displayStreak = stats?.streak ?? initialStreak;
+  const isActiveToday = stats?.isActiveToday ?? false;
 
   // Time-based greeting
   const hour = new Date().getHours();
@@ -214,10 +224,10 @@ export default function DashboardClient({
         <StatCard
           icon={Flame}
           label="Streak"
-          value={`${bestStreak} Hari`}
-          sub="Rekor terbaik"
-          color="bg-orange-50 text-orange-500"
-          accent="bg-orange-300"
+          value={`${displayStreak} Hari`}
+          sub={isActiveToday ? "Streak aktif hari ini!" : "Selesaikan misi hari ini!"}
+          color={isActiveToday ? "bg-orange-50 text-orange-500" : "bg-slate-50 text-slate-400"}
+          accent={isActiveToday ? "bg-orange-300" : "bg-slate-300"}
           index={0}
         />
         <StatCard
@@ -239,12 +249,12 @@ export default function DashboardClient({
           index={2}
         />
         <StatCard
-          icon={MessageSquare}
-          label="Komunitas"
-          value={userPostsCount}
-          sub="Postingan"
-          color="bg-sky-50 text-sky-500"
-          accent="bg-sky-300"
+          icon={Sparkles}
+          label="Points"
+          value={`${displayXp} XP`}
+          sub="Total pengalaman"
+          color="bg-blue-50 text-primary-blue"
+          accent="bg-blue-300"
           index={3}
         />
       </div>

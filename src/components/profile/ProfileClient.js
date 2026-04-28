@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { UploadButton } from "@/lib/uploadthing";
 
-export default function ProfileClient({ profileId }) {
+export default function ProfileClient({ profileId, isPublicView = false }) {
   const { data: session, update } = useSession();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,7 +53,7 @@ export default function ProfileClient({ profileId }) {
   const progressPercent = profileData ? ((profileData.xp % 500) / 500) * 100 : 0;
 
   const handleShare = async () => {
-    const shareUrl = `${window.location.origin}/profile/${profileData?.id || profileId || session?.user?.id || ""}`;
+    const shareUrl = `${window.location.origin}/public/profile/${profileData?.id || profileId || session?.user?.id || ""}`;
     const shareData = {
       title: `Profil Skillio ${profileData?.name}`,
       text: `Lihat progres belajar saya di Skillio!`,
@@ -82,8 +82,11 @@ export default function ProfileClient({ profileId }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary-blue border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary-blue border-t-transparent rounded-full animate-spin"></div>
+          <p className="font-black text-slate-400 text-xs uppercase tracking-widest">Memuat Profil...</p>
+        </div>
       </div>
     );
   }
@@ -92,13 +95,16 @@ export default function ProfileClient({ profileId }) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
         <h1 className="text-2xl font-black text-slate-900">Profil Tidak Ditemukan</h1>
-        <Link href="/dashboard" className="text-primary-blue font-bold hover:underline">Kembali ke Dashboard</Link>
+        <Link href="/" className="text-primary-blue font-bold hover:underline">Kembali ke Beranda</Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-10 px-6 md:px-10 space-y-12 relative z-10">
+    <div className={cn(
+      "max-w-7xl mx-auto px-6 md:px-10 space-y-12 relative z-10",
+      isPublicView ? "py-16" : "py-10"
+    )}>
       {/* ═══ PREMIUM PROFILE SHOWROOM HEADER ═══ */}
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
@@ -138,7 +144,7 @@ export default function ProfileClient({ profileId }) {
                 </div>
               </div>
               
-              {profileData.isOwnProfile && (
+              {profileData.isOwnProfile && !isPublicView && (
                 <div className="absolute -bottom-2 -right-2 bg-white rounded-2xl shadow-2xl hover:scale-110 transition-all overflow-hidden group/upload flex items-center justify-center w-12 h-12 border-4 border-blue-600">
                    <div className="absolute inset-0 flex items-center justify-center text-primary-blue pointer-events-none">
                      <Edit3 size={20} />
@@ -202,7 +208,7 @@ export default function ProfileClient({ profileId }) {
                 
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-5 text-white/70 font-bold">
                    <span className="flex items-center gap-2 text-sm md:text-base bg-white/5 border border-white/10 px-4 py-1.5 rounded-full backdrop-blur-md">
-                     <Mail size={16} className="text-blue-300" /> {profileData.email}
+                     <Mail size={16} className="text-blue-300" /> {isPublicView ? "Terverifikasi" : profileData.email}
                    </span>
                    <span className="flex items-center gap-2 text-sm md:text-base bg-white/5 border border-white/10 px-4 py-1.5 rounded-full backdrop-blur-md">
                      <Calendar size={16} className="text-blue-300" /> Bergabung {joinedDate}
@@ -210,23 +216,34 @@ export default function ProfileClient({ profileId }) {
                 </div>
               </div>
 
-              <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
-                 <button 
-                   onClick={handleShare}
-                   className="px-8 py-4 bg-white text-primary-blue rounded-[24px] font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-xl shadow-black/20"
-                 >
-                    <Share2 size={18} /> Bagikan Profil
-                 </button>
-                 
-                 {profileData.isOwnProfile && (
+              {!isPublicView && (
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
                    <button 
-                     onClick={() => signOut({ callbackUrl: "/" })}
-                     className="px-8 py-4 bg-red-500/10 hover:bg-red-500/20 text-red-100 rounded-[24px] font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 border border-red-400/20"
+                     onClick={handleShare}
+                     className="px-8 py-4 bg-white text-primary-blue rounded-[24px] font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-xl shadow-black/20"
                    >
-                      <LogOut size={18} /> Keluar
+                      <Share2 size={18} /> Bagikan Profil
                    </button>
-                 )}
-              </div>
+                   
+                   {profileData.isOwnProfile && (
+                     <button 
+                       onClick={() => signOut({ callbackUrl: "/" })}
+                       className="px-8 py-4 bg-red-500/10 hover:bg-red-500/20 text-red-100 rounded-[24px] font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 border border-red-400/20"
+                     >
+                        <LogOut size={18} /> Keluar
+                     </button>
+                   )}
+                </div>
+              )}
+
+              {isPublicView && (
+                <div className="flex justify-center lg:justify-start">
+                   <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/20 shadow-lg">
+                      <ShieldCheck className="text-green-300" size={20} />
+                      <span className="text-xs font-black uppercase tracking-widest text-white">Profil Terverifikasi Skillio</span>
+                   </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

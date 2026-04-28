@@ -16,8 +16,8 @@ import {
   Smile,
   Calendar,
   Hash,
-  MessageSquareCodeIcon,
-  ShieldCheck
+  ShieldCheck,
+  MessageSquareIcon
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -277,7 +277,7 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
               {likesCount}
             </button>
             <button onClick={() => setShowComments(!showComments)} className={cn("flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all", showComments ? "text-primary-blue bg-blue-50" : "text-slate-500 hover:bg-slate-50")}>
-              <MessageSquareCodeIcon size={18} />
+              <MessageSquareIcon size={18} />
               {comments.length}
             </button>
           </div>

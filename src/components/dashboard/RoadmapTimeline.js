@@ -25,7 +25,7 @@ const cleanAiText = (text) => {
 };
 
 const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
-  const { isImmersiveMode, setIsImmersiveMode } = useAppStore();
+  const { isImmersiveMode, setIsImmersiveMode, stats, refreshStats } = useAppStore();
   const [days, setDays] = useState([]);
   const [loadingDays, setLoadingDays] = useState(true);
   const [progress, setProgress] = useState(userRoadmap.progress || []);
@@ -340,8 +340,10 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
             score: finalScore 
           })
         });
-        // Jika gagal, baru kita handle (opsional: revert state, tapi biasanya sukses)
-        if (!res.ok) {
+        // Jika berhasil, refresh stats global
+        if (res.ok) {
+           await refreshStats();
+        } else {
            console.error("Gagal sinkronisasi ke server");
         }
       } catch (err) {
@@ -892,24 +894,56 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
               </div>
             </div>
             <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
-               <div className="bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 text-white rounded-3xl p-6 shadow-2xl shadow-skillio-500/30">
-                  <div className="flex items-center justify-between mb-8">
-                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center border border-white/20">
-                           <Flame className={cn("transition-colors", (userRoadmap.user?.streak?.current_streak || 0) > 0 ? "text-orange-400 fill-orange-400" : "text-slate-500")} size={20} />
-                        </div>
-                        <div>
-                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Day Streak</p>
-                           <p className="text-xl font-black">{userRoadmap.user?.streak?.current_streak || 0}</p>
-                        </div>
+                <div className={cn(
+                  "rounded-3xl p-6 shadow-2xl transition-all duration-500",
+                  !stats.isActiveToday 
+                    ? "bg-slate-800/50 backdrop-blur-md border border-slate-700" 
+                    : "bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 shadow-skillio-500/30"
+                )}>
+                   <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-3">
+                         <div className={cn(
+                           "w-10 h-10 rounded-full flex items-center justify-center border transition-all",
+                           !stats.isActiveToday ? "bg-slate-700 border-slate-600" : "bg-white/10 border-white/20"
+                         )}>
+                            <Flame className={cn(
+                              "transition-all", 
+                              !stats.isActiveToday ? "text-slate-500 grayscale" : "text-orange-400 fill-orange-400 animate-pulse"
+                            )} size={20} />
+                         </div>
+                         <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Day Streak</p>
+                            <p className={cn("text-xl font-black", !stats.isActiveToday ? "text-slate-500" : "text-white")}>
+                              {stats.streak}
+                            </p>
+                         </div>
+                      </div>
+                      <div className="text-right">
+                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">XP Points</p>
+                         <p className={cn("text-xl font-black", !stats.isActiveToday ? "text-slate-500" : "text-skillio-400")}>
+                           {stats.xp}
+                         </p>
+                      </div>
+                   </div>
+                   <div className="space-y-2">
+                     <div className="flex items-center justify-between text-xs font-bold text-slate-300">
+                       <span>Progres Belajar</span>
+                       <span>{Math.round((completedDaysCount / 30) * 100)}%</span>
                      </div>
-                     <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">XP Points</p>
-                        <p className="text-xl font-black text-skillio-400">{userRoadmap.user?.xp || 0}</p>
+                     <div className={cn(
+                       "w-full h-2 rounded-full overflow-hidden",
+                       !stats.isActiveToday ? "bg-slate-700" : "bg-white/10"
+                     )}>
+                       <div 
+                         className={cn(
+                           "h-full rounded-full transition-all duration-1000",
+                           !stats.isActiveToday ? "bg-slate-600" : "bg-gradient-to-r from-skillio-500 to-teal-400"
+                         )} 
+                         style={{ width: `${(completedDaysCount / 30) * 100}%` }} 
+                       />
                      </div>
-                  </div>
-                  <div className="space-y-2"><div className="flex items-center justify-between text-xs font-bold text-slate-300"><span>Progres Belajar</span><span>{Math.round((completedDaysCount / 30) * 100)}%</span></div><div className="w-full h-2 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-skillio-500 to-teal-400 rounded-full" style={{ width: `${(completedDaysCount / 30) * 100}%` }} /></div></div>
-               </div>
+                   </div>
+                </div>
                <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xl shadow-slate-100/50">
                   <div className="flex items-center gap-2 mb-6">
                      <Target size={18} className="text-skillio-500" />

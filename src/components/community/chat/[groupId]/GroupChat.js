@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowLeft, MoreHorizontal, Send, Loader2, Lock, Users, MessageSquare, Paperclip, Image as ImageIcon, FileText, X, Download, Search, ShieldAlert, Menu, ShieldCheck } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Send, Loader2, Lock, Users, MessageSquare, Paperclip, Image as ImageIcon, FileText, X, Download, Search, ShieldAlert, Menu, ShieldCheck, MessageSquareIcon } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -164,7 +164,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
             <div className="absolute inset-0 pointer-events-none opacity-40" style={{ backgroundImage: `linear-gradient(rgba(146, 183, 214, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(146, 183, 214, 0.15) 1px, transparent 1px)`, backgroundSize: '40px 40px' }}></div>
             <div ref={scrollRef} className="relative z-10 p-6 md:p-8 space-y-4 flex flex-col min-h-full justify-end">
                {messages.length === 0 && (
-                 <div className="w-full flex justify-center my-6"><div className="bg-white/80 border border-[#dbe7f2] text-[#1f547e] text-xs font-bold px-6 py-3 rounded-full flex items-center gap-2"><MessageSquareCodeIcon size={16} /> Mulai percakapan pertamamu!</div></div>
+                 <div className="w-full flex justify-center my-6"><div className="bg-white/80 border border-[#dbe7f2] text-[#1f547e] text-xs font-bold px-6 py-3 rounded-full flex items-center gap-2"><MessageSquareIcon size={16} /> Mulai percakapan pertamamu!</div></div>
                )}
                {messages.map((msg, index) => {
                  const isMe = msg.user_id === session?.user?.id;

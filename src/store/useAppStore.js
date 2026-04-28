@@ -4,6 +4,21 @@ export const useAppStore = create((set) => ({
   user: null,
   setUser: (user) => set({ user }),
   
+  // User Stats Global State
+  stats: { xp: 0, streak: 0, isActiveToday: false },
+  setStats: (stats) => set({ stats }),
+  refreshStats: async () => {
+    try {
+      const res = await fetch("/api/user/stats");
+      if (res.ok) {
+        const data = await res.json();
+        set({ stats: data });
+      }
+    } catch (err) {
+      console.error("Failed to refresh stats", err);
+    }
+  },
+  
   selectedCareer: null,
   setSelectedCareer: (career) => set({ selectedCareer: career }),
   

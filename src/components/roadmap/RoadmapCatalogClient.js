@@ -59,6 +59,27 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
     if (!result.isConfirmed) return;
 
     setLoadingCategory(category.id);
+    
+    // Show immersive loading overlay
+    Swal.fire({
+      title: 'Mempersiapkan Masa Depanmu...',
+      html: `
+        <div className="py-10 flex flex-col items-center gap-6">
+          <div className="w-16 h-16 border-4 border-primary-blue border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+          <p className="text-slate-600 font-bold leading-relaxed">
+            AI Mentor sedang merancang kurikulum terbaik untuk bidang <b>${category.name}</b>.<br/>
+            Proses ini memakan waktu sekitar 10-20 detik. Jangan tutup halaman ini ya!
+          </p>
+        </div>
+      `,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      customClass: {
+        popup: 'rounded-[40px] p-10 border-none shadow-2xl',
+      }
+    });
+
     try {
       const res = await fetch("/api/roadmap/generate", {
         method: "POST",
@@ -68,25 +89,37 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
 
       if (res.ok) {
         Swal.fire({
-          toast: true,
-          position: 'top-end',
           icon: 'success',
-          title: 'Roadmap berhasil dipilih!',
-          showConfirmButton: false,
-          timer: 3000
+          title: 'Roadmap Siap!',
+          text: 'AI telah selesai merancang perjalanan belajarmu.',
+          confirmButtonColor: '#3b82f6',
+          confirmButtonText: 'Mulai Belajar Sekarang',
+          customClass: {
+            popup: 'rounded-[32px]',
+            confirmButton: 'px-8 py-3 bg-primary-blue text-white rounded-xl font-bold'
+          }
+        }).then(() => {
+          router.push("/belajar");
         });
-        router.push("/belajar");
       } else {
         Swal.fire({
           icon: 'error',
-          title: 'Gagal memilih roadmap',
-          text: 'Silakan coba lagi nanti.',
-          confirmButtonColor: '#3b82f6'
+          title: 'Sedikit Kendala...',
+          text: 'Gagal merancang roadmap. Coba lagi dalam beberapa saat ya.',
+          confirmButtonColor: '#3b82f6',
+          customClass: { popup: 'rounded-[32px]' }
         });
         setLoadingCategory(null);
       }
     } catch (error) {
       console.error(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Koneksi Terputus',
+        text: 'Pastikan internetmu lancar dan coba lagi.',
+        confirmButtonColor: '#3b82f6',
+        customClass: { popup: 'rounded-[32px]' }
+      });
       setLoadingCategory(null);
     }
   };

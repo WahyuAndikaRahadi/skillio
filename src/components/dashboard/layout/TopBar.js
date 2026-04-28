@@ -7,9 +7,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
+import { useAppStore } from "@/store/useAppStore";
+
 const TopBar = ({ onMenuClick }) => {
   const { data: session } = useSession();
-  const [stats, setStats] = useState({ xp: 0, streak: 0 });
+  const { stats, refreshStats } = useAppStore();
   const [notifications, setNotifications] = useState([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -17,16 +19,6 @@ const TopBar = ({ onMenuClick }) => {
   const profileRef = useRef(null);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("/api/user/stats");
-        const data = await res.json();
-        setStats(data);
-      } catch (err) {
-        console.error("Gagal mengambil statistik user");
-      }
-    };
-
     const fetchNotifs = async () => {
       try {
         const res = await fetch("/api/notifications");
@@ -38,10 +30,10 @@ const TopBar = ({ onMenuClick }) => {
     };
 
     if (session) {
-      fetchStats();
+      refreshStats();
       fetchNotifs();
     }
-  }, [session]);
+  }, [session, refreshStats]);
 
   // Click outside to close
   useEffect(() => {
@@ -91,21 +83,22 @@ const TopBar = ({ onMenuClick }) => {
         <div className="flex items-center gap-3 md:gap-6">
           <div className={cn(
             "flex items-center gap-2 px-4 py-2 rounded-xl border shadow-sm transition-all duration-500 hidden sm:flex",
+            !stats.isActiveToday ? "bg-slate-100 text-slate-400 border-slate-200 grayscale" :
             stats.streak >= 30 ? "bg-blue-50 text-blue-600 border-blue-100" :
             stats.streak >= 15 ? "bg-purple-50 text-purple-600 border-purple-100" :
-            stats.streak > 0 ? "bg-orange-50 text-orange-600 border-orange-100" :
-            "bg-slate-50 text-slate-400 border-slate-100"
+            "bg-orange-50 text-orange-600 border-orange-100"
           )}>
             <Flame size={20} className={cn(
+              !stats.isActiveToday ? "" :
               stats.streak >= 30 ? "fill-blue-600" :
               stats.streak >= 15 ? "fill-purple-600" :
-              stats.streak > 0 ? "fill-orange-600" : ""
+              "fill-orange-600"
             )} />
             <span className="font-black text-sm">{stats.streak} Hari</span>
           </div>
 
-          <div className="flex items-center gap-2 bg-blue-50 text-primary-blue px-4 py-2 rounded-xl border border-blue-100 shadow-sm hidden sm:flex">
-            <Sparkles size={18} className="fill-primary-blue" />
+          <div className="flex items-center gap-2 bg-blue-50 text-primary-blue px-4 py-2 rounded-xl border border-blue-100 shadow-sm hidden sm:flex group transition-all hover:scale-105">
+            <Sparkles size={18} className="fill-primary-blue group-hover:animate-spin" />
             <span className="font-black text-sm">{stats.xp} XP</span>
           </div>
 
