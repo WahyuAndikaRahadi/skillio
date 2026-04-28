@@ -15,7 +15,10 @@ import {
   Calendar,
   Share2,
   Loader2,
-  LogOut
+  LogOut,
+  User,
+  Lock,
+  Save
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -27,6 +30,11 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [oldPass, setOldPass] = useState("");
+  const [newPass, setNewPass] = useState("");
+  const [isUpdatingName, setIsUpdatingName] = useState(false);
+  const [isUpdatingPass, setIsUpdatingPass] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -34,7 +42,10 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
         const url = profileId ? `/api/user/profile?userId=${profileId}` : "/api/user/profile";
         const res = await fetch(url);
         const data = await res.json();
-        if (res.ok) setProfileData(data);
+        if (res.ok) {
+          setProfileData(data);
+          setEditName(data.name || "");
+        }
       } catch (err) {
         console.error("Gagal memuat profil");
       } finally {
@@ -52,92 +63,62 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
   const xpToNextLevel = profileData ? 500 - (profileData.xp % 500) : 500;
   const progressPercent = profileData ? ((profileData.xp % 500) / 500) * 100 : 0;
 
-  const handleUpdateName = async () => {
+  const handleUpdateName = async (e) => {
+    e?.preventDefault();
+    if (!editName || editName.trim().length < 2) return;
+    
+    setIsUpdatingName(true);
     const Swal = (await import("sweetalert2")).default;
-    const { value: newName } = await Swal.fire({
-      title: 'Ubah Nama',
-      input: 'text',
-      inputLabel: 'Masukkan nama baru Anda',
-      inputValue: profileData.name,
-      showCancelButton: true,
-      confirmButtonColor: '#3b82f6',
-      cancelButtonColor: '#94a3b8',
-      inputValidator: (value) => {
-        if (!value || value.trim().length < 2) {
-          return 'Nama harus minimal 2 karakter'
-        }
-      },
-      customClass: { popup: 'rounded-[32px] p-8' }
-    });
-
-    if (newName) {
-      try {
-        const res = await fetch("/api/user/update-profile", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: newName })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setProfileData(prev => ({ ...prev, name: newName }));
-          await update({ name: newName });
-          Swal.fire({ icon: 'success', title: 'Berhasil!', text: data.message, confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
-        } else {
-          Swal.fire({ icon: 'error', title: 'Gagal', text: data.message, confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
-        }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan sistem', confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
+    try {
+      const res = await fetch("/api/user/update-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: editName })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setProfileData(prev => ({ ...prev, name: editName }));
+        await update({ name: editName });
+        Swal.fire({ icon: 'success', title: 'Berhasil!', text: data.message, toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+      } else {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: data.message, confirmButtonColor: '#3b82f6' });
       }
+    } catch (err) {
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem' });
+    } finally {
+      setIsUpdatingName(false);
     }
   };
 
-  const handleUpdatePassword = async () => {
-    const Swal = (await import("sweetalert2")).default;
-    const { value: formValues } = await Swal.fire({
-      title: 'Ubah Password',
-      html: `
-        <div class="space-y-4 pt-4">
-          <input id="oldPassword" type="password" placeholder="Password Lama" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none">
-          <input id="newPassword" type="password" placeholder="Password Baru (min. 6 karakter)" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none">
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Update Password',
-      confirmButtonColor: '#3b82f6',
-      cancelButtonColor: '#94a3b8',
-      focusConfirm: false,
-      preConfirm: () => {
-        const oldP = document.getElementById('oldPassword').value;
-        const newP = document.getElementById('newPassword').value;
-        if (!oldP || !newP) {
-          Swal.showValidationMessage('Harap isi semua kolom');
-          return false;
-        }
-        if (newP.length < 6) {
-          Swal.showValidationMessage('Password baru minimal 6 karakter');
-          return false;
-        }
-        return { oldPassword: oldP, newPassword: newP };
-      },
-      customClass: { popup: 'rounded-[32px] p-8' }
-    });
+  const handleUpdatePassword = async (e) => {
+    e?.preventDefault();
+    if (!oldPass || !newPass) return;
+    if (newPass.length < 6) {
+      const Swal = (await import("sweetalert2")).default;
+      Swal.fire({ icon: 'warning', title: 'Password Terlalu Pendek', text: 'Password minimal 6 karakter' });
+      return;
+    }
 
-    if (formValues) {
-      try {
-        const res = await fetch("/api/user/update-password", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formValues)
-        });
-        const data = await res.json();
-        if (res.ok) {
-          Swal.fire({ icon: 'success', title: 'Berhasil!', text: data.message, confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
-        } else {
-          Swal.fire({ icon: 'error', title: 'Gagal', text: data.message, confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
-        }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan sistem', confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
+    setIsUpdatingPass(true);
+    const Swal = (await import("sweetalert2")).default;
+    try {
+      const res = await fetch("/api/user/update-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setOldPass("");
+        setNewPass("");
+        Swal.fire({ icon: 'success', title: 'Password Diperbarui!', text: data.message, toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+      } else {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: data.message, confirmButtonColor: '#3b82f6' });
       }
+    } catch (err) {
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem' });
+    } finally {
+      setIsUpdatingPass(false);
     }
   };
 
@@ -289,15 +270,6 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tighter">
                     {profileData.name || "Pengguna Skillio"}
-                    {profileData.isOwnProfile && !isPublicView && (
-                      <button 
-                        onClick={handleUpdateName}
-                        className="p-2 bg-white/10 hover:bg-white/20 rounded-xl border border-white/20 transition-all group/edit"
-                        title="Ubah Nama"
-                      >
-                        <Edit3 size={18} className="text-white/60 group-hover/edit:text-white" />
-                      </button>
-                    )}
                   </h1>
                   {profileData.role === "admin" && (
                     <span className="px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/20 text-white">Premium Admin</span>
@@ -322,16 +294,6 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                    >
                       <Share2 size={18} /> Bagikan Profil
                    </button>
-                   
-                   {profileData.isOwnProfile && (
-                      <button 
-                        onClick={handleUpdatePassword}
-                        className="px-8 py-4 bg-blue-500/10 hover:bg-blue-500/20 text-blue-100 rounded-[24px] font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 border border-blue-400/20"
-                      >
-                         <Edit3 size={18} /> Ubah Password
-                      </button>
-                    )}
-                    
                     {profileData.isOwnProfile && (
                       <button 
                         onClick={() => signOut({ callbackUrl: "/" })}
@@ -429,6 +391,89 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                </div>
              )}
           </div>
+
+          {/* ═══ SETTINGS FORMS (NAME & PASSWORD) ═══ */}
+          {profileData.isOwnProfile && !isPublicView && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Name Update Form */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="bg-white rounded-[40px] border border-slate-100 p-8 md:p-10 shadow-xl shadow-slate-200/40"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2.5 bg-blue-50 rounded-xl text-primary-blue"><User size={20} /></div>
+                  <h3 className="text-xl font-black text-slate-900">Informasi Profil</h3>
+                </div>
+                <form onSubmit={handleUpdateName} className="space-y-4">
+                  <div>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Nama Lengkap</label>
+                    <input 
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      placeholder="Masukkan nama Anda"
+                      className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 focus:border-primary-blue outline-none font-bold text-sm transition-all text-slate-900"
+                    />
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={isUpdatingName || editName === profileData.name}
+                    className="w-full py-3.5 bg-primary-blue text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 shadow-lg shadow-blue-500/20"
+                  >
+                    {isUpdatingName ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} 
+                    Simpan Perubahan
+                  </button>
+                </form>
+              </motion.div>
+
+              {/* Password Update Form */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="bg-white rounded-[40px] border border-slate-100 p-8 md:p-10 shadow-xl shadow-slate-200/40"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2.5 bg-purple-50 rounded-xl text-purple-600"><Lock size={20} /></div>
+                  <h3 className="text-xl font-black text-slate-900">Keamanan Akun</h3>
+                </div>
+                <form onSubmit={handleUpdatePassword} className="space-y-4">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Password Lama</label>
+                      <input 
+                        type="password"
+                        value={oldPass}
+                        onChange={(e) => setOldPass(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 outline-none font-bold text-sm transition-all text-slate-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Password Baru</label>
+                      <input 
+                        type="password"
+                        value={newPass}
+                        onChange={(e) => setNewPass(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 outline-none font-bold text-sm transition-all text-slate-900"
+                      />
+                    </div>
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={isUpdatingPass || !oldPass || !newPass}
+                    className="w-full py-3.5 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 shadow-lg shadow-black/20"
+                  >
+                    {isUpdatingPass ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />} 
+                    Perbarui Password
+                  </button>
+                </form>
+              </motion.div>
+            </div>
+          )}
         </motion.div>
 
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="space-y-10">

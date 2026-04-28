@@ -12,7 +12,6 @@ import {
   Reply,
   Loader2,
   X,
-  Code,
   Smile,
   Calendar,
   Hash,
@@ -247,16 +246,18 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
             </div>
           </div>
 
-          <div className="relative">
-            <button onClick={() => setShowMenu(!showMenu)} className="p-2 rounded-full text-slate-400 hover:bg-slate-50 transition-all">
-              <MoreHorizontal size={18} />
-            </button>
-            {showMenu && canDelete && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-10 py-1">
-                <button onClick={handleDeletePost} className="w-full text-left px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-50">Hapus Postingan</button>
-              </div>
-            )}
-          </div>
+          {canDelete && (
+            <div className="relative">
+              <button onClick={() => setShowMenu(!showMenu)} className="p-2 rounded-full text-slate-400 hover:bg-slate-50 transition-all">
+                <MoreHorizontal size={18} />
+              </button>
+              {showMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-10 py-1">
+                  <button onClick={handleDeletePost} className="w-full text-left px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-50">Hapus Postingan</button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="mb-4">
@@ -281,9 +282,7 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
               {comments.length}
             </button>
           </div>
-          <button className="p-2 rounded-lg text-slate-400 hover:bg-slate-50 transition-all">
-            <Share2 size={18} />
-          </button>
+          <div />
         </div>
       </div>
 
