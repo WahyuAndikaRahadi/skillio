@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeft, MoreHorizontal, Send, Loader2, Lock, Users, MessageSquare, Paperclip, Image as ImageIcon, FileText, X, Download, Search, ShieldAlert, Menu, ShieldCheck, MessageSquareIcon } from "lucide-react";
-
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { pusherClient } from "@/lib/pusher-client";

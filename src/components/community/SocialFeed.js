@@ -390,7 +390,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
     setShowMentions(false);
   };
 
-  const filteredMentions = categories.filter(cat => 
+  const filteredMentions = categories.filter(cat =>
     cat.name.toLowerCase().includes(mentionQuery.toLowerCase())
   );
 
@@ -455,7 +455,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
   };
 
   // Filter posts based on search query
-  const filteredPosts = posts.filter(post => 
+  const filteredPosts = posts.filter(post =>
     post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
     post.user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -509,29 +509,19 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
 
               {/* Bagian UploadThing asli Anda yang dipertahankan */}
               <AnimatePresence>
-                {showImageInput && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="relative overflow-hidden">
-                    {!imageUrl ? (
-                      <div className="border border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center mt-2">
-                        <UploadButton
-                          endpoint="imageUploader"
-                          onClientUploadComplete={(res) => { if (res && res[0]) setImageUrl(res[0].url); }}
-                          onUploadError={(error) => {
-                            Swal.fire({
-                              icon: "error",
-                              title: "Upload Gagal",
-                              text: error.message
-                            });
-                          }}
-                          appearance={{ button: "bg-primary-blue text-white font-medium px-4 py-1.5 rounded-lg text-xs w-auto" }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="mt-2 relative rounded-xl overflow-hidden h-32 border border-slate-200">
-                        <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => setImageUrl("")} className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-red-500"><X size={12} /></button>
-                      </div>
-                    )}
+                {imageUrl && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="relative overflow-hidden"
+                  >
+                    <div className="mt-2 relative rounded-xl overflow-hidden h-32 border border-slate-200">
+                      <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                      <button type="button" onClick={() => setImageUrl("")} className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-red-500">
+                        <X size={12} />
+                      </button>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -539,10 +529,29 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
               <div className="flex items-center justify-between pt-2 border-t border-slate-50">
                 <div className="flex items-center gap-1 text-slate-400">
                   {/* Action Toggles */}
-                  <button type="button" onClick={() => setShowImageInput(!showImageInput)} className={`p-2 rounded-full transition-colors ${showImageInput ? 'bg-blue-50 text-primary-blue' : 'hover:bg-slate-50 hover:text-slate-600'}`}>
-                    <ImageIcon size={18} />
-                  </button>
-                  <button type="button" onClick={() => setPostType(prev => prev === "question" ? "progress" : "question")} className={`p-2 rounded-full transition-colors ${postType === 'question' ? 'bg-orange-50 text-orange-500' : 'hover:bg-slate-50 hover:text-slate-600'}`}>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // UploadThing renders an <input type="file"> inside its button — click it directly
+                        document.querySelector('input[type="file"]')?.click();
+                      }}
+                      className={`p-2 rounded-full transition-colors ${imageUrl ? 'bg-blue-50 text-primary-blue' : 'hover:bg-slate-50 hover:text-slate-600'}`}
+                    >
+                      <ImageIcon size={18} />
+                    </button>
+
+                    {/* UploadButton hidden but still mounted so its input exists in the DOM */}
+                    <div className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
+                      <UploadButton
+                        endpoint="imageUploader"
+                        onClientUploadComplete={(res) => { if (res && res[0]) setImageUrl(res[0].url); }}
+                        onUploadError={(error) => {
+                          Swal.fire({ icon: "error", title: "Upload Gagal", text: error.message });
+                        }}
+                      />
+                    </div>
+                  </div><button type="button" onClick={() => setPostType(prev => prev === "question" ? "progress" : "question")} className={`p-2 rounded-full transition-colors ${postType === 'question' ? 'bg-orange-50 text-orange-500' : 'hover:bg-slate-50 hover:text-slate-600'}`}>
                     <HelpCircle size={18} />
                   </button>
 
