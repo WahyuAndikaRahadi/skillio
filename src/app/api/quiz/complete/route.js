@@ -96,13 +96,14 @@ export async function POST(req) {
         })
       ] : []),
 
-      // D. Streak (Update whenever they are active, even if retake)
+      // D. Streak (Update only if passed)
       prisma.streak.update({
         where: { user_id: session.user.id },
         data: {
           current_streak: newStreak,
           longest_streak: Math.max(newStreak, userStreak.longest_streak),
-          last_active: new Date()
+          // Only update last_active if they passed, so the flame stays grey if they failed
+          ...(isPassedNow ? { last_active: new Date() } : {})
         }
       })
     ]);

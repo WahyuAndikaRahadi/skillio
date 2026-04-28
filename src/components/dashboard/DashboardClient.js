@@ -22,6 +22,8 @@ import {
   Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAppStore } from "@/store/useAppStore";
+import { useEffect } from "react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
