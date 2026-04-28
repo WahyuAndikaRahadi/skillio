@@ -197,6 +197,7 @@ export default function LandingAiWidget() {
           setIsOpen(!isOpen);
           setShowTooltip(false);
         }}
+        aria-label={isOpen ? "Tutup Mentor AI" : "Buka Mentor AI"}
         className={`w-14 h-14 rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(31,84,126,0.3)] transition-colors z-10 ${
           isOpen ? "bg-slate-800 text-white" : "bg-[linear-gradient(135deg,#2b6ea6,#1f547e)] text-white"
         }`}

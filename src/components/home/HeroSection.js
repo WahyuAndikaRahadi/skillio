@@ -16,10 +16,15 @@ const credibility = [
 const HeroImage = ({ className }) => (
   <div className={`fade-up relative ${className}`} style={{ animationDelay: "150ms" }}>
     <div className="relative z-10 mx-auto max-w-[280px] sm:max-w-[400px] lg:max-w-[500px]">
-      <img
+      <Image
         src="/images/karir2.png"
         alt="Skillio hero"
+        width={500}
+        height={500}
+        priority
+        fetchPriority="high"
         className="h-auto w-full object-contain transition-transform duration-700 hover:scale-105"
+        style={{ width: '100%', height: 'auto' }}
       />
     </div>
   </div>
@@ -71,7 +76,7 @@ export default function HeroSection() {
                   key={item}
                   className="flex items-center gap-2 text-sm font-semibold text-slate-600"
                 >
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-100 text-teal-600">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-600 text-white shadow-sm">
                     <BadgeCheck className="h-4 w-4" />
                   </div>
                   <span>{item}</span>

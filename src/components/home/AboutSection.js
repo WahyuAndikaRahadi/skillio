@@ -14,6 +14,8 @@ export default function AboutSection() {
                 src="/images/about.png"
                 alt="Tentang Skillio"
                 fill
+                priority
+                sizes="(max-width: 768px) 100vw, 380px"
                 className="object-cover object-center"
               />
             </div>

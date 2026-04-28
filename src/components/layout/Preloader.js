@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { animate, stagger } from 'framer-motion';
+import Image from 'next/image';
 
 const Preloader = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -69,9 +70,12 @@ const Preloader = () => {
         {/* Logo */}
         <div className="preloader-logo w-24 h-24 md:w-28 md:h-28 relative opacity-0">
           <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-10" />
-          <img 
+          <Image 
             src="/images/skillio-logo.png" 
             alt="Skillio Logo" 
+            width={168}
+            height={168}
+            priority
             className="w-full h-full object-contain relative z-10"
           />
         </div>
@@ -98,7 +102,7 @@ const Preloader = () => {
           </div>
 
           {/* Slogan Skillio */}
-          <p className="preloader-slogan opacity-0 text-[10px] md:text-[11px] font-medium text-slate-500 tracking-[0.2em] mt-1 text-center">
+          <p className="preloader-slogan opacity-0 text-[10px] md:text-[11px] font-bold text-slate-700 tracking-[0.2em] mt-1 text-center">
             Temukan Karir Impianmu
           </p>
         </div>

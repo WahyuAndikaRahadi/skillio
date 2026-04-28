@@ -35,9 +35,9 @@ const Footer = () => {
           </div>
 
           <div className="lg:min-w-[200px]">
-            <h4 className="mb-6 font-display text-base font-bold text-slate-900">
+            <h3 className="mb-6 font-display text-base font-bold text-slate-900">
               Platform
-            </h4>
+            </h3>
             <ul className="space-y-4 text-sm font-medium text-slate-600">
               <li>
                 <Link href="#features" className="transition-colors hover:text-skillio-600">
@@ -65,7 +65,7 @@ const Footer = () => {
 
         <div className="mt-16 flex flex-col gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Skillio Indonesia. Semua hak dilindungi.</p>
-          <p className="font-medium text-slate-400">Satu hari, satu langkah, satu skill yang benar-benar jadi.</p>
+          <p className="font-medium text-slate-600">Satu hari, satu langkah, satu skill yang benar-benar jadi.</p>
         </div>
       </div>
     </footer>

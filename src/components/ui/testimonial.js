@@ -112,8 +112,8 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
                   <div
                     className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
                       item.textColor === "text-white"
-                        ? "bg-white/10 text-white/80"
-                        : "bg-slate-100 text-slate-500"
+                        ? "bg-white/10 text-white"
+                        : "bg-slate-200 text-slate-900"
                     }`}
                   >
                     <item.icon className="h-3 w-3" />
@@ -126,17 +126,20 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
 
                 <div className="flex items-center gap-3 border-t border-current/10 pt-4 sm:gap-4 sm:pt-6">
                   <div className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border-2 border-current/20 bg-white sm:h-12 sm:w-12">
-                    <img 
+                    <Image 
                       src={`https://api.dicebear.com/9.x/thumbs/svg?seed=${seed}&backgroundColor=transparent`}
                       alt={`Avatar ${item.name}`}
+                      width={48}
+                      height={48}
+                      unoptimized
                       className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="whitespace-normal">
-                    <h4 className="font-display text-sm font-bold sm:text-base">
+                    <h3 className="font-display text-sm font-bold sm:text-base">
                       {item.name}
-                    </h4>
-                    <p className="text-[10px] opacity-70 sm:text-xs">
+                    </h3>
+                    <p className="text-[10px] text-current/80 sm:text-xs">
                       {item.role} &middot; {item.company}
                     </p>
                   </div>

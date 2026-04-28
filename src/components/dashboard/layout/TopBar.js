@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 
 import { useAppStore } from "@/store/useAppStore";
 
@@ -196,11 +197,20 @@ const TopBar = ({ onMenuClick }) => {
               </div>
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 overflow-hidden border-2 border-white shrink-0 group-hover:scale-110 transition-transform">
                 {session?.user?.image ? (
-                  <img src={session.user.image} alt="Profil" className="w-full h-full object-cover" />
+                  <Image 
+                    src={session.user.image} 
+                    alt="Profil" 
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover" 
+                  />
                 ) : (
-                  <img 
+                  <Image 
                     src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${session?.user?.name || "guest"}`} 
                     alt="Profil" 
+                    width={40}
+                    height={40}
+                    unoptimized
                     className="w-full h-full object-cover bg-blue-50" 
                   />
                 )}

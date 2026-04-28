@@ -36,8 +36,6 @@ export const viewport = {
   themeColor: "#2b6ea6",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 import Preloader from "@/components/layout/Preloader";
@@ -46,6 +44,9 @@ import PWAInstall from "@/components/layout/PWAInstall";
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
+      <head>
+        <link rel="preconnect" href="https://www.transparenttextures.com" />
+      </head>
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased`}>
         <Preloader />
         <AuthProvider>

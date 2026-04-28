@@ -20,7 +20,7 @@ const roadmapMoments = [
       "Mulailah dengan menjawab pertanyaan cerdas yang dirancang khusus untuk memahami minat, kekuatan, dan gaya belajarmu yang unik.",
     icon: BrainCircuit,
     highlights: ["Pertanyaan adaptif", "Analisis minat", "Pemetaan kekuatan"],
-    color: "bg-blue-50 text-blue-600",
+    color: "bg-blue-50 text-blue-800",
     stepColor: "text-blue-200",
   },
   {
@@ -30,7 +30,7 @@ const roadmapMoments = [
       "Berdasarkan profilmu, kami menyarankan bidang karier yang paling sesuai agar kamu tidak membuang waktu di jalur yang kurang tepat.",
     icon: Target,
     highlights: ["Fokus pada hasil", "Logika pemilihan jelas", "Arah lebih terjamin"],
-    color: "bg-teal-50 text-teal-600",
+    color: "bg-teal-50 text-teal-800",
     stepColor: "text-teal-200",
   },
   {
@@ -40,7 +40,7 @@ const roadmapMoments = [
       "Dapatkan jadwal belajar 30 hari yang realistis. Materi disusun secara bertahap mulai dari fondasi hingga tantangan nyata.",
     icon: Milestone,
     highlights: ["Kurikulum terukur", "Target harian", "Progres bertahap"],
-    color: "bg-indigo-50 text-indigo-600",
+    color: "bg-indigo-50 text-indigo-800",
     stepColor: "text-indigo-200",
   },
   {
@@ -50,7 +50,7 @@ const roadmapMoments = [
       "Setiap hari kamu akan mendapatkan paket belajar lengkap: materi singkat, tugas praktis, dan quiz untuk menguji pemahamanmu.",
     icon: BookOpenText,
     highlights: ["Tugas praktis", "Materi ringkas", "Quiz konfirmasi"],
-    color: "bg-amber-50 text-amber-600",
+    color: "bg-amber-50 text-amber-900",
     stepColor: "text-amber-200",
   },
   {
@@ -60,7 +60,7 @@ const roadmapMoments = [
       "Terhubung dengan pelajar lain di bidang yang sama. Berbagi progres, bertanya, dan saling mendukung untuk menjaga semangat.",
     icon: Users,
     highlights: ["Grup bidang sama", "Diskusi interaktif", "Dukungan sesama"],
-    color: "bg-rose-50 text-rose-600",
+    color: "bg-rose-50 text-rose-800",
     stepColor: "text-rose-200",
   },
   {
@@ -70,7 +70,7 @@ const roadmapMoments = [
       "Progresmu berubah menjadi kartu capaian dan badge digital yang membuktikan keahlianmu. Kamu juga didampingi AI Mentor di setiap langkah.",
     icon: BadgeCheck,
     highlights: ["Badge digital", "Kartu capaian", "Bantuan AI Mentor"],
-    color: "bg-emerald-50 text-emerald-600",
+    color: "bg-emerald-50 text-emerald-800",
     stepColor: "text-emerald-200",
   },
 ];

@@ -56,15 +56,15 @@ const allDigitalFields = [
 ];
 
 const colorPalette = [
-  "bg-blue-50 border-blue-100 text-blue-700 hover:border-blue-300",
-  "bg-emerald-50 border-emerald-100 text-emerald-700 hover:border-emerald-300",
-  "bg-amber-50 border-amber-100 text-amber-700 hover:border-amber-300",
-  "bg-rose-50 border-rose-100 text-rose-700 hover:border-rose-300",
-  "bg-indigo-50 border-indigo-100 text-indigo-700 hover:border-indigo-300",
-  "bg-purple-50 border-purple-100 text-purple-700 hover:border-purple-300",
-  "bg-teal-50 border-teal-100 text-teal-700 hover:border-teal-300",
-  "bg-orange-50 border-orange-100 text-orange-700 hover:border-orange-300",
-  "bg-sky-50 border-sky-100 text-sky-700 hover:border-sky-300"
+  "bg-blue-50 border-blue-100 text-blue-800 hover:border-blue-300",
+  "bg-emerald-50 border-emerald-100 text-emerald-800 hover:border-emerald-300",
+  "bg-amber-50 border-amber-100 text-amber-900 hover:border-amber-300",
+  "bg-rose-50 border-rose-100 text-rose-800 hover:border-rose-300",
+  "bg-indigo-50 border-indigo-100 text-indigo-800 hover:border-indigo-300",
+  "bg-purple-50 border-purple-100 text-purple-800 hover:border-purple-300",
+  "bg-teal-50 border-teal-100 text-teal-800 hover:border-teal-300",
+  "bg-orange-50 border-orange-100 text-orange-900 hover:border-orange-300",
+  "bg-sky-50 border-sky-100 text-sky-800 hover:border-sky-300"
 ];
 
 const coloredFields = allDigitalFields.map((item, index) => ({
