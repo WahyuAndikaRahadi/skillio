@@ -15,8 +15,7 @@ export default function AboutSection() {
                 alt="Tentang Skillio"
                 fill
                 priority
-                fetchPriority="high"
-                sizes="(max-width: 640px) 280px, (max-width: 1024px) 320px, 380px"
+                sizes="(max-width: 768px) 100vw, 380px"
                 className="object-cover object-center"
               />
             </div>

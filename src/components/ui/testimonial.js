@@ -66,7 +66,7 @@ const allTestimonials = [
     image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?q=80&w=687&auto=format&fit=crop",
     icon: BriefcaseBusiness,
     badge: "Proof over promises",
-    color: "bg-skillio-600",
+    color: "bg-skillio-500",
     textColor: "text-white"
   },
   {
@@ -112,8 +112,8 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
                   <div
                     className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest ${
                       item.textColor === "text-white"
-                        ? "bg-white text-slate-900"
-                        : "bg-slate-900 text-white"
+                        ? "bg-white/10 text-white"
+                        : "bg-slate-200 text-slate-900"
                     }`}
                   >
                     <item.icon className="h-3 w-3" />
@@ -139,7 +139,7 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
                     <h3 className="font-display text-sm font-bold sm:text-base">
                       {item.name}
                     </h3>
-                    <p className={item.textColor === "text-white" ? "text-white/95 text-[10px] sm:text-xs" : "text-slate-500 text-[10px] sm:text-xs"}>
+                    <p className="text-[10px] text-current/80 sm:text-xs">
                       {item.role} &middot; {item.company}
                     </p>
                   </div>

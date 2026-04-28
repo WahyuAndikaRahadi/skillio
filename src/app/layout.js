@@ -45,7 +45,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <head>
-        <link rel="preconnect" href="https://www.transparenttextures.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.transparenttextures.com" />
       </head>
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased`}>
         <Preloader />
