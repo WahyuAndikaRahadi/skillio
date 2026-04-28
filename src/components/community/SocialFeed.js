@@ -205,11 +205,17 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "bg-white/70 backdrop-blur-xl rounded-[32px] border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all mb-6 relative overflow-hidden",
+        "bg-white/70 backdrop-blur-xl rounded-[32px] border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30_rgb(0,0,0,0.08)] transition-all mb-6 relative",
         post.type === "question" && "border-orange-200",
         post.user.role === "admin" && "border-primary-blue/30 ring-2 ring-primary-blue/5 bg-gradient-to-br from-white to-blue-50/30"
       )}
     >
+      {post.category && (
+        <div className="absolute -top-2.5 left-8 px-3 py-1 bg-white border border-blue-100 rounded-full shadow-sm flex items-center gap-1.5 z-20">
+          <Hash size={10} className="text-primary-blue" />
+          <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{post.category.name}</span>
+        </div>
+      )}
       {post.user.role === "admin" && (
         <div className="absolute top-0 right-0">
           <div className="bg-primary-blue text-white text-[8px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-bl-2xl shadow-lg">
@@ -229,11 +235,6 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
                 {post.user.role === "admin" && (
                   <span className="w-4 h-4 bg-primary-blue text-white rounded-full flex items-center justify-center shrink-0" title="Admin Terverifikasi">
                     <ShieldCheck size={10} strokeWidth={3} />
-                  </span>
-                )}
-                {post.category && (
-                  <span className="text-[10px] font-black uppercase tracking-tighter px-2 py-0.5 rounded bg-blue-50 text-primary-blue flex items-center gap-1 ml-1">
-                    <Hash size={10} /> {post.category.name}
                   </span>
                 )}
                 {post.type === 'question' && (
@@ -462,7 +463,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
   return (
     <div className="space-y-8 px-6">
       {/* Create Post Input Container (Diperbarui sesuai referensi desain) */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-[32px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-[32px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-[50]">
         <form onSubmit={handleSubmit}>
           <div className="flex gap-4">
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 font-bold text-slate-500 overflow-hidden">
@@ -484,7 +485,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute z-50 bg-white border border-slate-100 rounded-2xl shadow-xl w-64 mt-2 max-h-60 overflow-y-auto custom-scrollbar p-2"
+                    className="absolute z-[100] bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl shadow-2xl w-64 mt-2 max-h-60 overflow-y-auto custom-scrollbar p-2 left-0 md:left-auto"
                   >
                     <div className="px-3 py-2 border-b border-slate-50 mb-1">
                       <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Pilih Bidang</p>
