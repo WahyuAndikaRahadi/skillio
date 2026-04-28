@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export const metadata = {
   title: "Skillio | Public Profile",
@@ -13,9 +13,14 @@ export default function PublicLayout({ children }) {
       {/* Simple Top Navigation for Public View */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-             <div className="bg-primary-blue p-2 rounded-xl group-hover:rotate-12 transition-transform shadow-lg shadow-blue-500/20">
-                <Sparkles size={20} className="text-white" />
+          <Link href="/" className="flex items-center gap-3 group">
+             <div className="relative w-10 h-10 group-hover:scale-110 transition-transform">
+                <Image 
+                  src="/images/skillio-logo.png" 
+                  alt="Skillio Logo" 
+                  fill 
+                  className="object-contain"
+                />
              </div>
              <span className="text-2xl font-black tracking-tighter text-slate-900">SKILLIO</span>
           </Link>
@@ -34,7 +39,8 @@ export default function PublicLayout({ children }) {
       </main>
 
       <footer className="py-10 border-t border-slate-200 bg-white text-center">
-        <p className="text-sm font-bold text-slate-400">© 2026 Skillio — Dibuat untuk Generasi Pembelajar Indonesia</p>
+        <p className="text-sm font-black text-slate-900">Skillio - Temukan Karir Impianmu</p>
+        <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">© 2026 Skillio — Dibuat untuk Generasi Pembelajar Indonesia</p>
       </footer>
     </div>
   );
