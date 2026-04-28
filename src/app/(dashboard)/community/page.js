@@ -26,7 +26,7 @@ const getInitials = (name) => {
   return name.slice(0, 2).toUpperCase();
 };
 
-export default function CommunityPage() {
+function CommunityContent() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -295,5 +295,13 @@ export default function CommunityPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CommunityPage() {
+  return (
+    <React.Suspense fallback={<div className="flex h-[calc(100vh-56px)] md:h-[calc(100vh-80px)] items-center justify-center bg-[#f0f7ff] text-slate-400 font-bold text-sm">Memuat komunitas...</div>}>
+      <CommunityContent />
+    </React.Suspense>
   );
 }
