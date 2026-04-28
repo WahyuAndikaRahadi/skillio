@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import {
@@ -45,7 +45,7 @@ const getBadgeTheme = (badgeName) => {
   return badgeThemes.default;
 };
 
-export default function BadgesPage() {
+function BadgesContent() {
   const { data: session } = useSession();
   const router = useRouter();
   const params = useParams();
@@ -619,5 +619,18 @@ export default function BadgesPage() {
         })()}
       </div>
     </div>
+  );
+}
+
+export default function BadgesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-16 h-16 text-skillio-600 animate-spin" />
+        <p className="font-black text-slate-600 text-lg">Membuka lemari piala Anda...</p>
+      </div>
+    }>
+      <BadgesContent />
+    </Suspense>
   );
 }
