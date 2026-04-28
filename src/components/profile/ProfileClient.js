@@ -52,6 +52,95 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
   const xpToNextLevel = profileData ? 500 - (profileData.xp % 500) : 500;
   const progressPercent = profileData ? ((profileData.xp % 500) / 500) * 100 : 0;
 
+  const handleUpdateName = async () => {
+    const Swal = (await import("sweetalert2")).default;
+    const { value: newName } = await Swal.fire({
+      title: 'Ubah Nama',
+      input: 'text',
+      inputLabel: 'Masukkan nama baru Anda',
+      inputValue: profileData.name,
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#94a3b8',
+      inputValidator: (value) => {
+        if (!value || value.trim().length < 2) {
+          return 'Nama harus minimal 2 karakter'
+        }
+      },
+      customClass: { popup: 'rounded-[32px] p-8' }
+    });
+
+    if (newName) {
+      try {
+        const res = await fetch("/api/user/update-profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: newName })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setProfileData(prev => ({ ...prev, name: newName }));
+          await update({ name: newName });
+          Swal.fire({ icon: 'success', title: 'Berhasil!', text: data.message, confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Gagal', text: data.message, confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan sistem', confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
+      }
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    const Swal = (await import("sweetalert2")).default;
+    const { value: formValues } = await Swal.fire({
+      title: 'Ubah Password',
+      html: `
+        <div class="space-y-4 pt-4">
+          <input id="oldPassword" type="password" placeholder="Password Lama" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none">
+          <input id="newPassword" type="password" placeholder="Password Baru (min. 6 karakter)" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none">
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Update Password',
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#94a3b8',
+      focusConfirm: false,
+      preConfirm: () => {
+        const oldP = document.getElementById('oldPassword').value;
+        const newP = document.getElementById('newPassword').value;
+        if (!oldP || !newP) {
+          Swal.showValidationMessage('Harap isi semua kolom');
+          return false;
+        }
+        if (newP.length < 6) {
+          Swal.showValidationMessage('Password baru minimal 6 karakter');
+          return false;
+        }
+        return { oldPassword: oldP, newPassword: newP };
+      },
+      customClass: { popup: 'rounded-[32px] p-8' }
+    });
+
+    if (formValues) {
+      try {
+        const res = await fetch("/api/user/update-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formValues)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          Swal.fire({ icon: 'success', title: 'Berhasil!', text: data.message, confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Gagal', text: data.message, confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Terjadi kesalahan sistem', confirmButtonColor: '#3b82f6', customClass: { popup: 'rounded-[32px]' } });
+      }
+    }
+  };
+
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/public/profile/${profileData?.id || profileId || session?.user?.id || ""}`;
     const shareData = {
@@ -200,6 +289,15 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tighter">
                     {profileData.name || "Pengguna Skillio"}
+                    {profileData.isOwnProfile && !isPublicView && (
+                      <button 
+                        onClick={handleUpdateName}
+                        className="p-2 bg-white/10 hover:bg-white/20 rounded-xl border border-white/20 transition-all group/edit"
+                        title="Ubah Nama"
+                      >
+                        <Edit3 size={18} className="text-white/60 group-hover/edit:text-white" />
+                      </button>
+                    )}
                   </h1>
                   {profileData.role === "admin" && (
                     <span className="px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/20 text-white">Premium Admin</span>
@@ -226,13 +324,22 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                    </button>
                    
                    {profileData.isOwnProfile && (
-                     <button 
-                       onClick={() => signOut({ callbackUrl: "/" })}
-                       className="px-8 py-4 bg-red-500/10 hover:bg-red-500/20 text-red-100 rounded-[24px] font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 border border-red-400/20"
-                     >
-                        <LogOut size={18} /> Keluar
-                     </button>
-                   )}
+                      <button 
+                        onClick={handleUpdatePassword}
+                        className="px-8 py-4 bg-blue-500/10 hover:bg-blue-500/20 text-blue-100 rounded-[24px] font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 border border-blue-400/20"
+                      >
+                         <Edit3 size={18} /> Ubah Password
+                      </button>
+                    )}
+                    
+                    {profileData.isOwnProfile && (
+                      <button 
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="px-8 py-4 bg-red-500/10 hover:bg-red-500/20 text-red-100 rounded-[24px] font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 border border-red-400/20"
+                      >
+                         <LogOut size={18} /> Keluar
+                      </button>
+                    )}
                 </div>
               )}
 

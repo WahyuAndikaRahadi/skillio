@@ -1,8 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
-
 const Footer = () => {
   return (
     <footer className="border-t border-slate-200 bg-white px-5 pb-8 pt-20 sm:px-6 lg:px-8">
@@ -34,27 +32,6 @@ const Footer = () => {
               berhenti bingung, memilih bidang yang tepat, lalu membuktikan
               kemampuannya lewat progres nyata.
             </p>
-
-            <div className="mt-8 flex gap-3">
-              <a
-                href="#"
-                className="group flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-500 transition-all hover:border-skillio-200 hover:bg-skillio-50 hover:text-skillio-600"
-              >
-                <FaInstagram className="h-4 w-4 transition-transform group-hover:scale-110" />
-              </a>
-              <a
-                href="#"
-                className="group flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-500 transition-all hover:border-skillio-200 hover:bg-skillio-50 hover:text-skillio-600"
-              >
-                <FaTwitter className="h-4 w-4 transition-transform group-hover:scale-110" />
-              </a>
-              <a
-                href="#"
-                className="group flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-500 transition-all hover:border-skillio-200 hover:bg-skillio-50 hover:text-skillio-600"
-              >
-                <FaLinkedin className="h-4 w-4 transition-transform group-hover:scale-110" />
-              </a>
-            </div>
           </div>
 
           <div className="lg:min-w-[200px]">

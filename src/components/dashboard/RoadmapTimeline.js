@@ -912,14 +912,14 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                             )} size={20} />
                          </div>
                          <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Day Streak</p>
+                            <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">Day Streak</p>
                             <p className={cn("text-xl font-black", !stats.isActiveToday ? "text-slate-500" : "text-white")}>
                               {stats.streak}
                             </p>
                          </div>
                       </div>
                       <div className="text-right">
-                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">XP Points</p>
+                         <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">XP Points</p>
                          <p className={cn("text-xl font-black", !stats.isActiveToday ? "text-slate-500" : "text-skillio-400")}>
                            {stats.xp}
                          </p>
