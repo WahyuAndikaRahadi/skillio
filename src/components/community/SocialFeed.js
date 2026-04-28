@@ -545,7 +545,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
                   <button type="button" onClick={() => setPostType(prev => prev === "question" ? "progress" : "question")} className={`p-2 rounded-full transition-colors ${postType === 'question' ? 'bg-orange-50 text-orange-500' : 'hover:bg-slate-50 hover:text-slate-600'}`}>
                     <HelpCircle size={18} />
                   </button>
-                  <button type="button" className="p-2 hover:bg-slate-50 hover:text-slate-600 rounded-full transition-colors hidden sm:block"><Code size={18} /></button>
+
                 </div>
                 <button
                   type="submit"

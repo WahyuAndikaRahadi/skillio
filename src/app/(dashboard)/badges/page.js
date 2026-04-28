@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import {
   Award,
   Lock,
@@ -48,34 +48,41 @@ const getBadgeTheme = (badgeName) => {
 export default function BadgesPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const profileId = params?.id || searchParams?.get("userId");
+
   const [badges, setBadges] = useState([]);
   const [userBadgeIds, setUserBadgeIds] = useState(new Set());
+  const [viewedUser, setViewedUser] = useState(null);
+  const [isOwnProfile, setIsOwnProfile] = useState(true);
   const [activeRoadmapId, setActiveRoadmapId] = useState(null);
   const [completedRoadmaps, setCompletedRoadmaps] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("lencana"); // lencana, misi, sertifikat
-
+  const [activeTab, setActiveTab] = useState("lencana");
 
   useEffect(() => {
     const fetchBadges = async () => {
       try {
-        const res = await fetch("/api/badges");
+        const url = profileId ? `/api/badges?userId=${profileId}` : "/api/badges";
+        const res = await fetch(url);
         const data = await res.json();
         if (res.ok) {
           setBadges(data.allBadges);
           setUserBadgeIds(new Set(data.earnedBadgeIds));
           setCompletedRoadmaps(data.completedRoadmaps || []);
           setActiveRoadmapId(data.activeRoadmapId);
+          setViewedUser(data.user);
+          setIsOwnProfile(data.isOwnProfile);
         }
-
       } catch (err) {
         console.error("Gagal memuat lencana");
       } finally {
         setLoading(false);
       }
     };
-    if (session) fetchBadges();
-  }, [session]);
+    fetchBadges();
+  }, [profileId]);
 
   if (loading) {
     return (
@@ -556,8 +563,8 @@ export default function BadgesPage() {
                             <motion.button
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
-                              onClick={() => {
-                                const shareUrl = `${window.location.origin}/profile/${session?.user?.id || ''}`;
+                              onClick={async () => {
+                                const shareUrl = `${window.location.origin}/profile/${profileId || session?.user?.id || ''}`;
                                 const shareData = {
                                   title: `Saya meraih lencana ${badge.name}!`,
                                   text: `Lihat pencapaian saya di Skillio: ${badge.description}`,
@@ -565,32 +572,20 @@ export default function BadgesPage() {
                                 };
 
                                 if (navigator.share) {
-                                  navigator.share(shareData).catch(() => {
-                                    navigator.clipboard.writeText(shareUrl);
-                                    Swal.fire({
-                                      toast: true,
-                                      position: 'top-end',
-                                      icon: 'success',
-                                      title: 'Link disalin!',
-                                      showConfirmButton: false,
-                                      timer: 2000,
-                                      customClass: {
-                                        popup: 'rounded-2xl'
-                                      }
-                                    });
-                                  });
+                                  try {
+                                    await navigator.share(shareData);
+                                  } catch (err) {
+                                    console.log("Share failed", err);
+                                  }
                                 } else {
-                                  navigator.clipboard.writeText(shareUrl);
+                                  await navigator.clipboard.writeText(shareUrl);
                                   Swal.fire({
                                     toast: true,
                                     position: 'top-end',
                                     icon: 'success',
                                     title: 'Link disalin!',
                                     showConfirmButton: false,
-                                    timer: 2000,
-                                    customClass: {
-                                      popup: 'rounded-2xl'
-                                    }
+                                    timer: 2000
                                   });
                                 }
                               }}

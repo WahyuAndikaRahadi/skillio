@@ -2,10 +2,22 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(req) {
   try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
+    
     const session = await auth();
-    if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const targetId = userId || session?.user?.id;
+    
+    if (!targetId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+    const user = await prisma.user.findUnique({
+      where: { id: targetId },
+      select: { name: true, image: true }
+    });
+
+    if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
     // 1. Get all available badges
     const allBadges = await prisma.badge.findMany({
@@ -14,7 +26,7 @@ export async function GET() {
 
     // 2. Get user's earned badges
     const userBadges = await prisma.userBadge.findMany({
-      where: { user_id: session.user.id },
+      where: { user_id: targetId },
       select: { badge_id: true }
     });
 
@@ -23,7 +35,7 @@ export async function GET() {
     // 3. Get completed roadmaps as certificates
     const completedRoadmaps = await prisma.userRoadmap.findMany({
       where: { 
-        user_id: session.user.id,
+        user_id: targetId,
         status: "completed"
       },
       include: {
@@ -33,9 +45,11 @@ export async function GET() {
     });
 
     return NextResponse.json({
+      user,
       allBadges,
       earnedBadgeIds,
-      completedRoadmaps
+      completedRoadmaps,
+      isOwnProfile: session?.user?.id === targetId
     });
 
   } catch (error) {
