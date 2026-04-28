@@ -16,7 +16,8 @@ import {
   Smile,
   Calendar,
   Hash,
-  MessageSquareCodeIcon
+  MessageSquareCodeIcon,
+  ShieldCheck
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
