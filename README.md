@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<p align="center">
+  <img src="public/skillio-logo.png" alt="Skillio Logo" width="180px" />
+</p>
 
-## Getting Started
+<h1 align="center">Skillio</h1>
 
-First, run the development server:
+<p align="center">
+  <strong>The Future of Career Development Powered by Generative AI</strong>
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16-blue?style=for-the-badge&logo=nextdotjs" alt="Next.js" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/Gemini_AI-API-4285F4?style=for-the-badge&logo=google-gemini" alt="Gemini AI" />
+</p>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🚀 Overview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Skillio** is an AI-driven career pathing and educational platform designed to bridge the gap between education and industry requirements. By leveraging the power of Google Gemini AI, Skillio provides personalized learning roadmaps, interactive competency assessments, and a thriving community for aspiring professionals.
 
-## Learn More
+## ✨ Key Features
 
-To learn more about Next.js, take a look at the following resources:
+- 🧠 **AI Career Roadmap**: Personalized 30-day learning paths generated specifically for your career goals.
+- 📝 **Intelligent Assessments**: Multi-phase career matching quizzes to find your perfect professional fit.
+- 🏆 **Gamification System**: Earn unique badges, maintain streaks, and climb the global leaderboard.
+- 💬 **Real-time Community**: Interactive social feed and group chats powered by Pusher for collaborative learning.
+- 🎓 **Professional Certification**: Generate and verify competency certificates upon roadmap completion.
+- 🎨 **Immersive UI/UX**: A premium, minimalist design featuring smooth animations with Framer Motion and Anime.js.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Frontend**: [Next.js 16](https://nextjs.org/) (App Router), [React 19](https://react.dev/), [Tailwind CSS 4](https://tailwindcss.com/)
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Database & ORM**: [PostgreSQL](https://www.postgresql.org/) with [Prisma](https://www.prisma.io/)
+- **AI Integration**: [Google Gemini AI API](https://ai.google.dev/)
+- **Real-time**: [Pusher](https://pusher.com/)
+- **Storage**: [Uploadthing](https://uploadthing.com/)
+- **Caching**: [Redis](https://upstash.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/), [Anime.js](https://animejs.com/)
+- **Authentication**: [Auth.js (NextAuth v5)](https://authjs.dev/)
 
-## Deploy on Vercel
+## 📦 Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/WahyuAndikaRahadi/skillio.git
+   cd skillio
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup:**
+   Create a `.env` file in the root directory and add your credentials:
+   ```env
+   DATABASE_URL="your_postgresql_url"
+   NEXTAUTH_SECRET="your_secret"
+   GEMINI_API_KEY="your_gemini_key"
+   PUSHER_APP_ID="your_pusher_id"
+   PUSHER_KEY="your_pusher_key"
+   PUSHER_SECRET="your_pusher_secret"
+   UPSTASH_REDIS_REST_URL="your_redis_url"
+   UPSTASH_REDIS_REST_TOKEN="your_redis_token"
+   ```
+
+4. **Database Migration:**
+   ```bash
+   npx prisma db push
+   ```
+
+5. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+<p align="center">
+  <img src="public/images/skillio-screenshot3.jpeg" alt="Skillio Certificate" width="32%" />
+  <img src="public/images/skillio-screenshot1.jpeg" alt="Skillio Dashboard" width="32%" />
+  <img src="public/images/skillio-screenshot2.jpeg" alt="Skillio Community" width="32%" />
+</p>
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  Built with ❤️ by <strong>Team Galatea</strong> for the Competition.
+</p>
