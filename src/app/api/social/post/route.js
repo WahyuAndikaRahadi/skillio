@@ -36,7 +36,6 @@ export async function POST(req) {
       }
     });
 
-    // Trigger Pusher for real-time update
     await pusherServer.trigger("community-feed", "new-post", post);
 
     return NextResponse.json({ success: true, post });

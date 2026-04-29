@@ -30,7 +30,6 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // Create Group Form States
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupDesc, setNewGroupDesc] = useState("");
   const [newGroupPrivacy, setNewGroupPrivacy] = useState("public");
@@ -39,7 +38,6 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
   const [isCreating, setIsCreating] = useState(false);
   const [categories, setCategories] = useState([]);
 
-  // Join Group States
   const [joinGroupId, setJoinGroupId] = useState(null);
   const [joinPassword, setJoinPassword] = useState("");
   const [isJoining, setIsJoining] = useState(false);
@@ -127,8 +125,8 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
         if (data.status === "approved") {
           setJoinGroupId(null);
           setJoinPassword("");
-          // Ganti router.push menjadi onJoin
-          onJoin(groupId); // <--- PERUBAHAN DI SINI
+
+          onJoin(groupId);
         } else {
           Swal.fire({
             icon: "error",
@@ -155,7 +153,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
       setIsJoining(false);
     }
   };
-  
+
   const handleDeleteGroup = async (group) => {
     const result = await Swal.fire({
       title: "Hapus Komunitas?",
@@ -193,21 +191,19 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
   };
 
   const displayedGroups = groups.filter((g) => {
-    // Filter by Category if selected
+
     if (categoryId) {
       const targetId = String(categoryId);
       const groupCatId = String(g.categoryId || g.category_id || g.category?.id);
       if (groupCatId !== targetId) return false;
     }
 
-    // Filter by View Mode (Joined vs All)
     const isMember = g.members && g.members.length > 0;
-    
+
     if (viewMode === "joined") {
       if (!isMember) return false;
     } else {
-      // viewMode === 'all' (Cari Grup)
-      // JANGAN munculkan grup yang sudah kita masuki
+
       if (isMember) return false;
     }
 
@@ -245,7 +241,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
           <p className="font-bold text-slate-400">Menjelajahi komunitas...</p>
         </div>
       ) : showCreateModal ? (
-        /* Inline Create Group Card - Takes over when creating */
+
         <AnimatePresence mode="wait">
           <motion.div
             key="create-form"
@@ -254,16 +250,16 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
             exit={{ opacity: 0, y: -20 }}
             className="m-4 overflow-hidden bg-white rounded-[32px] border border-primary-blue/20 shadow-xl shadow-blue-500/5"
           >
-            {/* Header Decoration */}
+            {}
             <div className="h-1.5 bg-gradient-to-r from-primary-blue via-blue-400 to-indigo-500" />
-            
+
             <div className="p-7 md:p-9">
               <div className="flex items-center justify-between mb-8">
                 <div className="space-y-1">
                   <h2 className="text-xl font-black text-slate-900 tracking-tight">Buat Grup Baru</h2>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pimpin komunitas belajarmu</p>
                 </div>
-                <button 
+                <button
                   onClick={() => setShowCreateModal(false)}
                   className="p-2.5 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-xl transition-colors hover:bg-slate-100"
                 >
@@ -393,7 +389,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
           </motion.div>
         </AnimatePresence>
       ) : (
-        /* Normal Group List View */
+
         <div className="flex flex-col gap-3 p-4 bg-[#f8fbfd] min-h-full">
           {displayedGroups.map((group) => {
             const isMember = group.members && group.members.length > 0;
@@ -404,7 +400,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                 className="flex items-center gap-4 p-4 bg-white border border-slate-200/60 rounded-2xl hover:border-primary-blue/30 hover:shadow-sm transition-all cursor-pointer group relative"
               >
 
-                {/* Avatar Style WhatsApp */}
+                {}
                 <div className="w-14 h-14 shrink-0 rounded-full bg-[#E6F0F9] flex items-center justify-center font-black text-xl text-[#2A75C4] overflow-hidden border-2 border-white shadow-sm">
                   {group.image_url ? (
                     <img src={group.image_url} alt="" className="w-full h-full object-cover" />
@@ -413,7 +409,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                   )}
                 </div>
 
-                {/* Content */}
+                {}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
                     <h4 className="font-black text-[#1E293B] text-base truncate flex items-center gap-2 font-display">
@@ -438,13 +434,13 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
 
                 </div>
 
-                {/* Meta & Actions */}
+                {}
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   <div className="flex items-center gap-1.5 text-slate-400">
                      <Users size={14} className="text-primary-blue/60" />
                      <span className="text-xs font-bold text-primary-blue">{group._count?.members || 0}</span>
                   </div>
-                  
+
                     {session?.user?.role === "admin" && (
                       <button
                         onClick={(e) => {
@@ -457,7 +453,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                         <Trash2 size={16} />
                       </button>
                     )}
-                    
+
                     {!isMember ? (
                        <button
                          onClick={(e) => {
@@ -487,8 +483,8 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                 {viewMode === "joined" ? "Belum Bergabung" : "Tidak Ada Grup"}
               </p>
               <p className="text-slate-300 text-sm max-w-xs mx-auto">
-                {viewMode === "joined" 
-                  ? "Kamu belum bergabung dengan komunitas manapun di kategori ini." 
+                {viewMode === "joined"
+                  ? "Kamu belum bergabung dengan komunitas manapun di kategori ini."
                   : "Belum ada grup yang dibuat untuk bidang ini."}
               </p>
             </div>
@@ -496,7 +492,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
         </div>
       )}
 
-      {/* Join Private Group Modal */}
+      {}
       <AnimatePresence>
         {joinGroupId && (
           <div className="absolute inset-0 z-[9999] flex items-center justify-center p-6">
@@ -513,9 +509,9 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
               exit={{ opacity: 0, scale: 0.95, y: 30 }}
               className="relative w-full max-w-md bg-white rounded-[40px] shadow-[0_32px_64px_rgba(0,0,0,0.2)] overflow-hidden border border-slate-100"
             >
-              {/* Technical Header Decoration */}
+              {}
               <div className="h-2 bg-gradient-to-r from-red-500 via-orange-400 to-amber-500" />
-              
+
               <div className="p-10 md:p-12 text-center">
                 <div className="w-20 h-20 bg-red-50 text-red-500 rounded-[28px] flex items-center justify-center mx-auto mb-8 shadow-inner">
                   <Lock size={32} />
@@ -556,8 +552,8 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                         </span>
                       )}
                     </button>
-                    
-                    <button 
+
+                    <button
                       type="button"
                       onClick={() => { setJoinGroupId(null); setJoinPassword(""); }}
                       className="w-full py-4 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-colors"
@@ -567,8 +563,8 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                   </div>
                 </form>
               </div>
-              
-              {/* Bottom Decoration */}
+
+              {}
               <div className="absolute bottom-0 inset-x-0 h-1 bg-slate-50/50" />
             </motion.div>
           </div>
@@ -576,4 +572,4 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
       </AnimatePresence>
     </div>
   );
-}
+}

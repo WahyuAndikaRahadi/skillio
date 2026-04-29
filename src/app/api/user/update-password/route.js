@@ -18,20 +18,17 @@ export async function POST(req) {
       where: { id: session.user.id }
     });
 
-    // Check if user has a password (not an OAuth user)
     if (!user.password) {
-      return NextResponse.json({ 
-        message: "Akun Google tidak menggunakan password lokal. Silakan hubungi dukungan jika ingin mengatur password." 
+      return NextResponse.json({
+        message: "Akun Google tidak menggunakan password lokal. Silakan hubungi dukungan jika ingin mengatur password."
       }, { status: 400 });
     }
 
-    // Verify old password
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return NextResponse.json({ message: "Password lama tidak sesuai" }, { status: 400 });
     }
 
-    // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({

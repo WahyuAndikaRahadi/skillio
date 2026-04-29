@@ -10,13 +10,13 @@ export default function PWAInstallButton({ className }) {
 
   const handleInstall = async () => {
     if (!deferredPrompt) {
-      // If no prompt, maybe suggest manual install for iOS etc.
+
       return;
     }
-    
+
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === "accepted") {
       setDeferredPrompt(null);
     }
@@ -43,8 +43,8 @@ export default function PWAInstallButton({ className }) {
       disabled={!deferredPrompt}
       className={cn(
         "inline-flex h-14 items-center justify-center gap-2 rounded-2xl px-8 text-sm sm:text-base font-bold transition-all",
-        deferredPrompt 
-          ? "bg-skillio-600 text-white shadow-xl shadow-skillio-500/20 hover:scale-105 active:scale-95" 
+        deferredPrompt
+          ? "bg-skillio-600 text-white shadow-xl shadow-skillio-500/20 hover:scale-105 active:scale-95"
           : "bg-slate-200 text-slate-400 cursor-not-allowed",
         className
       )}

@@ -51,7 +51,7 @@ const Sidebar = ({ isMobile = false }) => {
       "w-64 h-screen bg-slate-50/40 backdrop-blur-xl border-r border-slate-200/60 flex flex-col p-4 z-40 transition-all duration-500",
       !isMobile ? "fixed left-0 top-0 hidden lg:flex" : "flex"
     )}>
-      {/* Brand Section */}
+      {}
       <div className="mb-8 px-2 pt-2">
         <Link href={isAdmin ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-3 group">
           <div className="w-9 h-9 bg-primary-blue rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:rotate-12 transition-all duration-500">
@@ -76,17 +76,17 @@ const Sidebar = ({ isMobile = false }) => {
         </Link>
       </div>
 
-      {/* Subtle Divider */}
+      {}
       <div className="px-4 mb-6">
         <div className="h-px w-full bg-slate-200/60" />
       </div>
 
-      {/* Navigation Section */}
+      {}
       <div className="flex-grow space-y-1 overflow-hidden pr-1">
         {menuItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           const Icon = item.icon;
-          
+
           return (
             <Link
               key={item.name}
@@ -104,16 +104,16 @@ const Sidebar = ({ isMobile = false }) => {
               >
                 <div className={cn(
                   "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300",
-                  isActive 
-                    ? "bg-blue-50 text-primary-blue shadow-inner" 
+                  isActive
+                    ? "bg-blue-50 text-primary-blue shadow-inner"
                     : "bg-slate-100/50 text-slate-400 group-hover:bg-white group-hover:text-primary-blue"
                 )}>
                   <Icon size={16} strokeWidth={isActive ? 2.5 : 2} />
                 </div>
                 <span className="tracking-tight text-[13px]">{item.name}</span>
-                
+
                 {isActive && (
-                  <motion.div 
+                  <motion.div
                     layoutId="sidebarActive"
                     className="absolute inset-0 bg-white shadow-[0_4px_12px_rgba(59,130,246,0.08)] border border-blue-100/50 rounded-2xl -z-10"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
@@ -127,7 +127,5 @@ const Sidebar = ({ isMobile = false }) => {
     </aside>
   );
 };
-
-
 
 export default Sidebar;

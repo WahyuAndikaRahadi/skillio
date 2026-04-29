@@ -56,7 +56,6 @@ export async function DELETE(req) {
       return NextResponse.json({ message: "User ID is required" }, { status: 400 });
     }
 
-    // Prevent deleting self
     if (userId === session.user.id) {
       return NextResponse.json({ message: "Anda tidak bisa menghapus diri sendiri." }, { status: 400 });
     }

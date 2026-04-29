@@ -9,7 +9,6 @@ export default async function AdminDashboardPage() {
     redirect("/dashboard");
   }
 
-  // Use Promise.all for parallel fetching to improve performance
   const [
     totalUsers,
     activeRoadmaps,
@@ -50,7 +49,6 @@ export default async function AdminDashboardPage() {
     createdAt: user.createdAt.toISOString()
   }));
 
-  // Prisma join workaround to get creator name
   const creatorIds = latestGroupsRaw.map(g => g.created_by);
   const creators = await prisma.user.findMany({
     where: { id: { in: creatorIds } },

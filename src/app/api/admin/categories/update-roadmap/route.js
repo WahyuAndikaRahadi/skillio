@@ -20,7 +20,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "Category not found" }, { status: 404 });
     }
 
-    // Upsert the Roadmap
     const updatedRoadmap = await prisma.roadmap.upsert({
       where: { category_id: categoryId },
       update: {

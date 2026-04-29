@@ -7,7 +7,7 @@ export default function AboutSection() {
     <section id="about" className="relative px-5 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-          {/* Image (Left) */}
+          {}
           <div className="order-first flex items-center justify-center">
             <div className="relative aspect-square w-full max-w-[280px] overflow-hidden rounded-[2rem] sm:max-w-[320px] lg:max-w-[380px]">
               <Image
@@ -21,7 +21,7 @@ export default function AboutSection() {
             </div>
           </div>
 
-          {/* Text Content (Right) */}
+          {}
           <div className="space-y-8 text-center lg:order-last lg:text-left">
             <div className="section-kicker mx-auto lg:mx-0">Tentang Skillio</div>
             <h2 className="font-display text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">

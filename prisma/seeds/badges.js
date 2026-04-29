@@ -83,11 +83,10 @@ const BADGES = [
 
 async function main() {
   console.log("🌱 Cleaning and Seeding Indonesian Badges...");
-  
-  // Wipe old badges to ensure clean names
+
   await prisma.userBadge.deleteMany({});
   await prisma.badge.deleteMany({});
-  
+
   let created = 0;
   for (const badgeData of BADGES) {
     await prisma.badge.create({ data: badgeData });

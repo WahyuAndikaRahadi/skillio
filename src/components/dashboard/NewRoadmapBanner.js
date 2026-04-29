@@ -4,17 +4,13 @@ import { motion } from "framer-motion";
 import { Trophy, Sparkles, BookOpen, RotateCcw, ArrowRight, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
-/**
- * Shown on /belajar when the user has NO active roadmap
- * but HAS at least one completed one.
- */
 export default function NewRoadmapBanner({ completedRoadmaps = [] }) {
-  const lastCompleted = completedRoadmaps[0]; // most recently completed
+  const lastCompleted = completedRoadmaps[0];
 
   return (
     <div className="max-w-3xl mx-auto py-16 px-4 space-y-10">
 
-      {/* Hero celebration */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -35,14 +31,14 @@ export default function NewRoadmapBanner({ completedRoadmaps = [] }) {
         )}
       </motion.div>
 
-      {/* Two big choices */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 sm:grid-cols-2 gap-5"
       >
-        {/* Option A: Explore catalog */}
+        {}
         <Link
           href="/roadmap"
           className="group relative flex flex-col gap-4 p-7 bg-white border-2 border-slate-100 hover:border-skillio-300 rounded-3xl shadow-sm hover:shadow-xl hover:shadow-skillio-500/10 transition-all duration-300"
@@ -63,7 +59,7 @@ export default function NewRoadmapBanner({ completedRoadmaps = [] }) {
           </div>
         </Link>
 
-        {/* Option B: Retake quiz */}
+        {}
         <Link
           href="/orientation"
           className="group relative flex flex-col gap-4 p-7 bg-white border-2 border-slate-100 hover:border-purple-300 rounded-3xl shadow-sm hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300"
@@ -85,7 +81,7 @@ export default function NewRoadmapBanner({ completedRoadmaps = [] }) {
         </Link>
       </motion.div>
 
-      {/* Completed history strip */}
+      {}
       {completedRoadmaps.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}

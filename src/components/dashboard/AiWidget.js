@@ -6,9 +6,6 @@ import { Sparkles, X, Send, Bot, User, Loader2, Mic, MicOff, Volume2, VolumeX, S
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-
-/** Remove markdown symbols so TTS sounds natural */
 function stripMarkdown(text) {
   return text
     .replace(/\*\*(.*?)\*\*/g, "$1")
@@ -21,8 +18,6 @@ function stripMarkdown(text) {
     .trim();
 }
 
-// ── Component ──────────────────────────────────────────────────────────────
-
 export default function AiWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -31,20 +26,17 @@ export default function AiWidget() {
   const [input, setInput]       = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Voice states
-  const [isListening, setIsListening]   = useState(false);  // mic active
-  const [isSpeaking, setIsSpeaking]     = useState(false);  // TTS playing
-  const [voiceEnabled, setVoiceEnabled] = useState(true);   // toggle TTS reply
-  const [micSupported, setMicSupported] = useState(false);  // browser support
+  const [isListening, setIsListening]   = useState(false);
+  const [isSpeaking, setIsSpeaking]     = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [micSupported, setMicSupported] = useState(false);
 
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
   const synthRef       = useRef(null);
 
-  // ── Init ────────────────────────────────────────────────────────────────
-
   useEffect(() => {
-    // Check browser support
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     setMicSupported(!!SpeechRecognition);
     synthRef.current = window.speechSynthesis;
@@ -54,12 +46,9 @@ export default function AiWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Cancel speech when widget closes
   useEffect(() => {
     if (!isOpen) stopSpeaking();
   }, [isOpen]);
-
-  // ── TTS ─────────────────────────────────────────────────────────────────
 
   const speak = useCallback((text) => {
     if (!voiceEnabled || !synthRef.current) return;
@@ -70,7 +59,6 @@ export default function AiWidget() {
     utterance.rate  = 1.05;
     utterance.pitch = 1.0;
 
-    // Pick an Indonesian voice if available
     const voices = synthRef.current.getVoices();
     const idVoice = voices.find(v => v.lang.startsWith("id")) ||
                     voices.find(v => v.lang.startsWith("en"));
@@ -90,13 +78,10 @@ export default function AiWidget() {
     }
   };
 
-  // ── STT / Mic ────────────────────────────────────────────────────────────
-
   const startListening = useCallback(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
-    // Stop any ongoing TTS before listening
     stopSpeaking();
 
     const recognition = new SpeechRecognition();
@@ -110,7 +95,7 @@ export default function AiWidget() {
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       setInput(transcript);
-      // Auto-send after a short delay so user can see what was transcribed
+
       setTimeout(() => sendMessage(transcript), 400);
     };
 
@@ -122,14 +107,12 @@ export default function AiWidget() {
     recognition.onend = () => setIsListening(false);
 
     recognition.start();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const stopListening = () => {
     recognitionRef.current?.stop();
     setIsListening(false);
   };
-
-  // ── Send Message ─────────────────────────────────────────────────────────
 
   const sendMessage = async (text) => {
     const userMessage = (text || input).trim();
@@ -149,7 +132,7 @@ export default function AiWidget() {
       const res  = await fetch("/api/ai/chat", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ 
+        body:    JSON.stringify({
           message: userMessage,
           history: history
         }),
@@ -162,7 +145,6 @@ export default function AiWidget() {
 
       setMessages(prev => [...prev, { role: "ai", content: reply }]);
 
-      // Speak the reply
       if (voiceEnabled) speak(reply);
 
     } catch {
@@ -178,8 +160,6 @@ export default function AiWidget() {
     sendMessage(input);
   };
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
   return (
     <div className="fixed bottom-6 left-6 lg:left-80 z-[100] flex flex-col items-start">
       <AnimatePresence>
@@ -191,7 +171,7 @@ export default function AiWidget() {
             transition={{ duration: 0.2 }}
             className="mb-4 w-[340px] h-[520px] bg-white rounded-[32px] shadow-2xl border border-light-blue overflow-hidden flex flex-col"
           >
-            {/* ── Header ── */}
+            {}
             <div className="p-5 bg-gradient-to-r from-primary-blue to-dark-blue flex items-center justify-between">
               <div className="flex items-center gap-3 text-white">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm relative">
@@ -210,7 +190,7 @@ export default function AiWidget() {
               </div>
 
               <div className="flex items-center gap-2">
-                {/* Toggle TTS */}
+                {}
                 <button
                   onClick={() => { setVoiceEnabled(v => !v); if (isSpeaking) stopSpeaking(); }}
                   title={voiceEnabled ? "Matikan suara AI" : "Aktifkan suara AI"}
@@ -228,7 +208,7 @@ export default function AiWidget() {
               </div>
             </div>
 
-            {/* ── Chat Messages ── */}
+            {}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50 custom-scrollbar">
               {messages.map((msg, idx) => (
                 <div
@@ -257,7 +237,7 @@ export default function AiWidget() {
                 </div>
               ))}
 
-              {/* Thinking indicator */}
+              {}
               {isLoading && (
                 <div className="flex gap-3 flex-row">
                   <div className="w-8 h-8 rounded-full bg-primary-blue text-white flex items-center justify-center shrink-0">
@@ -271,7 +251,7 @@ export default function AiWidget() {
                 </div>
               )}
 
-              {/* Listening indicator */}
+              {}
               {isListening && (
                 <div className="flex justify-center">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-full text-xs font-black border border-red-100">
@@ -284,10 +264,10 @@ export default function AiWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* ── Input Area ── */}
+            {}
             <div className="p-4 bg-white border-t border-slate-100">
 
-              {/* Speaking banner */}
+              {}
               {isSpeaking && (
                 <div className="flex items-center justify-between mb-3 px-3 py-2 bg-primary-blue/5 rounded-xl border border-primary-blue/10">
                   <div className="flex items-center gap-2 text-xs font-black text-primary-blue">
@@ -313,7 +293,7 @@ export default function AiWidget() {
                   className="w-full pl-5 pr-24 py-3.5 bg-slate-50 rounded-2xl border border-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-blue/20 text-sm font-bold text-dark-blue transition-all disabled:opacity-50"
                 />
 
-                {/* Mic button */}
+                {}
                 {micSupported && (
                   <button
                     type="button"
@@ -331,7 +311,7 @@ export default function AiWidget() {
                   </button>
                 )}
 
-                {/* Send button */}
+                {}
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading || isListening}
@@ -351,7 +331,7 @@ export default function AiWidget() {
         )}
       </AnimatePresence>
 
-      {/* ── FAB Button ── */}
+      {}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}

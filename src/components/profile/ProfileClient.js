@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { 
-  Trophy, 
-  Flame, 
-  Sparkles, 
-  Award, 
-  Map as MapIcon, 
+import {
+  Trophy,
+  Flame,
+  Sparkles,
+  Award,
+  Map as MapIcon,
   ChevronRight,
   ShieldCheck,
   Edit3,
@@ -55,7 +55,7 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
     fetchProfileData();
   }, [profileId]);
 
-  const joinedDate = profileData?.joinedAt 
+  const joinedDate = profileData?.joinedAt
     ? new Date(profileData.joinedAt).toLocaleDateString("id-ID", { month: "long", year: "numeric" })
     : "April 2024";
 
@@ -66,7 +66,7 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
   const handleUpdateName = async (e) => {
     e?.preventDefault();
     if (!editName || editName.trim().length < 2) return;
-    
+
     setIsUpdatingName(true);
     const Swal = (await import("sweetalert2")).default;
     try {
@@ -175,27 +175,27 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
       "max-w-7xl mx-auto px-6 md:px-10 space-y-12 relative z-10",
       isPublicView ? "py-16" : "py-10"
     )}>
-      {/* ═══ PREMIUM PROFILE SHOWROOM HEADER ═══ */}
-      <motion.div 
+      {}
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="relative group"
       >
         <div className="relative overflow-hidden rounded-[50px] md:rounded-[70px] bg-gradient-to-br from-primary-blue to-blue-700 border border-blue-400/30 shadow-[0_20px_50px_rgba(59,130,246,0.3)]">
-          
+
           <div className="absolute inset-0 z-0">
              <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800" />
-             <motion.div 
+             <motion.div
                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3], rotate: [0, 90, 0] }}
                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-               className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl" 
+               className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl"
              />
              <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
           </div>
 
           <div className="relative z-10 p-8 md:p-14 lg:p-16 flex flex-col lg:flex-row items-center gap-10 md:gap-14">
-            
+
             <div className="relative group/avatar">
               <div className="w-32 h-32 md:w-48 md:h-48 rounded-[45px] bg-white/20 backdrop-blur-2xl p-1.5 shadow-2xl ring-1 ring-white/30 overflow-hidden">
                 <div className="w-full h-full rounded-[38px] overflow-hidden bg-slate-100 flex items-center justify-center border-4 border-white/10 group-hover/avatar:scale-105 transition-transform duration-500 relative">
@@ -213,7 +213,7 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                   )}
                 </div>
               </div>
-              
+
               {profileData.isOwnProfile && !isPublicView && (
                 <div className="absolute -bottom-2 -right-2 bg-white rounded-2xl shadow-2xl hover:scale-110 transition-all overflow-hidden group/upload flex items-center justify-center w-12 h-12 border-4 border-blue-600">
                    <div className="absolute inset-0 flex items-center justify-center text-primary-blue pointer-events-none">
@@ -275,7 +275,7 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                     <span className="px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/20 text-white">Premium Admin</span>
                   )}
                 </div>
-                
+
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-5 text-white/70 font-bold">
                    <span className="flex items-center gap-2 text-sm md:text-base bg-white/5 border border-white/10 px-4 py-1.5 rounded-full backdrop-blur-md">
                      <Mail size={16} className="text-blue-300" /> {isPublicView ? "Terverifikasi" : profileData.email}
@@ -288,14 +288,14 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
 
               {!isPublicView && (
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
-                   <button 
+                   <button
                      onClick={handleShare}
                      className="px-8 py-4 bg-white text-primary-blue rounded-[24px] font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-2 shadow-xl shadow-black/20"
                    >
                       <Share2 size={18} /> Bagikan Profil
                    </button>
                     {profileData.isOwnProfile && (
-                      <button 
+                      <button
                         onClick={() => signOut({ callbackUrl: "/" })}
                         className="px-8 py-4 bg-red-500/10 hover:bg-red-500/20 text-red-100 rounded-[24px] font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 border border-red-400/20"
                       >
@@ -392,11 +392,11 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
              )}
           </div>
 
-          {/* ═══ SETTINGS FORMS (NAME & PASSWORD) ═══ */}
+          {}
           {profileData.isOwnProfile && !isPublicView && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Name Update Form */}
-              <motion.div 
+              {}
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -409,7 +409,7 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                 <form onSubmit={handleUpdateName} className="space-y-4">
                   <div>
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Nama Lengkap</label>
-                    <input 
+                    <input
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
@@ -417,19 +417,19 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                       className="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 focus:border-primary-blue outline-none font-bold text-sm transition-all text-slate-900"
                     />
                   </div>
-                  <button 
+                  <button
                     type="submit"
                     disabled={isUpdatingName || editName === profileData.name}
                     className="w-full py-3.5 bg-primary-blue text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 shadow-lg shadow-blue-500/20"
                   >
-                    {isUpdatingName ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} 
+                    {isUpdatingName ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                     Simpan Perubahan
                   </button>
                 </form>
               </motion.div>
 
-              {/* Password Update Form */}
-              <motion.div 
+              {}
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -443,7 +443,7 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                   <div className="space-y-3">
                     <div>
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Password Lama</label>
-                      <input 
+                      <input
                         type="password"
                         value={oldPass}
                         onChange={(e) => setOldPass(e.target.value)}
@@ -453,7 +453,7 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                     </div>
                     <div>
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Password Baru</label>
-                      <input 
+                      <input
                         type="password"
                         value={newPass}
                         onChange={(e) => setNewPass(e.target.value)}
@@ -462,12 +462,12 @@ export default function ProfileClient({ profileId, isPublicView = false }) {
                       />
                     </div>
                   </div>
-                  <button 
+                  <button
                     type="submit"
                     disabled={isUpdatingPass || !oldPass || !newPass}
                     className="w-full py-3.5 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 shadow-lg shadow-black/20"
                   >
-                    {isUpdatingPass ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />} 
+                    {isUpdatingPass ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />}
                     Perbarui Password
                   </button>
                 </form>

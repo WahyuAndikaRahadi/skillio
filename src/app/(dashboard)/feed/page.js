@@ -56,14 +56,14 @@ export default function FeedPage() {
     fetchCommunityGroups();
   }, []);
 
-  const filteredCategories = categories.filter(cat => 
+  const filteredCategories = categories.filter(cat =>
     cat.name.toLowerCase().includes(sidebarSearch.toLowerCase())
   );
 
   return (
     <div className="flex flex-1 gap-8 px-8 py-6 max-w-[1600px] mx-auto font-sans">
 
-      {/* LEFT SIDEBAR (Navigation & Categories) */}
+      {}
       <div className="hidden lg:flex flex-col w-64 shrink-0 space-y-6">
         <nav className="space-y-1">
           {[
@@ -89,12 +89,12 @@ export default function FeedPage() {
           <div className="flex items-center justify-between mb-4 px-4">
             <h3 className="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase">Bidang</h3>
           </div>
-          
-          {/* Sidebar Search for Categories */}
+
+          {}
           <div className="px-4 mb-4">
             <div className="relative">
               <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input 
+              <input
                 type="text"
                 value={sidebarSearch}
                 onChange={(e) => setSidebarSearch(e.target.value)}
@@ -132,25 +132,25 @@ export default function FeedPage() {
         </div>
       </div>
 
-      {/* MIDDLE COLUMN (Main Feed) */}
+      {}
       <div className="flex-1 max-w-2xl xl:max-w-3xl">
         <SocialFeed categoryId={selectedCategory} searchQuery={searchQuery} />
       </div>
 
-      {/* RIGHT SIDEBAR (Widgets & Promo) */}
+      {}
       <div className="hidden xl:flex flex-col w-80 shrink-0 space-y-8">
         <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800 p-8 text-white shadow-xl shadow-primary-blue/20 group">
-          {/* Immersive Animated Background */}
+          {}
           <div className="absolute inset-0 z-0">
-             <motion.div 
+             <motion.div
                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3], rotate: [0, 90, 0] }}
                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-               className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-2xl" 
+               className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-2xl"
              />
-             <motion.div 
+             <motion.div
                animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.4, 0.2], rotate: [0, -90, 0] }}
                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-               className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)] blur-2xl" 
+               className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)] blur-2xl"
              />
           </div>
 
@@ -197,7 +197,7 @@ export default function FeedPage() {
                 return (
                   <button
                     key={group.id}
-                    onClick={() => router.push(`/community?groupId=${group.id}`)} 
+                    onClick={() => router.push(`/community?groupId=${group.id}`)}
                     className="w-full flex items-center gap-3 p-2 rounded-2xl hover:bg-white hover:shadow-sm transition-all group"
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-black shadow-sm overflow-hidden ${colors[i % colors.length]}`}>

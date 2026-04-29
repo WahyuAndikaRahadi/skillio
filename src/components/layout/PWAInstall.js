@@ -7,7 +7,7 @@ export default function PWAInstall() {
   const { setDeferredPrompt, setIsInstalled } = useAppStore();
 
   useEffect(() => {
-    // 1. Register Service Worker
+
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("/sw.js").then(
@@ -21,7 +21,6 @@ export default function PWAInstall() {
       });
     }
 
-    // 2. Handle Installation Prompt
     const checkInstalled = () => {
       return (
         window.matchMedia("(display-mode: standalone)").matches ||

@@ -1,10 +1,10 @@
-// Simple Redis wrapper using Upstash REST API
+
 export const redis = {
   async get(key) {
     try {
       const res = await fetch(`${process.env.UPSTASH_REDIS_REST_URL}/get/${key}`, {
         headers: { Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}` },
-        next: { revalidate: 0 } // Don't cache the fetch itself
+        next: { revalidate: 0 }
       });
       const data = await res.json();
       return data.result ? JSON.parse(data.result) : null;

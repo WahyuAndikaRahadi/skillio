@@ -31,7 +31,6 @@ export async function GET(req) {
       orderBy: { createdAt: "desc" }
     });
 
-
     return NextResponse.json(groups);
   } catch (error) {
     console.error("Fetch groups error:", error);
@@ -54,7 +53,7 @@ export async function POST(req) {
     if (!name || !description) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
-    
+
     if (privacy === "private" && !password) {
       return NextResponse.json({ message: "Password is required for private groups" }, { status: 400 });
     }
@@ -66,7 +65,6 @@ export async function POST(req) {
        hashedPassword = await bcrypt.hash(password, 10);
     }
 
-    // Gunakan Transaction untuk memastikan grup dan member admin dibuat bersamaan
     const group = await prisma.communityGroup.create({
       data: {
         name,
@@ -90,9 +88,9 @@ export async function POST(req) {
     return NextResponse.json(group);
   } catch (error) {
     console.error("CRITICAL ERROR CREATE GROUP:", error);
-    return NextResponse.json({ 
-      message: "Gagal membuat grup", 
-      error: error.message 
+    return NextResponse.json({
+      message: "Gagal membuat grup",
+      error: error.message
     }, { status: 500 });
   }
 }

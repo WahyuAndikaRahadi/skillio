@@ -6,7 +6,6 @@ import ScoreboardShell from "../../../components/scoreboard/Scoreboardshell";
 
 export const dynamic = "force-dynamic";
 
-// ── XP badge ─────────────────────────────────────────────────────────────────
 function XpBadge({ value, large = false }) {
   return (
     <div className={cn("flex items-center gap-1", large ? "gap-1.5" : "gap-1")}>
@@ -30,7 +29,6 @@ function XpBadge({ value, large = false }) {
   );
 }
 
-// ── Avatar ────────────────────────────────────────────────────────────────────
 function Avatar({ user, size = "md" }) {
   const s = {
     sm: "w-9 h-9 text-sm",
@@ -59,7 +57,6 @@ function Avatar({ user, size = "md" }) {
   );
 }
 
-// ── Podium card ───────────────────────────────────────────────────────────────
 function PodiumCard({ user, rank, platformH }) {
   const isFirst = rank === 1;
   const medal = {
@@ -83,7 +80,6 @@ function PodiumCard({ user, rank, platformH }) {
     },
   }[rank];
 
-  // Stagger animation delays based on rank
   const animationDelay = {
     2: "0ms",
     1: "120ms",
@@ -146,7 +142,6 @@ function PodiumCard({ user, rank, platformH }) {
   );
 }
 
-// ── Table row ─────────────────────────────────────────────────────────────────
 function TableRow({ user, index }) {
   const rankStyle =
     index === 0
@@ -201,7 +196,6 @@ function TableRow({ user, index }) {
   );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
 export default async function ScoreboardPage() {
   const rawUsers = await prisma.user.findMany({
     where: { role: { not: "admin" } },
@@ -228,7 +222,6 @@ export default async function ScoreboardPage() {
     { user: third, rank: 3, platformH: 36 },
   ].filter((p) => p.user);
 
-  // ── Banner (parallax background layer) ──────────────────────────────────────
   const banner = (
     <div
       className="relative w-full px-8 pt-10 pb-16 overflow-hidden"
@@ -237,7 +230,7 @@ export default async function ScoreboardPage() {
         minHeight: "440px",
       }}
     >
-      {/* Decorative Elements */}
+      {}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 blur-[100px] rounded-full -translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-400/20 blur-[120px] rounded-full translate-x-1/4 translate-y-1/4" />
@@ -265,9 +258,9 @@ export default async function ScoreboardPage() {
 
         {podium.length > 0 && (
           <div className="flex items-end justify-center gap-4 md:gap-10 max-w-lg mx-auto relative">
-             {/* Highlight effect behind podium */}
+             {}
              <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white/10 to-transparent blur-2xl rounded-full" />
-            
+
             {podium.map(({ user, rank, platformH }) => (
               <div key={user.id} className="flex-1 relative z-10">
                 <PodiumCard user={user} rank={rank} platformH={platformH} />
@@ -279,11 +272,9 @@ export default async function ScoreboardPage() {
     </div>
   );
 
-
-  // ── Table (foreground card that slides over the banner) ──────────────────────
   const table = (
     <>
-      {/* drag handle pill */}
+      {}
       <div className="flex justify-center pt-3 pb-1">
         <div className="w-10 h-1 rounded-full bg-skillio-200" />
       </div>

@@ -1,6 +1,5 @@
 import PusherServer from "pusher";
 
-// Server-side Pusher (for API routes)
 export const pusherServer = new PusherServer({
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_KEY,

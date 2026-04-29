@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Daftar API Key untuk rotasi (Sistem Eliminasi: Mulai dari 4 ke 1)
 const API_KEYS = [
   process.env.GEMINI_API_KEY4,
   process.env.GEMINI_API_KEY3,
@@ -10,20 +9,14 @@ const API_KEYS = [
 
 let currentKeyIndex = 0;
 
-/**
- * Mendapatkan instance model Gemini.
- * @param {string} type - Tipe model ('lite' atau 'roadmap')
- * @param {number} keyIndex - Index API key yang digunakan
- */
 const getModelInstance = (type = "lite", keyIndex = currentKeyIndex) => {
   const genAI = new GoogleGenerativeAI(API_KEYS[keyIndex]);
-  
-  // Model khusus berdasarkan permintaan user
-  const modelName = type === "roadmap" 
-    ? "gemini-3-flash-preview" 
+
+  const modelName = type === "roadmap"
+    ? "gemini-3-flash-preview"
     : "gemini-3.1-flash-lite-preview";
 
-  return genAI.getGenerativeModel({ 
+  return genAI.getGenerativeModel({
     model: modelName,
     generationConfig: {
       responseMimeType: "application/json",
@@ -33,18 +26,16 @@ const getModelInstance = (type = "lite", keyIndex = currentKeyIndex) => {
 
 async function callGemini(prompt, type = "lite") {
   let lastError = null;
-  
+
   const isRoadmap = type === "roadmap";
   const primaryModel = isRoadmap ? "gemini-3-flash-preview" : "gemini-3.1-flash-lite-preview";
   const fallbackModel = "gemini-3-flash-preview";
 
-  // Kita coba mulai dari index yang sekarang sampai habis (sistem eliminasi)
   for (let i = currentKeyIndex; i < API_KEYS.length; i++) {
     const genAI = new GoogleGenerativeAI(API_KEYS[i]);
-    
-    // 1. Coba Model Utama
+
     try {
-      const model = genAI.getGenerativeModel({ 
+      const model = genAI.getGenerativeModel({
         model: primaryModel,
         generationConfig: { responseMimeType: "application/json" }
       });
@@ -53,8 +44,7 @@ async function callGemini(prompt, type = "lite") {
       currentKeyIndex = i;
       return response.text();
     } catch (primaryError) {
-      // Jika ini roadmap, kita tidak pakai fallback lite (langsung ganti key)
-      // Jika ini lite, baru kita coba fallback ke flash preview
+
       if (isRoadmap) {
         console.warn(`[AI] Roadmap (${primaryModel}) gagal pada Key #${4-i}. Lanjut ke Key berikutnya...`);
         lastError = primaryError;
@@ -62,10 +52,9 @@ async function callGemini(prompt, type = "lite") {
       }
 
       console.warn(`[AI] Model Utama (${primaryModel}) gagal pada Key #${4-i}. Mencoba Fallback...`);
-      
-      // 2. Coba Model Fallback (Gemini 3 Flash) - Hanya untuk non-roadmap
+
       try {
-        const model = genAI.getGenerativeModel({ 
+        const model = genAI.getGenerativeModel({
           model: fallbackModel,
           generationConfig: { responseMimeType: "application/json" }
         });
@@ -83,20 +72,18 @@ async function callGemini(prompt, type = "lite") {
   throw new Error(`Gagal memproses AI setelah mencoba semua API Key. Error terakhir: ${lastError?.message}`);
 }
 
-
 const extractJson = (text) => {
   try {
-    // 1. Coba parse langsung
+
     return JSON.parse(text);
   } catch (e) {
     try {
-      // 2. Jika gagal, cari kurung kurawal pertama dan terakhir (Robust Cleaning)
+
       const firstBrace = text.indexOf('{');
       const lastBrace = text.lastIndexOf('}');
       const firstBracket = text.indexOf('[');
       const lastBracket = text.lastIndexOf(']');
 
-      // Tentukan mana yang lebih luar (objek atau array)
       const start = (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) ? firstBrace : firstBracket;
       const end = (lastBrace !== -1 && (lastBracket === -1 || lastBrace > lastBracket)) ? lastBrace : lastBracket;
 
@@ -126,7 +113,7 @@ export const generateQuizQuestions = async (context, phase) => {
     Role: Pakar Psikologi & Karier Skillio.
     Instruksi Fase: ${phaseInstruction}
     Konteks Jawaban Sebelumnya: "${context || "Baru mulai"}"
-    
+
     Tugas: Buat 10 pertanyaan pilihan ganda yang menarik dan tidak membosankan.
     Format JSON: Array of { "question_text": "...", "options": ["A", "B", "C", "D"], "correct_option": null }.
     Penting: Karena ini tes minat, "correct_option" selalu null. Gunakan Bahasa Indonesia yang ramah dan inspiratif.
@@ -155,7 +142,7 @@ export const analyzeCareerRecommendation = async (allAnswers) => {
     Role: Konsultan Karier Skillio.
     Analisis 30 jawaban ini: "${context}"
     Tugas: Berikan 3 rekomendasi karier.
-    
+
     ATURAN SANGAT PENTING: Anda HARUS dan HANYA BOLEH memilih rekomendasi karier dari daftar 50 bidang digital berikut ini. DILARANG KERAS memberikan karir di luar daftar ini:
     ${PREDEFINED_CAREERS}
 
@@ -177,7 +164,7 @@ export const generateFullRoadmap = async (career) => {
   const prompt = `
     Tugas: Buat roadmap belajar intensif 30 hari untuk karier: "${career}".
     Anda HARUS memberikan rencana lengkap untuk 30 hari tanpa terputus.
-    
+
     Format JSON:
     {
       "career": "${career}",
@@ -204,7 +191,7 @@ export const generateFullRoadmap = async (career) => {
         }
       ]
     }
-    
+
     SYARAT MUTLAK:
     1. WAJIB 30 HARI LENGKAP (Day 1 s/d Day 30).
     2. Materi ringkas tapi jelas.
@@ -216,35 +203,33 @@ export const generateFullRoadmap = async (career) => {
   console.log(`[AI] Memulai generate roadmap khusus dengan model roadmap...`);
   const text = await callGemini(prompt, "roadmap");
   const parsed = extractJson(text);
-  
+
   if (parsed.days && parsed.days.length < 25) {
     throw new Error("Output terpotong oleh AI (kurang dari 25 hari)");
   }
-  
+
   console.log(`[AI] Berhasil generate roadmap (${parsed.days.length} hari).`);
   return parsed;
 };
-
-
 
 export async function generateDayExpansion(dayNumber, dayTitle, dayMaterial) {
   const prompt = `
     Role: Senior Tech Mentor & Architect di Skillio.
     Tugas: Berikan bimbingan "DAGING" dan PENJELASAN MENDALAM yang sangat solid untuk materi hari ini. JANGAN berikan penjelasan permukaan yang membosankan.
-    
+
     KONTEKS TIMELINE: Hari ke-${dayNumber}
     JUDUL MATERI: ${dayTitle}
     RINGKASAN MATERI: ${dayMaterial}
 
-    GAYA BAHASA & STRUKTUR: 
+    GAYA BAHASA & STRUKTUR:
     - Gunakan gaya bahasa mentor senior yang sedang memberikan coaching 1-on-1 kepada murid pilihannya. Bahasa harus mengalir, berwibawa, namun sangat mencerahkan.
     - WAJIB terdiri dari MAKSIMAL 2 PARAGRAF SAJA.
     - SETIAP PARAGRAF HARUS SANGAT PANJANG, PADAT, DAN BERISI (DAGING). Minimal 500 karakter per paragraf.
     - DILARANG KERAS menggunakan LIST, POIN, NOMOR (1., 2., dst), atau BULLET POINT (- atau *). Semuanya harus dalam bentuk narasi paragraf yang mengalir.
     - DILARANG menggunakan simbol markdown seperti #, ##, atau **. Gunakan teks polos saja.
-    
+
     KONTEN PARAGRAF 1 (The Core & Industry Insight): Bedah konsep ${dayTitle} dari sudut pandang fundamental dan bagaimana ini menjadi tulang punggung di industri nyata. Jelaskan mekanisme teknisnya secara mendalam (under the hood) sehingga murid benar-benar paham cara kerjanya, bukan sekadar tahu cara pakainya.
-    
+
     KONTEN PARAGRAF 2 (Strategy & Secret Sauce): Berikan strategi eksekusi, rahasia standar industri yang jarang diketahui pemula, serta bagaimana menghindari jebakan Batman yang sering membuat orang gagal di materi ini. Tutup dengan pesan filosofis yang membakar semangat murid untuk menyelesaikan misi hari ini.
 
     WAJIB OUTPUT DALAM JSON MURNI:
@@ -261,7 +246,6 @@ export async function generateDayExpansion(dayNumber, dayTitle, dayMaterial) {
     const text = await callGemini(prompt, "lite");
     const data = extractJson(text);
 
-    // Validasi data
     if (!data.explanation || data.explanation.length < 50) {
       throw new Error("AI returned insufficient content");
     }
@@ -269,7 +253,7 @@ export async function generateDayExpansion(dayNumber, dayTitle, dayMaterial) {
     return data;
   } catch (error) {
     console.error("AI Generation failed, using fallback:", error);
-    // Fallback content if AI fails
+
     return {
       explanation: `### Penjelasan Mendalam: ${dayTitle}\n\nMateri tentang **${dayTitle}** merupakan pilar penting dalam perjalanan Anda. \n\n**Kenapa ini penting?**\n${dayMaterial}\n\n**Panduan Belajar:**\n1. Pahami dokumentasi teknis terkait materi ini.\n2. Lakukan praktik langsung pada proyek nyata.\n3. Hubungkan konsep ini dengan materi hari-hari sebelumnya untuk membangun pemahaman yang utuh.\n\n*Mentor AI sedang mengalami kendala teknis untuk memberikan penjelasan yang lebih mendalam, silakan gunakan sumber daya di bawah untuk eksplorasi mandiri.*`,
       resources: [

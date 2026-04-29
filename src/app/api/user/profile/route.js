@@ -6,10 +6,10 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
-    
+
     const session = await auth();
     const targetId = userId || session?.user?.id;
-    
+
     if (!targetId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const user = await prisma.user.findUnique({
@@ -22,7 +22,6 @@ export async function GET(req) {
     });
     if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-    // Completed roadmaps
     const completedRoadmaps = await prisma.userRoadmap.findMany({
       where: { user_id: targetId, status: "completed" },
       orderBy: { completed_at: "desc" },

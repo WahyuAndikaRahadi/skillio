@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const prisma = new PrismaClient()
 
 const CATEGORIES = [
-  // Teknologi & Pengembangan (1-12)
+
   "Pengembangan Web Frontend",
   "Pengembangan Web Backend",
   "Pengembangan Aplikasi Mobile Android",
@@ -18,7 +18,6 @@ const CATEGORIES = [
   "Pengembangan Game",
   "Pemrograman Tertanam & Internet of Things",
 
-  // Data & Kecerdasan Buatan (13-20)
   "Analisis Data",
   "Ilmu Data",
   "Rekayasa Data",
@@ -28,7 +27,6 @@ const CATEGORIES = [
   "Riset & Eksperimen Pengguna",
   "Otomasi & No-Code Development",
 
-  // Desain & Kreativitas (21-30)
   "Desain UI/UX",
   "Desain Grafis",
   "Desain Produk Digital",
@@ -40,7 +38,6 @@ const CATEGORIES = [
   "Desain Presentasi & Infografis",
   "Desain Augmented Reality & Virtual Reality",
 
-  // Konten & Media Digital (31-38)
   "Pembuatan Konten & Kreator Digital",
   "Penulisan Kreatif & Copywriting",
   "Penulisan Teknis & Dokumentasi",
@@ -50,7 +47,6 @@ const CATEGORIES = [
   "Manajemen Media Sosial",
   "Penyiaran & Streaming Digital",
 
-  // Bisnis & Pemasaran Digital (39-47)
   "Pemasaran Digital",
   "Optimasi Mesin Pencari",
   "Periklanan Digital & Manajemen Iklan",
@@ -61,7 +57,6 @@ const CATEGORIES = [
   "Hubungan Masyarakat Digital",
   "Kewirausahaan Digital & Rintisan Teknologi",
 
-  // Keuangan & Legalitas Digital (48-50)
   "Keuangan Pribadi & Investasi Digital",
   "Hukum & Regulasi Teknologi Digital",
   "Kepatuhan & Tata Kelola Data"
@@ -70,14 +65,13 @@ const CATEGORIES = [
 async function main() {
   console.log('🌱 Memulai proses seeding database fresh...');
 
-  // 1. Seed Admin
   const adminPassword = await bcrypt.hash('adminskilliogalatea', 10);
-  
+
   const admin = await prisma.user.upsert({
     where: { email: 'admin@skillio.com' },
     update: {
       emailVerified: new Date(),
-      password: adminPassword, // Ensure password is correct even if updated
+      password: adminPassword,
     },
     create: {
       email: 'admin@skillio.com',
@@ -91,11 +85,10 @@ async function main() {
   });
   console.log(`✅ Admin terbuat: ${admin.email}`);
 
-  // 2. Seed 50 Kategori
   let seededCount = 0;
   for (const name of CATEGORIES) {
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    
+
     await prisma.category.upsert({
       where: { slug: slug },
       update: {},
@@ -110,7 +103,6 @@ async function main() {
   }
   console.log(`✅ Berhasil melakukan seed untuk ${seededCount} Kategori Digital.`);
 
-  // 3. Seed Badges
   const newBadges = [
     {
       name: "Social Butterfly",
@@ -150,7 +142,7 @@ async function main() {
   ];
 
   for (const badge of newBadges) {
-    // Upsert equivalent for badges isn't straight forward without unique field, so let's just create if count is 0
+
     const exist = await prisma.badge.findFirst({ where: { name: badge.name } });
     if (!exist) {
       await prisma.badge.create({ data: badge });

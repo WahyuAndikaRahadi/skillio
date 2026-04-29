@@ -15,7 +15,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "Slug dan content JSON wajib diisi" }, { status: 400 });
     }
 
-    // Find the category in main DB to get its ID, then upsert its Roadmap record.
     const category = await prismaMain.category.findUnique({ where: { slug: category_slug } });
     if (!category) {
       return NextResponse.json({ message: "Kategori tidak ditemukan di database utama" }, { status: 404 });

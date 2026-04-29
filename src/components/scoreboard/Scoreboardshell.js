@@ -15,7 +15,7 @@ export default function ScoreboardShell({ banner, table }) {
 
     const onScroll = () => {
       const scrollY = window.scrollY;
-      // Banner scrolls at 0.4x speed — gives the parallax illusion
+
       banner.style.transform = `translateY(${scrollY * 0.4}px)`;
     };
 
@@ -25,7 +25,7 @@ export default function ScoreboardShell({ banner, table }) {
 
   return (
     <div className="w-full min-h-screen relative">
-      {/* ── Fixed-height parallax banner ── */}
+      {}
       <div
         ref={bannerRef}
         className="w-full will-change-transform"
@@ -34,7 +34,7 @@ export default function ScoreboardShell({ banner, table }) {
         {banner}
       </div>
 
-      {/* ── Table card slides up over the banner ── */}
+      {}
       <div
         ref={cardRef}
         className="relative z-10 bg-white rounded-t-3xl"

@@ -88,7 +88,7 @@ export default function RoadmapGenerationTimeline() {
             </h2>
           </div>
           <div className="rounded-[24px] border border-white/70 bg-white/72 p-5 text-sm leading-7 text-slate-600 shadow-[0_18px_50px_rgba(31,84,126,0.08)] backdrop-blur lg:max-w-sm">
-            Visual ini menjelaskan fitur inti Skillio: proses yang bergerak dari 
+            Visual ini menjelaskan fitur inti Skillio: proses yang bergerak dari
             identifikasi potensi sampai output belajar harian yang siap dijalani.
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function RoadmapGenerationTimeline() {
               <article
                 className="group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-6 sm:rounded-[3rem] sm:p-8"
               >
-                {/* Decorative Number Watermark */}
+                {}
                 <div className={`absolute -right-2 -top-4 select-none font-display text-[7rem] font-black ${moment.stepColor} opacity-[0.25] sm:-right-4 sm:-top-8 sm:text-[10rem]`}>
                   {moment.step}
                 </div>
@@ -108,17 +108,17 @@ export default function RoadmapGenerationTimeline() {
                   <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${moment.color} shadow-lg shadow-current/10 sm:mb-8 sm:h-16 sm:w-16 sm:rounded-[2rem]`}>
                     <moment.icon className="h-7 w-7 sm:h-8 sm:w-8" />
                   </div>
-                  
+
                   <div className="space-y-4">
                     <span className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-skillio-500">
                       <Sparkles className="h-3 w-3" />
                       Tahap {moment.step}
                     </span>
-                    
+
                     <h3 className="font-display text-xl font-bold tracking-wide leading-relaxed text-slate-900 sm:text-2xl">
                       {moment.title}
                     </h3>
-                    
+
                     <p className="text-sm tracking-wide leading-relaxed text-slate-500 sm:text-[15px]">
                       {moment.description}
                     </p>
@@ -134,14 +134,14 @@ export default function RoadmapGenerationTimeline() {
                   </div>
                 </div>
 
-                {/* Bottom Accent Line */}
+                {}
                 <div className={`absolute bottom-0 left-0 h-1.5 w-0 bg-skillio-500 transition-all duration-500 group-hover:w-full`} />
               </article>
             </div>
           ))}
         </div>
 
-        {/* Final CTA/Summary Section */}
+        {}
         <div className="mt-24 rounded-[3rem] border border-skillio-100 bg-slate-50/50 p-8 sm:p-12">
           <div className="grid gap-12 sm:grid-cols-3">
             <div className="space-y-4 text-center sm:text-left">
@@ -153,7 +153,7 @@ export default function RoadmapGenerationTimeline() {
                 Setiap materi dan tantangan menyesuaikan dengan kecepatan belajarmu secara personal.
               </p>
             </div>
-            
+
             <div className="space-y-4 text-center sm:text-left">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-skillio-600 shadow-sm sm:mx-0">
                 <ClipboardCheck className="h-6 w-6" />

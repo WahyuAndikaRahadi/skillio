@@ -14,7 +14,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "Title and material are required" }, { status: 400 });
     }
 
-    // 1. Find the roadmap associated with this user_roadmap
     const userRoadmap = await prisma.userRoadmap.findUnique({
       where: { id: user_roadmap_id },
       include: { roadmap: true, category: true }
@@ -32,7 +31,6 @@ export async function POST(req) {
       console.error("Invalid curriculum JSON");
     }
 
-    // 2. Check if expansion already exists in the JSON
     if (curriculum && curriculum.days) {
       const dayIndex = curriculum.days.findIndex(d => (d.day_number === day_number || d.day === day_number));
       if (dayIndex !== -1 && curriculum.days[dayIndex].expansion) {
@@ -41,19 +39,16 @@ export async function POST(req) {
       }
     }
 
-    // 3. Generate expansion if not found
     console.log(`[AI] Generating expansion for Day ${day_number}: ${title}`);
     const expandedContent = await generateDayExpansion(day_number, title, material);
 
-    // 4. Save expansion back to the curriculum JSON for future use (Global Cache)
     if (curriculum && curriculum.days) {
       const dayIndex = curriculum.days.findIndex(d => (d.day_number === day_number || d.day === day_number));
       if (dayIndex !== -1) {
         curriculum.days[dayIndex].expansion = expandedContent;
-        
+
         const updatedJson = JSON.stringify(curriculum);
 
-        // Update Main DB
         await prisma.roadmap.update({
           where: { id: roadmap.id },
           data: { file_url: updatedJson }

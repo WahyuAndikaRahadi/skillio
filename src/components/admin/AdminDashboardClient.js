@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { 
-  Users, 
-  Map, 
-  Globe, 
-  MessageSquare, 
+import {
+  Users,
+  Map,
+  Globe,
+  MessageSquare,
   ShieldCheck,
   TrendingUp,
   Clock
@@ -21,7 +21,7 @@ export default function AdminDashboardClient({ metrics, latestUsers, latestGroup
 
   return (
     <div className="w-full max-w-7xl mx-auto pb-12 space-y-8">
-      {/* Header */}
+      {}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl md:text-4xl font-black text-dark-blue flex items-center gap-3 tracking-tight">
@@ -34,7 +34,7 @@ export default function AdminDashboardClient({ metrics, latestUsers, latestGroup
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpis.map((kpi, index) => (
           <div key={index} className="bg-white rounded-[32px] p-6 border border-light-blue shadow-sm flex items-center gap-6">
@@ -50,8 +50,8 @@ export default function AdminDashboardClient({ metrics, latestUsers, latestGroup
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
-        
-        {/* Latest Users Table */}
+
+        {}
         <div className="bg-white rounded-[40px] border border-light-blue p-8 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-black text-dark-blue flex items-center gap-3">
@@ -59,7 +59,7 @@ export default function AdminDashboardClient({ metrics, latestUsers, latestGroup
               Pengguna Baru
             </h3>
           </div>
-          
+
           {latestUsers.length === 0 ? (
             <p className="text-slate-400 font-medium italic text-sm text-center py-6">Belum ada pengguna terdaftar.</p>
           ) : (
@@ -71,10 +71,10 @@ export default function AdminDashboardClient({ metrics, latestUsers, latestGroup
                       {user.image ? (
                         <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
                       ) : (
-                        <img 
-                          src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${user.name || user.id}`} 
-                          alt={user.name} 
-                          className="w-full h-full object-cover bg-blue-50" 
+                        <img
+                          src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${user.name || user.id}`}
+                          alt={user.name}
+                          className="w-full h-full object-cover bg-blue-50"
                         />
                       )}
                     </div>
@@ -95,7 +95,7 @@ export default function AdminDashboardClient({ metrics, latestUsers, latestGroup
           )}
         </div>
 
-        {/* Latest Groups Table */}
+        {}
         <div className="bg-white rounded-[40px] border border-light-blue p-8 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-black text-dark-blue flex items-center gap-3">
@@ -103,7 +103,7 @@ export default function AdminDashboardClient({ metrics, latestUsers, latestGroup
               Grup Baru Dibuat
             </h3>
           </div>
-          
+
           {latestGroups.length === 0 ? (
             <p className="text-slate-400 font-medium italic text-sm text-center py-6">Belum ada grup yang dibuat.</p>
           ) : (

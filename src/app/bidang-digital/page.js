@@ -103,7 +103,7 @@ export default function BidangDigitalPage() {
       <Navbar />
       <main className="flex-grow pt-28 pb-20 sm:pt-32">
         <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-          
+
           <div className="mb-16 max-w-3xl space-y-6">
             <h1 className="font-display text-4xl font-bold leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
               50 Bidang Digital <br className="hidden sm:block" />
@@ -129,7 +129,7 @@ export default function BidangDigitalPage() {
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {category.items.map((item) => (
-                    <div 
+                    <div
                       key={item}
                       className="group flex h-full cursor-default items-start gap-3 rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-skillio-300 hover:shadow-md"
                     >

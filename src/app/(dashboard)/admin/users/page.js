@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  Users, 
-  Search, 
-  Trash2, 
-  Shield, 
-  ShieldCheck, 
-  Mail, 
-  Calendar, 
+import {
+  Users,
+  Search,
+  Trash2,
+  Shield,
+  ShieldCheck,
+  Mail,
+  Calendar,
   MoreVertical,
   Loader2,
   X,
@@ -111,8 +111,8 @@ export default function AdminUsersPage() {
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-6 md:px-10 space-y-10 relative z-10">
-      {/* Header Section */}
-      <motion.div 
+      {}
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col md:flex-row md:items-center justify-between gap-6"
@@ -127,9 +127,9 @@ export default function AdminUsersPage() {
           <p className="text-slate-500 font-medium ml-1">Pantau dan kelola seluruh anggota komunitas Skillio.</p>
         </div>
 
-        {/* Search Bar */}
+        {}
         <form onSubmit={handleSearch} className="relative w-full md:w-96">
-          <input 
+          <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -137,7 +137,7 @@ export default function AdminUsersPage() {
             className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue outline-none transition-all shadow-sm font-medium"
           />
           <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <button 
+          <button
             type="submit"
             className="absolute right-3 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-primary-blue text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-colors"
           >
@@ -146,7 +146,7 @@ export default function AdminUsersPage() {
         </form>
       </motion.div>
 
-      {/* Users Table / Grid */}
+      {}
       <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-4">
@@ -175,11 +175,11 @@ export default function AdminUsersPage() {
               </thead>
               <tbody>
                 {users.map((user, idx) => (
-                  <motion.tr 
+                  <motion.tr
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    key={user.id} 
+                    key={user.id}
                     className="group hover:bg-slate-50/30 border-b border-slate-50 last:border-0 transition-colors"
                   >
                     <td className="px-8 py-5">
@@ -188,10 +188,10 @@ export default function AdminUsersPage() {
                           {user.image ? (
                             <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
                           ) : (
-                            <img 
-                              src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${user.name || user.id}`} 
-                              alt={user.name} 
-                              className="w-full h-full object-cover bg-blue-50" 
+                            <img
+                              src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${user.name || user.id}`}
+                              alt={user.name}
+                              className="w-full h-full object-cover bg-blue-50"
                             />
                           )}
                         </div>
@@ -206,8 +206,8 @@ export default function AdminUsersPage() {
                     <td className="px-8 py-5">
                       <div className={cn(
                         "inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
-                        user.role === "admin" 
-                          ? "bg-amber-50 text-amber-600 border border-amber-100" 
+                        user.role === "admin"
+                          ? "bg-amber-50 text-amber-600 border border-amber-100"
                           : "bg-blue-50 text-primary-blue border border-blue-100"
                       )}>
                         {user.role === "admin" ? <ShieldCheck size={12} /> : <User size={12} />}
@@ -233,13 +233,13 @@ export default function AdminUsersPage() {
                       </div>
                     </td>
                     <td className="px-8 py-5 text-right">
-                      <button 
+                      <button
                         onClick={() => handleDeleteUser(user)}
                         disabled={isDeleting === user.id}
                         className={cn(
                           "p-3 rounded-xl transition-all",
-                          user.role === "admin" 
-                            ? "text-slate-200 cursor-not-allowed" 
+                          user.role === "admin"
+                            ? "text-slate-200 cursor-not-allowed"
                             : "text-slate-400 hover:text-red-500 hover:bg-red-50"
                         )}
                         title={user.role === "admin" ? "Admin tidak bisa dihapus" : "Hapus Akun"}

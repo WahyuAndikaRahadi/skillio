@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { motion } from "framer-motion";
-import { 
-  Trophy, ArrowRight, RotateCcw, Target, Sparkles, 
+import {
+  Trophy, ArrowRight, RotateCcw, Target, Sparkles,
   ChevronRight, Info, CheckCircle2
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -76,8 +76,8 @@ const ResultPage = () => {
   return (
     <div className="min-h-screen bg-white py-12 md:py-20 px-6">
       <div className="max-w-4xl mx-auto">
-        
-        {/* Header - Simple & Modern */}
+
+        {}
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 bg-skillio-50 text-skillio-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
             <Trophy size={12} />
@@ -91,8 +91,8 @@ const ResultPage = () => {
           </p>
         </div>
 
-        {/* AI Summary - Simple Box */}
-        <motion.div 
+        {}
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-slate-50 border border-slate-100 rounded-3xl p-6 mb-12 flex items-start gap-4"
@@ -105,7 +105,7 @@ const ResultPage = () => {
           </p>
         </motion.div>
 
-        {/* Results Grid - Clean & Minimalist */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {quizResult?.recommendations.map((rec, i) => (
             <motion.div
@@ -115,8 +115,8 @@ const ResultPage = () => {
               transition={{ delay: i * 0.1 }}
               className={cn(
                 "group bg-white p-8 rounded-[32px] border transition-all flex flex-col",
-                i === 0 
-                  ? "border-skillio-600 shadow-xl shadow-skillio-100/50 ring-1 ring-skillio-600/10" 
+                i === 0
+                  ? "border-skillio-600 shadow-xl shadow-skillio-100/50 ring-1 ring-skillio-600/10"
                   : "border-slate-100 hover:border-slate-200"
               )}
             >
@@ -139,12 +139,12 @@ const ResultPage = () => {
                 {rec.reason}
               </p>
 
-              <button 
+              <button
                 onClick={() => handleSelectCareer(rec.career)}
                 className={cn(
                   "w-full py-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all",
-                  i === 0 
-                    ? "bg-skillio-600 text-white shadow-lg shadow-skillio-600/20 hover:bg-skillio-700" 
+                  i === 0
+                    ? "bg-skillio-600 text-white shadow-lg shadow-skillio-600/20 hover:bg-skillio-700"
                     : "bg-slate-50 text-slate-600 hover:bg-slate-900 hover:text-white"
                 )}
               >
@@ -154,9 +154,9 @@ const ResultPage = () => {
           ))}
         </div>
 
-        {/* Simple Footer Actions */}
+        {}
         <div className="mt-20 flex flex-col items-center">
-          <button 
+          <button
             onClick={() => router.push("/quiz")}
             className="flex items-center gap-2 text-slate-400 font-bold text-sm hover:text-slate-900 transition-all cursor-pointer"
           >

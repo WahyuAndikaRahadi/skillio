@@ -12,7 +12,6 @@
   --color-mist: #f7fafc;
   --color-ink: #0f172a;
 
-  /* Intuitive Aliases */
   --color-primary-blue: var(--color-skillio-500);
   --color-dark-blue: var(--color-skillio-900);
   --color-accent-blue: var(--color-skillio-600);
@@ -43,7 +42,6 @@ html {
   scrollbar-color: rgba(43, 110, 166, 0.3) transparent;
 }
 
-/* Global Webkit Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -216,7 +214,6 @@ body::before {
     animation: sweep 7s linear infinite;
   }
 
-  /* Minimal Prose for Markdown */
   .prose {
     color: inherit;
     font-size: inherit;
@@ -265,7 +262,6 @@ body::before {
     font-size: 1.05rem;
   }
 
-  /* Custom Scrollbar Utility */
   .custom-scrollbar::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -285,7 +281,6 @@ body::before {
     background: rgba(43, 110, 166, 0.7);
   }
 
-  /* Firefox support */
   .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: rgba(43, 110, 166, 0.4) transparent;

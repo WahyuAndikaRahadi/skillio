@@ -67,7 +67,7 @@ export default function FaqSection() {
     <section id="faq" className="relative border-y border-slate-100 bg-slate-50/50 px-5 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr] lg:gap-16">
-          {/* Header Side */}
+          {}
           <div className="flex flex-col items-start space-y-6">
             <p className="section-kicker">Pertanyaan Umum</p>
             <h2 className="font-display text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
@@ -79,7 +79,7 @@ export default function FaqSection() {
             </p>
           </div>
 
-          {/* Accordion Side */}
+          {}
           <div className="flex flex-col space-y-4">
             {faqs.map((faq, index) => (
               <FaqItem

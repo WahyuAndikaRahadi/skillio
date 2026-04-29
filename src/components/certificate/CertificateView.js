@@ -17,10 +17,9 @@ const CertificateView = ({ certData }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCopied, setIsCopied]           = useState(false);
   const [scale, setScale]                 = useState(1);
-  // Logo as base64 so html2canvas can embed it correctly in PDF
+
   const [logoSrc, setLogoSrc]             = useState("/images/skillio-logo.png");
 
-  // Preload logo → base64 so html2canvas works in PDF export
   useEffect(() => {
     fetch("/images/skillio-logo.png")
       .then((r) => r.blob())
@@ -29,10 +28,9 @@ const CertificateView = ({ certData }) => {
         reader.onload = () => setLogoSrc(reader.result);
         reader.readAsDataURL(blob);
       })
-      .catch(() => {}); // fallback to original path
+      .catch(() => {});
   }, []);
 
-  // Scale certificate to always fit its container — no horizontal scroll
   const updateScale = useCallback(() => {
     if (containerRef.current) {
       const w = containerRef.current.offsetWidth;
@@ -109,7 +107,7 @@ const CertificateView = ({ certData }) => {
   return (
     <div className="max-w-4xl mx-auto space-y-5">
 
-      {/* Verified pill */}
+      {}
       <div className="flex justify-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-100 text-sm font-black">
           <CheckCircle2 size={15} />
@@ -117,7 +115,7 @@ const CertificateView = ({ certData }) => {
         </div>
       </div>
 
-      {/* Page title */}
+      {}
       <div className="text-center space-y-1">
         <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
           Sertifikat <span className="text-skillio-600">Resmi Skillio</span>
@@ -127,7 +125,7 @@ const CertificateView = ({ certData }) => {
         </p>
       </div>
 
-      {/* ── Certificate Capture Area ── */}
+      {}
       <div ref={containerRef} className="w-full rounded-2xl overflow-hidden shadow-lg">
         <div style={{ height: CERT_H * scale, position: "relative" }}>
           <div
@@ -145,7 +143,7 @@ const CertificateView = ({ certData }) => {
             }}
           >
 
-            {/* ─── Left blue panel ─── */}
+            {}
             <div style={{
               position: "absolute", left: 0, top: 0,
               width: 240, height: "100%",
@@ -154,7 +152,7 @@ const CertificateView = ({ certData }) => {
               alignItems: "center", justifyContent: "space-between",
               padding: "40px 24px",
             }}>
-              {/* Logo — white pill so original colors show; base64 src for PDF */}
+              {}
               <div style={{ width: "100%" }}>
                 <div style={{
                   display: "inline-block",
@@ -162,7 +160,7 @@ const CertificateView = ({ certData }) => {
                   borderRadius: 10,
                   padding: "7px 14px",
                 }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {}
                   <img
                     src={logoSrc}
                     alt="Skillio"
@@ -172,7 +170,7 @@ const CertificateView = ({ certData }) => {
                 <div style={{ height: 3, width: 36, background: "#93c5fd", borderRadius: 99, marginTop: 14 }} />
               </div>
 
-              {/* Decorative medal rings */}
+              {}
               <div style={{
                 position: "relative", width: 130, height: 130,
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -188,7 +186,7 @@ const CertificateView = ({ certData }) => {
                 </div>
               </div>
 
-              {/* QR Code */}
+              {}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
                 <div style={{ padding: 8, background: "#fff", borderRadius: 12 }}>
                   <QRCodeSVG value={verificationUrl} size={84} level="H" includeMargin={false} />
@@ -203,17 +201,17 @@ const CertificateView = ({ certData }) => {
               </div>
             </div>
 
-            {/* ─── Right content area ─── */}
+            {}
             <div style={{
               position: "absolute",
               left: 240, top: 0, right: 0, bottom: 0,
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",       // vertically center ALL content
+              justifyContent: "center",
               padding: "44px 60px 44px 56px",
               gap: 0,
             }}>
-              {/* Subtitle row */}
+              {}
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
                 <div style={{ height: 2, width: 24, background: "#1d4ed8", borderRadius: 99 }} />
                 <p style={{
@@ -224,12 +222,12 @@ const CertificateView = ({ certData }) => {
                 </p>
               </div>
 
-              {/* Presented to */}
+              {}
               <p style={{ fontSize: 16, color: "#94a3b8", fontStyle: "italic", marginBottom: 8 }}>
                 This certifies that
               </p>
 
-              {/* Participant name — BIGGER */}
+              {}
               <h2 style={{
                 fontSize: 72, fontWeight: 900, color: "#0f172a",
                 lineHeight: 1.0, letterSpacing: "-2px", marginBottom: 14,
@@ -238,10 +236,10 @@ const CertificateView = ({ certData }) => {
                 {certData.participantName}
               </h2>
 
-              {/* Blue accent line */}
+              {}
               <div style={{ height: 4, width: 80, background: "#1d4ed8", borderRadius: 99, marginBottom: 22 }} />
 
-              {/* Description — BIGGER */}
+              {}
               <p style={{
                 fontSize: 17, color: "#475569", lineHeight: 1.65,
                 maxWidth: 560, marginBottom: 26,
@@ -250,7 +248,7 @@ const CertificateView = ({ certData }) => {
                 on the Skillio AI platform, demonstrating professional-grade mastery in:
               </p>
 
-              {/* Course name chip — BIGGER */}
+              {}
               <div style={{
                 display: "inline-flex", alignSelf: "flex-start",
                 background: "#eff6ff", border: "2px solid #bfdbfe",
@@ -262,7 +260,7 @@ const CertificateView = ({ certData }) => {
                 </span>
               </div>
 
-              {/* Footer row */}
+              {}
               <div style={{
                 display: "flex", alignItems: "center",
                 justifyContent: "space-between",
@@ -301,7 +299,7 @@ const CertificateView = ({ certData }) => {
         </div>
       </div>
 
-      {/* ── Action bar ── */}
+      {}
       <div className="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-2 text-sm">
           <ShieldCheck size={15} className="text-emerald-500 flex-shrink-0" />

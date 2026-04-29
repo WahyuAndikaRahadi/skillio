@@ -10,37 +10,33 @@ export default async function RoadmapPage() {
     redirect("/auth/login");
   }
 
-  // 1. Fetch User Stats (Streak & Badges)
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    include: { 
+    include: {
       streak: true,
       badges: true
     }
   });
 
-  // 2. Fetch Active Roadmap(s)
   const activeRoadmaps = await prisma.userRoadmap.findMany({
     where: { user_id: session.user.id, status: "active" },
     orderBy: { started_at: "desc" },
-    include: { 
+    include: {
       category: true,
       progress: true
     }
   });
 
-  // 3. Fetch Completed Roadmap(s)
   const completedRoadmaps = await prisma.userRoadmap.findMany({
     where: { user_id: session.user.id, status: "completed" },
     orderBy: { completed_at: "desc" },
     include: { category: true }
   });
 
-  // We'll prioritize the most recent active roadmap for the main display in LearningRoom
   const activeRoadmap = activeRoadmaps.length > 0 ? activeRoadmaps[0] : null;
 
   return (
-    <LearningRoom 
+    <LearningRoom
       activeRoadmaps={activeRoadmaps}
       completedRoadmaps={completedRoadmaps}
       userName={session.user.name}

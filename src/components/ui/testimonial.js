@@ -126,7 +126,7 @@ function MarqueeRow({ items, direction = "left", duration = 40 }) {
 
                 <div className="flex items-center gap-3 border-t border-current/10 pt-4 sm:gap-4 sm:pt-6">
                   <div className="flex h-10 w-10 shrink-0 overflow-hidden items-center justify-center rounded-full border-2 border-current/20 bg-white sm:h-12 sm:w-12">
-                    <Image 
+                    <Image
                       src={`https://api.dicebear.com/9.x/thumbs/svg?seed=${seed}&backgroundColor=transparent`}
                       alt={`Avatar ${item.name}`}
                       width={48}
@@ -168,7 +168,7 @@ function ClientFeedback() {
         <MarqueeRow items={row2} direction="left" duration={45} />
       </div>
 
-      {/* Fade Overlays */}
+      {}
       <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#f8fbfd] to-transparent z-10" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#f8fbfd] to-transparent z-10" />
     </section>

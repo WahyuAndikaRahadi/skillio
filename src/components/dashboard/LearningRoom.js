@@ -2,8 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { 
-  BookOpen, Trophy, ArrowRight, Star, Clock, 
+import {
+  BookOpen, Trophy, ArrowRight, Star, Clock,
   ChevronRight, Award, Flame, Zap, Plus
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ import Link from "next/link";
 const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, stats }) => {
   return (
     <div className="w-full max-w-6xl mx-auto px-6 py-10 space-y-10">
-      {/* Header Section */}
+      {}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">
@@ -23,7 +23,7 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
           </p>
         </div>
 
-        <Link 
+        <Link
           href="/roadmap"
           className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-primary-blue to-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all"
         >
@@ -32,10 +32,10 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
         </Link>
       </div>
 
-      {/* Main Content Grid */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* Active Roadmap Section */}
+
+        {}
         <div className="lg:col-span-2 space-y-6">
           <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
             <Clock size={14} /> Bidang Sedang Dipelajari
@@ -49,7 +49,7 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
                     <div className="w-20 h-20 rounded-2xl bg-skillio-50 flex items-center justify-center text-skillio-600 shrink-0">
                       <Zap size={32} />
                     </div>
-                    
+
                     <div className="flex-grow space-y-4 w-full">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                         <h3 className="text-xl font-black text-slate-900">{roadmap.category.name}</h3>
@@ -64,7 +64,7 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
                           <span>{Math.round((roadmap.current_day / 30) * 100)}%</span>
                         </div>
                         <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                          <motion.div 
+                          <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${(roadmap.current_day / 30) * 100}%` }}
                             className="h-full bg-skillio-500"
@@ -72,7 +72,7 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
                         </div>
                       </div>
 
-                      <Link 
+                      <Link
                         href={`/belajar/${roadmap.id}`}
                         className="inline-flex items-center gap-2 text-sm font-black text-skillio-600 hover:text-skillio-700 transition-colors"
                       >
@@ -93,8 +93,8 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
                       Pilih bidang minatmu dan mulai perjalanan belajar 30 hari untuk mendapatkan sertifikat profesional pertamamu!
                     </p>
                  </div>
-                 <Link 
-                   href="/roadmap" 
+                 <Link
+                   href="/roadmap"
                    className="mt-4 px-8 py-3 bg-skillio-600 text-white rounded-xl font-black text-sm hover:bg-skillio-700 transition-all shadow-lg shadow-skillio-500/20"
                  >
                    Mulai Belajar Sekarang
@@ -103,7 +103,7 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
             )}
           </div>
 
-          {/* History Section */}
+          {}
           <div className="pt-4 space-y-6">
             <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
               <Trophy size={14} /> Riwayat Selesai
@@ -135,26 +135,26 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
           </div>
         </div>
 
-        {/* Sidebar Stats */}
+        {}
         <div className="space-y-6">
           <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800 text-white shadow-xl shadow-blue-500/20 group">
-            {/* Immersive Animated Background (Matched with Showroom) */}
+            {}
             <div className="absolute inset-0 z-0">
-               <motion.div 
-                 animate={{ 
+               <motion.div
+                 animate={{
                    scale: [1, 1.2, 1],
                    opacity: [0.3, 0.4, 0.3],
                    rotate: [0, 90, 0]
                  }}
                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                 className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] blur-3xl" 
+                 className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] blur-3xl"
                />
                <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             </div>
 
             <div className="relative z-10 p-6">
               <h3 className="text-sm font-black uppercase tracking-widest mb-6 opacity-80">Statistik Belajar</h3>
-              
+
               <div className="space-y-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -178,7 +178,7 @@ const LearningRoom = ({ activeRoadmaps = [], completedRoadmaps = [], userName, s
                   <span className="text-lg font-black">{completedRoadmaps.length}</span>
                 </div>
               </div>
-              
+
               <div className="mt-8 pt-6 border-t border-white/10">
                  <p className="text-[10px] font-bold text-white/60 leading-relaxed italic text-center">
                    "Teruslah melangkah, satu hari satu keahlian baru."

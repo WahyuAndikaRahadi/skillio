@@ -12,7 +12,6 @@ export async function POST(req) {
       );
     }
 
-    // Convert answers to a string context for Gemini
     const context = answers
       .map((a) => `Q: ${a.question} -> A: ${a.answer}`)
       .join("\n");

@@ -4,7 +4,7 @@ import path from "path";
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_SERVER_HOST,
   port: parseInt(process.env.EMAIL_SERVER_PORT || "465"),
-  secure: process.env.EMAIL_SERVER_PORT === "465", // true for 465, false for other ports
+  secure: process.env.EMAIL_SERVER_PORT === "465",
   auth: {
     user: process.env.EMAIL_SERVER_USER,
     pass: process.env.EMAIL_SERVER_PASSWORD,
@@ -27,7 +27,7 @@ export const sendVerificationEmail = async (email, otp) => {
           </div>
           <h2 style="color: #0d2133; text-align: center;">Verifikasi Email Anda</h2>
           <p style="color: #4a5568; line-height: 1.6; text-align: center;">
-            Halo! Terima kasih telah mendaftar di Skillio. <br/> 
+            Halo! Terima kasih telah mendaftar di Skillio. <br/>
             Gunakan kode OTP di bawah ini untuk mengaktifkan akun Anda:
           </p>
           <div style="background: #f3f7fb; padding: 30px; text-align: center; border-radius: 20px; margin: 30px 0; border: 2px dashed #2b6ea6;">
@@ -74,7 +74,7 @@ export const sendPasswordResetEmail = async (email, otp) => {
           </div>
           <h2 style="color: #0d2133; text-align: center;">Permintaan Reset Password</h2>
           <p style="color: #4a5568; line-height: 1.6; text-align: center;">
-            Kami menerima permintaan untuk mereset password akun Anda. <br/> 
+            Kami menerima permintaan untuk mereset password akun Anda. <br/>
             Gunakan kode OTP di bawah ini untuk melanjutkan:
           </p>
           <div style="background: #fff5f5; padding: 30px; text-align: center; border-radius: 20px; margin: 30px 0; border: 2px dashed #f56565;">

@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-50/30 relative overflow-hidden">
-      {/* ═══ PREMIUM MESH GRADIENT BACKGROUND ═══ */}
+      {}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute top-[20%] -right-[5%] w-[30%] h-[40%] bg-blue-500/5 rounded-full blur-[100px]" />
@@ -23,12 +23,12 @@ export default function DashboardLayout({ children }) {
       </div>
 
       {!isImmersiveMode && <Sidebar />}
-      
-      {/* Mobile Sidebar Overlay */}
+
+      {}
       <AnimatePresence>
         {isSidebarOpen && !isImmersiveMode && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -42,7 +42,7 @@ export default function DashboardLayout({ children }) {
               className="fixed left-0 top-0 bottom-0 w-64 bg-white z-50 lg:hidden shadow-2xl"
             >
                <Sidebar isMobile={true} />
-               <button 
+               <button
                  onClick={() => setIsSidebarOpen(false)}
                  className="absolute top-6 right-6 p-2 text-dark-blue hover:bg-light-blue rounded-xl"
                >
@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }) {
         !isImmersiveMode ? "lg:ml-64" : "lg:ml-0"
       )}>
         {!isImmersiveMode && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
-        
+
         <main className={cn(
           "flex-grow  w-full transition-all duration-500",
           !isImmersiveMode ? "pt-20" : "pt-12"

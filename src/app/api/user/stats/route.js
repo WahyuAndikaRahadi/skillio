@@ -9,12 +9,10 @@ export async function GET() {
     if (!session) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const cacheKey = `user_stats:${session.user.id}`;
-    
-    // 1. Try Cache
+
     const cached = await redis.get(cacheKey);
     if (cached) return NextResponse.json(cached);
 
-    // 2. Fetch DB
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
@@ -30,7 +28,7 @@ export async function GET() {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const lastActive = user?.streak?.last_active ? new Date(user.streak.last_active) : null;
     if (lastActive) lastActive.setHours(0, 0, 0, 0);
 
@@ -42,7 +40,6 @@ export async function GET() {
       isActiveToday
     };
 
-    // 3. Save Cache (expire 1 minute - shorter for streak reactivity)
     await redis.set(cacheKey, stats, 60);
 
     return NextResponse.json(stats);

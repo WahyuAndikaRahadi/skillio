@@ -11,7 +11,6 @@ export async function GET(req, { params }) {
     const resolvedParams = await params;
     const { groupId } = resolvedParams;
 
-    // Check if member
     const member = await prisma.groupMember.findUnique({
       where: {
         group_id_user_id: { group_id: groupId, user_id: session.user.id }
@@ -46,7 +45,6 @@ export async function POST(req, { params }) {
     const { groupId } = resolvedParams;
     const { content, imageUrl, fileUrl, fileName } = await req.json();
 
-    // Check membership
     const member = await prisma.groupMember.findUnique({
       where: {
         group_id_user_id: { group_id: groupId, user_id: session.user.id }
@@ -71,7 +69,6 @@ export async function POST(req, { params }) {
       }
     });
 
-    // TRIGGER PUSHER
     try {
       await pusherServer.trigger(`presence-group-${groupId}`, "new-message", message);
     } catch (err) {

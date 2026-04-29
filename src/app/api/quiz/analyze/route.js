@@ -17,7 +17,6 @@ export async function POST(req) {
 
     const analysis = await analyzeCareerRecommendation(answers);
 
-    // Save to DB if logged in
     if (session?.user?.id) {
       await prisma.userQuizResult.create({
         data: {

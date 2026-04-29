@@ -15,7 +15,6 @@ const API_KEYS = [
 
 const genAI = new GoogleGenerativeAI(API_KEYS[Math.floor(Math.random() * API_KEYS.length)] || process.env.GEMINI_API_KEY);
 
-
 export async function POST(req) {
   try {
     const session = await auth();
@@ -29,7 +28,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "Pesan kosong" }, { status: 400 });
     }
 
-    // Get user's roadmap to provide context to the AI
     const userRoadmap = await prisma.userRoadmap.findFirst({
       where: { user_id: session.user.id, status: "active" },
       include: { category: true }
@@ -40,7 +38,7 @@ export async function POST(req) {
     const systemPrompt = `
       Anda adalah "Skillio Mentor", seorang pakar profesional dan mentor tingkat senior di divisi/bidang: ${userField}.
       Pengguna ini adalah murid Anda yang sedang belajar di bidang tersebut.
-      
+
       Aturan Menjawab:
       1. Berikan jawaban yang sangat ahli, teknis jika diperlukan, namun tetap mudah dipahami.
       2. Anda memiliki ingatan percakapan (stateful). Anda dapat mengingat riwayat chat sebelumnya.
@@ -50,7 +48,6 @@ export async function POST(req) {
       6. JANGAN gunakan format markdown (seperti **bold** atau ## header) agar teks tetap bersih di UI chat. Gunakan teks polos dengan spasi paragraf yang baik.
     `;
 
-    // Prepare parts array for multimodal input
     let finalPromptText = message || "";
     const parts = [];
 
@@ -59,7 +56,6 @@ export async function POST(req) {
         const mimeType = file.type;
         const filename = file.name.toLowerCase();
 
-        // Parse Word Documents
         if (mimeType.includes("wordprocessingml") || filename.endsWith(".docx")) {
           try {
             const buffer = Buffer.from(file.base64, "base64");
@@ -68,8 +64,8 @@ export async function POST(req) {
           } catch (e) {
             console.error("Gagal membaca Word doc:", e);
           }
-        } 
-        // Parse Excel Spreadsheets
+        }
+
         else if (mimeType.includes("spreadsheetml") || mimeType.includes("ms-excel") || filename.endsWith(".xlsx") || filename.endsWith(".xls") || filename.endsWith(".csv")) {
           try {
             const buffer = Buffer.from(file.base64, "base64");
@@ -85,7 +81,7 @@ export async function POST(req) {
             console.error("Gagal membaca Excel/CSV:", e);
           }
         }
-        // Parse Plain Text files
+
         else if (mimeType === "text/plain") {
           try {
             const text = Buffer.from(file.base64, "base64").toString("utf-8");
@@ -94,7 +90,7 @@ export async function POST(req) {
             console.error("Gagal membaca file teks:", e);
           }
         }
-        // Send other supported files (Images, PDFs) to Gemini natively via inlineData
+
         else {
           parts.push({
             inlineData: {
@@ -106,26 +102,22 @@ export async function POST(req) {
       }
     }
 
-    // Add the final textual prompt at the front
     if (finalPromptText) {
       parts.unshift({ text: finalPromptText });
     }
 
-    // Construct the contents array including history
     const contents = [];
-    
-    // Append previous history
+
     for (const msg of history) {
-      // Skip the initial greeting message to save tokens
+
       if (msg.role === "ai" && msg.content.includes("Halo! Aku Skillio Mentor")) continue;
-      
+
       contents.push({
         role: msg.role === "ai" ? "model" : "user",
         parts: [{ text: msg.content || "" }]
       });
     }
 
-    // Add current turn
     contents.push({
       role: "user",
       parts: parts
@@ -134,17 +126,15 @@ export async function POST(req) {
     let lastError = null;
     let responseText = "";
 
-    // Sistem Rotasi Key & Model Fallback (Mulai dari 4 ke 1)
     const primaryModelName = "gemini-3.1-flash-lite-preview";
     const fallbackModelName = "gemini-3-flash-preview";
 
     let success = false;
     for (let i = API_KEYS.length - 1; i >= 0; i--) {
       const currentGenAI = new GoogleGenerativeAI(API_KEYS[i]);
-      
-      // 1. Coba Model Utama
+
       try {
-        const model = currentGenAI.getGenerativeModel({ 
+        const model = currentGenAI.getGenerativeModel({
           model: primaryModelName,
           systemInstruction: systemPrompt
         });
@@ -154,10 +144,9 @@ export async function POST(req) {
         break;
       } catch (primaryError) {
         console.warn(`[AI Widget] Primary Model failed on Key #${i+1}. Trying fallback...`);
-        
-        // 2. Coba Model Fallback
+
         try {
-          const model = currentGenAI.getGenerativeModel({ 
+          const model = currentGenAI.getGenerativeModel({
             model: fallbackModelName,
             systemInstruction: systemPrompt
           });
@@ -168,7 +157,7 @@ export async function POST(req) {
         } catch (fallbackError) {
           console.error(`[AI Widget] Key #${i+1} failed completely:`, fallbackError.message);
           lastError = fallbackError;
-          // Lanjut ke Key berikutnya
+
         }
       }
     }
@@ -179,13 +168,12 @@ export async function POST(req) {
 
     const enrichedPrompt = finalPromptText;
 
-    // Log the usage for the Curious Explorer badge
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       const logId = `log_${session.user.id}_${today.getTime()}`;
-      
+
       await prisma.aiMentorLog.upsert({
         where: { id: logId },
         create: {
@@ -201,7 +189,6 @@ export async function POST(req) {
     } catch (logError) {
       console.log("Log error ignored:", logError.message);
     }
-
 
     return NextResponse.json({ reply: responseText, enrichedPrompt });
   } catch (error) {

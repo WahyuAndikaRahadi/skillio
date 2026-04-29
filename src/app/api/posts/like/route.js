@@ -10,7 +10,6 @@ export async function POST(req) {
 
     const { post_id } = await req.json();
 
-    // 1. Check if already liked
     const existingLike = await prisma.postLike.findUnique({
       where: {
         post_id_user_id: {
@@ -22,7 +21,7 @@ export async function POST(req) {
 
     let action = "";
     if (existingLike) {
-      // Unlike
+
       await prisma.$transaction([
         prisma.postLike.delete({ where: { id: existingLike.id } }),
         prisma.communityPost.update({
@@ -32,7 +31,7 @@ export async function POST(req) {
       ]);
       action = "unlike";
     } else {
-      // Like
+
       await prisma.$transaction([
         prisma.postLike.create({
           data: { post_id, user_id: session.user.id }
@@ -45,7 +44,6 @@ export async function POST(req) {
       action = "like";
     }
 
-    // TRIGGER PUSHER: Like count changed
     const updatedPost = await prisma.communityPost.findUnique({
       where: { id: post_id },
       select: { likes_count: true }

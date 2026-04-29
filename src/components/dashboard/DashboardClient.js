@@ -101,12 +101,10 @@ export default function DashboardClient({
     refreshStats();
   }, [refreshStats]);
 
-  // Use store stats if available, otherwise fallback to initial props
   const displayXp = stats?.xp ?? initialXp;
   const displayStreak = stats?.streak ?? initialStreak;
   const isActiveToday = stats?.isActiveToday ?? false;
 
-  // Time-based greeting
   const hour = new Date().getHours();
   const greeting =
     hour < 12
@@ -117,7 +115,7 @@ export default function DashboardClient({
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 overflow-x-hidden pb-12 px-6 md:px-10 max-w-7xl mx-auto pt-6">
-      {/* ═══ HEADER ═══ */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -126,7 +124,7 @@ export default function DashboardClient({
       >
         <div>
           <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-            {greeting}, {firstName}! 
+            {greeting}, {firstName}!
           </h1>
           <p className="text-slate-400 font-medium mt-1">
             {hasRoadmap
@@ -137,7 +135,7 @@ export default function DashboardClient({
 
       </motion.div>
 
-      {/* ═══ HERO PROGRESS CARD (if has roadmap) ═══ */}
+      {}
       {hasRoadmap && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -145,7 +143,7 @@ export default function DashboardClient({
           transition={{ delay: 0.1, duration: 0.6 }}
           className="relative bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 rounded-[28px] p-7 md:p-9 text-white overflow-hidden shadow-2xl shadow-skillio-500/30"
         >
-          {/* Decorative */}
+          {}
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-skillio-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3" />
           <div className="absolute bottom-0 left-0 w-[200px] h-[200px] bg-teal-400/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/3" />
 
@@ -163,7 +161,7 @@ export default function DashboardClient({
                 Hari {currentDay} dari 30 — {completedDays} hari terselesaikan
               </p>
 
-              {/* Progress Bar */}
+              {}
               <div className="mt-5 flex items-center gap-4">
                 <div className="flex-1 h-3 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm">
                   <motion.div
@@ -193,7 +191,7 @@ export default function DashboardClient({
         </motion.div>
       )}
 
-      {/* ═══ NO ROADMAP CTA ═══ */}
+      {}
       {!hasRoadmap && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -221,7 +219,7 @@ export default function DashboardClient({
         </motion.div>
       )}
 
-      {/* ═══ STAT CARDS ═══ */}
+      {}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           icon={Flame}
@@ -261,9 +259,9 @@ export default function DashboardClient({
         />
       </div>
 
-      {/* ═══ MAIN GRID: Tasks + Sidebar ═══ */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Today's Tasks */}
+        {}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -334,9 +332,9 @@ export default function DashboardClient({
           )}
         </motion.div>
 
-        {/* Right Sidebar */}
+        {}
         <div className="space-y-6">
-          {/* AI Mentor Activity */}
+          {}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -363,7 +361,7 @@ export default function DashboardClient({
             </Link>
           </motion.div>
 
-          {/* Badges */}
+          {}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

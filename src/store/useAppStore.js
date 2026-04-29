@@ -3,8 +3,7 @@ import { create } from "zustand";
 export const useAppStore = create((set) => ({
   user: null,
   setUser: (user) => set({ user }),
-  
-  // User Stats Global State
+
   stats: { xp: 0, streak: 0, isActiveToday: false },
   setStats: (stats) => set({ stats }),
   refreshStats: async () => {
@@ -18,23 +17,22 @@ export const useAppStore = create((set) => ({
       console.error("Failed to refresh stats", err);
     }
   },
-  
+
   selectedCareer: null,
   setSelectedCareer: (career) => set({ selectedCareer: career }),
-  
+
   quizAnswers: [],
   setQuizAnswers: (answers) => set({ quizAnswers: answers }),
-  
+
   quizResult: null,
   setQuizResult: (result) => set({ quizResult: result }),
-  
+
   roadmapProgress: 0,
   setRoadmapProgress: (progress) => set({ roadmapProgress: progress }),
 
   isImmersiveMode: false,
   setIsImmersiveMode: (mode) => set({ isImmersiveMode: mode }),
 
-  // PWA State
   deferredPrompt: null,
   setDeferredPrompt: (prompt) => set({ deferredPrompt: prompt }),
   isInstalled: false,

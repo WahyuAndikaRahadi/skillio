@@ -41,7 +41,7 @@ const Navbar = () => {
             : "bg-white/40 shadow-sm backdrop-blur-md"
         )}
       >
-        {/* Logo Section */}
+        {}
         <Link href={session ? "/dashboard" : "/"} className="group flex items-center gap-2.5 px-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110">
             <Image
@@ -58,7 +58,7 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation - Center Pill */}
+        {}
         <div className="hidden items-center md:flex">
           <div className="relative flex items-center gap-1 rounded-full p-1">
             {navLinks.map((link) => (
@@ -73,7 +73,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Desktop Actions */}
+        {}
         <div className="hidden items-center gap-2 md:flex">
           {session ? (
             <Link
@@ -92,7 +92,7 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Toggle */}
+        {}
         <button
           className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-900 transition-colors hover:bg-slate-200 md:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

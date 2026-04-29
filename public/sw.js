@@ -20,7 +20,7 @@ self.addEventListener('fetch', (event) => {
           return response;
         }
         return fetch(event.request).catch(() => {
-          // Fallback response to avoid uncaught promise error
+
           return new Response('Network error occurred', { status: 503 });
         });
       })

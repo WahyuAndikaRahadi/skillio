@@ -13,7 +13,7 @@ export default async function RoadmapDetailPage({ params }) {
 
   const userRoadmap = await prisma.userRoadmap.findFirst({
     where: { id: id, user_id: session.user.id },
-    include: { 
+    include: {
       roadmap: true,
       category: true,
       progress: true,
@@ -30,7 +30,7 @@ export default async function RoadmapDetailPage({ params }) {
   }
 
   return (
-    <RoadmapClientView 
+    <RoadmapClientView
       userRoadmap={userRoadmap}
       session={session}
     />

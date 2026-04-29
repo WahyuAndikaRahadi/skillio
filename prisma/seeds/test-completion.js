@@ -7,7 +7,6 @@ async function main() {
 
   const hashedPassword = await bcrypt.hash("expert123", 10);
 
-  // 1. Create/Find Test User
   const user = await prisma.user.upsert({
     where: { email: "test-expert@skillio.com" },
     update: {
@@ -24,7 +23,6 @@ async function main() {
     }
   });
 
-  // Ensure streak exists
   await prisma.streak.upsert({
     where: { user_id: user.id },
     update: {
@@ -40,14 +38,12 @@ async function main() {
     }
   });
 
-  // 2. Find a category
   const category = await prisma.category.findFirst();
   if (!category) {
     console.error("❌ No categories found. Run main seeder first.");
     return;
   }
 
-  // 3. Create a Roadmap (if not exists)
   const roadmap = await prisma.roadmap.upsert({
     where: { category_id: category.id },
     update: {},
@@ -61,7 +57,6 @@ async function main() {
     }
   });
 
-  // 4. Create UserRoadmap (Completed)
   const userRoadmap = await prisma.userRoadmap.create({
     data: {
       user_id: user.id,
@@ -74,7 +69,6 @@ async function main() {
     }
   });
 
-  // 5. Create 30 Days of Progress
   console.log("  📝 Creating 30 days of progress...");
   const progressEntries = [];
   for (let i = 1; i <= 30; i++) {
@@ -88,12 +82,11 @@ async function main() {
   }
   await prisma.userDayProgress.createMany({ data: progressEntries });
 
-  // 6. Award "Sertifikat Kelulusan" Badge
   const badge = await prisma.badge.findFirst({ where: { name: "Sertifikat Kelulusan" } });
   if (badge) {
-    // Clean old badges for this user first
+
     await prisma.userBadge.deleteMany({ where: { user_id: user.id } });
-    
+
     await prisma.userBadge.create({
       data: {
         user_id: user.id,

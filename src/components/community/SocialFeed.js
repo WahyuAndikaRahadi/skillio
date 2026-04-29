@@ -57,7 +57,7 @@ const CommentItem = ({ comment, postId, onReply }) => {
             </span>
           </div>
 
-          {/* Replies */}
+          {}
           {comment.replies && comment.replies.length > 0 && (
             <div className="mt-3 ml-4 border-l-2 border-slate-100 pl-4 space-y-3">
               {comment.replies.map(reply => (
@@ -138,14 +138,13 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
   useEffect(() => {
     const channel = pusherClient.subscribe(`post-${post.id}`);
 
-    // 1. Ekstrak fungsi ke dalam variabel
     const handleLikeUpdate = (data) => {
       setLikesCount(data.likes_count);
       if (data.user_id === currentUserId) setIsLiked(data.action === "like");
     };
 
     const handleNewComment = (data) => {
-      // TANPA pencegahan, langsung masukkan ke state aslinya
+
       if (data.parent_id) {
         setComments(prev => prev.map(c => c.id === data.parent_id ? { ...c, replies: [...(c.replies || []), data] } : c));
       } else {
@@ -153,12 +152,11 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
       }
     };
 
-    // 2. Bind fungsi tersebut
     channel.bind("like-update", handleLikeUpdate);
     channel.bind("new-comment", handleNewComment);
 
     return () => {
-      // 3. ROOT CAUSE FIX: Unbind secara eksplisit fungsi yang tadi dipasang!
+
       channel.unbind("like-update", handleLikeUpdate);
       channel.unbind("new-comment", handleNewComment);
       pusherClient.unsubscribe(`post-${post.id}`);
@@ -346,7 +344,6 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
   const [showMentions, setShowMentions] = useState(false);
   const [selectedCategoryState, setSelectedCategoryState] = useState(categoryId);
 
-  // Auto-expand textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -371,7 +368,6 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
     const value = e.target.value;
     setNewPost(value);
 
-    // Detect # mention
     const lastWord = value.split(" ").pop();
     if (lastWord.startsWith("#")) {
       setMentionQuery(lastWord.slice(1));
@@ -383,7 +379,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
 
   const selectCategory = (cat) => {
     const words = newPost.split(" ");
-    words.pop(); // remove the #query
+    words.pop();
     const updatedContent = [...words, `#${cat.name} `].join(" ");
     setNewPost(updatedContent);
     setSelectedCategoryState(cat.id);
@@ -411,17 +407,15 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
 
     const channel = pusherClient.subscribe("community-feed");
 
-    // 1. Ekstrak fungsi
     const handleNewPost = (data) => {
-      // TANPA pencegahan, langsung letakkan di awal array
+
       setPosts((prev) => [data, ...prev]);
     };
 
-    // 2. Bind fungsi
     channel.bind("new-post", handleNewPost);
 
     return () => {
-      // 3. ROOT CAUSE FIX: Unbind saat cleanup
+
       channel.unbind("new-post", handleNewPost);
       pusherClient.unsubscribe("community-feed");
     };
@@ -432,7 +426,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
 
     if (!newPost.trim() || isSubmitting) return;
 
-    setIsSubmitting(true); // Mulai loading
+    setIsSubmitting(true);
 
     try {
       const res = await fetch("/api/posts", {
@@ -445,16 +439,15 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
         setImageUrl("");
         setShowImageInput(false);
         setPostType("progress");
-        setSelectedCategoryState(categoryId); // reset to current filter
+        setSelectedCategoryState(categoryId);
       }
     } catch (err) {
       console.error("Gagal posting");
     } finally {
-      setIsSubmitting(false); // Selesai loading, tombol bisa diklik lagi
+      setIsSubmitting(false);
     }
   };
 
-  // Filter posts based on search query
   const filteredPosts = posts.filter(post =>
     post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
     post.user.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -462,7 +455,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
 
   return (
     <div className="space-y-8 px-6">
-      {/* Create Post Input Container (Diperbarui sesuai referensi desain) */}
+      {}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-[32px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-[50]">
         <form onSubmit={handleSubmit}>
           <div className="flex gap-4">
@@ -478,7 +471,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
                 className="w-full bg-transparent border-none focus:outline-none text-slate-700 placeholder-slate-400 pt-2 text-sm resize-none overflow-hidden"
               />
 
-              {/* Mention List UI */}
+              {}
               <AnimatePresence>
                 {showMentions && filteredMentions.length > 0 && (
                   <motion.div
@@ -507,7 +500,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
                 )}
               </AnimatePresence>
 
-              {/* Bagian UploadThing asli Anda yang dipertahankan */}
+              {}
               <AnimatePresence>
                 {imageUrl && (
                   <motion.div
@@ -528,12 +521,12 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-50">
                 <div className="flex items-center gap-1 text-slate-400">
-                  {/* Action Toggles */}
+                  {}
                   <div className="relative">
                     <button
                       type="button"
                       onClick={() => {
-                        // UploadThing renders an <input type="file"> inside its button — click it directly
+
                         document.querySelector('input[type="file"]')?.click();
                       }}
                       className={`p-2 rounded-full transition-colors ${imageUrl ? 'bg-blue-50 text-primary-blue' : 'hover:bg-slate-50 hover:text-slate-600'}`}
@@ -541,7 +534,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
                       <ImageIcon size={18} />
                     </button>
 
-                    {/* UploadButton hidden but still mounted so its input exists in the DOM */}
+                    {}
                     <div className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
                       <UploadButton
                         endpoint="imageUploader"
@@ -558,12 +551,12 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
                 </div>
                 <button
                   type="submit"
-                  // Disable tombol jika input kosong ATAU sedang proses submit
+
                   disabled={!newPost.trim() || isSubmitting}
                   className="px-4 py-1.5 bg-primary-blue text-white rounded-full text-sm font-medium hover:bg-blue-600 transition-all disabled:opacity-50 flex items-center gap-2 min-w-[80px] justify-center"
                 >
                   {isSubmitting ? (
-                    <Loader2 size={14} className="animate-spin" /> // Animasi muter saat loading
+                    <Loader2 size={14} className="animate-spin" />
                   ) : (
                     <>
                       Share <Send size={14} />
@@ -576,7 +569,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
         </form>
       </motion.div>
 
-      {/* Feed List */}
+      {}
       <div className="space-y-6">
         {isLoading ? (
           <div className="text-center py-12">

@@ -67,7 +67,7 @@ export default function FeaturesSection() {
             <span className="text-skillio-500">Kebingungan Jadi Aksi Nyata.</span>
           </h2>
           <p className="mt-6 max-w-2xl text-lg text-slate-600">
-            Kami tidak hanya memberikan materi, kami memberikan arah. 
+            Kami tidak hanya memberikan materi, kami memberikan arah.
             Membantumu menemukan passion dan memberimu jalan untuk menguasainya.
           </p>
         </div>

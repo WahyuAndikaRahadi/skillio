@@ -10,7 +10,6 @@ export async function POST(req) {
     const { userRoadmapId } = await req.json();
     if (!userRoadmapId) return NextResponse.json({ message: "userRoadmapId required" }, { status: 400 });
 
-    // Verify ownership
     const userRoadmap = await prisma.userRoadmap.findFirst({
       where: { id: userRoadmapId, user_id: session.user.id },
     });
@@ -19,7 +18,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "Already completed", alreadyDone: true });
     }
 
-    // Mark as completed + award XP
     await prisma.$transaction([
       prisma.userRoadmap.update({
         where: { id: userRoadmapId },
@@ -31,12 +29,10 @@ export async function POST(req) {
       }),
     ]);
 
-    // Count completed roadmaps to check which badges to award
     const completedCount = await prisma.userRoadmap.count({
       where: { user_id: session.user.id, status: "completed" },
     });
 
-    // --- Badge Award Logic (Using Central Engine) ---
     const { checkAndAwardBadges } = await import("@/lib/badges");
     const awarded = await checkAndAwardBadges(session.user.id, "roadmaps_completed", { count: completedCount });
 

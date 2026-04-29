@@ -10,7 +10,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "Data tidak lengkap" }, { status: 400 });
     }
 
-    // 1. Find and validate OTP
     const verificationToken = await prisma.verificationToken.findFirst({
       where: {
         identifier: email,
@@ -27,18 +26,16 @@ export async function POST(req) {
       return NextResponse.json({ message: "Kode OTP kedaluwarsa" }, { status: 400 });
     }
 
-    // 2. Hash and update password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
       where: { email },
-      data: { 
+      data: {
         password: hashedPassword,
-        emailVerified: new Date() // Verify email if not already
+        emailVerified: new Date()
       }
     });
 
-    // 3. Cleanup
     await prisma.verificationToken.deleteMany({
       where: { identifier: email }
     });

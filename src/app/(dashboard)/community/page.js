@@ -17,11 +17,10 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
-// Fungsi bantuan untuk mengambil singkatan (misal: "Desain Antarmuka" -> "DE")
 const getInitials = (name) => {
   const words = name.trim().split(" ");
   if (words.length > 1) {
-    return (words[0].slice(0, 2)).toUpperCase(); // Mengikuti gambar: Desain Antarmuka -> DE
+    return (words[0].slice(0, 2)).toUpperCase();
   }
   return name.slice(0, 2).toUpperCase();
 };
@@ -30,10 +29,8 @@ function CommunityContent() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState("joined"); // 'joined' or 'all'
+  const [viewMode, setViewMode] = useState("joined");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-
 
   const searchParams = useSearchParams();
   const urlGroupId = searchParams.get("groupId");
@@ -59,19 +56,18 @@ function CommunityContent() {
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-
   return (
-    // Full viewport, no outer padding — fills the layout shell exactly
+
     <div className="flex h-[calc(100vh-56px)] md:h-[calc(100vh-80px)] overflow-hidden bg-[#f0f7ff] relative font-sans">
-      
-      {/* Unified Atmospheric Background */}
+
+      {}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-5%] right-[-5%] w-[600px] h-[600px] rounded-full bg-blue-200/20 blur-[130px]" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-100/30 blur-[110px]" />
         <div className="absolute top-[20%] left-[30%] w-[400px] h-[400px] rounded-full bg-sky-100/20 blur-[100px]" />
       </div>
 
-      {/* Mobile Sidebar Overlay */}
+      {}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -84,15 +80,14 @@ function CommunityContent() {
         )}
       </AnimatePresence>
 
-      {/* ── LEFT PANEL (Glass Sidebar) ────────────────────────────────────────────────────── */}
+      {}
       <div className={cn(
         "absolute inset-y-0 left-0 z-[70] lg:z-10 w-80 shrink-0 flex flex-col border-r border-white/20 bg-white/40 backdrop-blur-xl transition-transform duration-300 lg:relative lg:translate-x-0",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full",
         activeGroupId && "lg:hidden"
       )}>
 
-
-        {/* Mobile Header (Sidebar) */}
+        {}
         <div className="flex items-center justify-between px-4 py-4 lg:hidden border-b border-skillio-50">
           <span className="font-black text-[#0d2133] tracking-tight uppercase text-xs">Pilih Bidang</span>
           <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-slate-400 hover:text-slate-600">
@@ -100,7 +95,7 @@ function CommunityContent() {
           </button>
         </div>
 
-        {/* Search bar */}
+        {}
         <div className="px-4 py-3 border-b border-white/20">
           <div className="relative">
             <Search
@@ -117,17 +112,17 @@ function CommunityContent() {
           </div>
         </div>
 
-        {/* Scrollable category list */}
+        {}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
 
-          {/* View Mode Toggle */}
+          {}
           <div className="px-4 py-4 grid grid-cols-2 gap-2">
             <button
               onClick={() => setViewMode("joined")}
               className={cn(
                 "py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
-                viewMode === "joined" 
-                  ? "bg-primary-blue text-white border-primary-blue shadow-lg shadow-primary-blue/20" 
+                viewMode === "joined"
+                  ? "bg-primary-blue text-white border-primary-blue shadow-lg shadow-primary-blue/20"
                   : "bg-white/50 text-slate-400 border-white/20 hover:border-white/40"
               )}
             >
@@ -137,8 +132,8 @@ function CommunityContent() {
               onClick={() => setViewMode("all")}
               className={cn(
                 "py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
-                viewMode === "all" 
-                  ? "bg-primary-blue text-white border-primary-blue shadow-lg shadow-primary-blue/20" 
+                viewMode === "all"
+                  ? "bg-primary-blue text-white border-primary-blue shadow-lg shadow-primary-blue/20"
                   : "bg-white/50 text-slate-400 border-white/20 hover:border-white/40"
               )}
             >
@@ -146,7 +141,7 @@ function CommunityContent() {
             </button>
           </div>
 
-          {/* "All" row */}
+          {}
           <button
             onClick={() => {
               setSelectedCategory(null);
@@ -180,15 +175,14 @@ function CommunityContent() {
             )}
           </button>
 
-
-          {/* Divider label */}
+          {}
           <div className="px-4 pt-4 pb-1">
             <p className="text-[10px] font-black tracking-[0.18em] uppercase text-slate-300">
               Bidang
             </p>
           </div>
 
-          {/* Category rows */}
+          {}
           {filteredCategories.map((cat) => {
             const isActive = selectedCategory === cat.id;
             const initials = getInitials(cat.name);
@@ -227,7 +221,7 @@ function CommunityContent() {
           })}
         </div>
 
-        {/* Create group CTA at bottom */}
+        {}
         <div className="p-4 border-t border-white/20">
           <button
             onClick={() => {
@@ -241,15 +235,14 @@ function CommunityContent() {
         </div>
       </div>
 
-
-      {/* ── RIGHT PANEL (Unified Background) ────────────────────────── */}
+      {}
       <div className="flex-1 flex flex-col overflow-hidden relative z-10">
         {!activeGroupId ? (
           <>
-            {/* Tampilan List Grup */}
+            {}
             <div className="px-6 py-5 border-b border-white/20 bg-white/30 backdrop-blur-xl flex items-center justify-between shrink-0 z-20">
               <div className="flex items-center gap-4">
-                <button 
+                <button
                   onClick={() => setIsSidebarOpen(true)}
                   className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-primary-blue hover:bg-white/50 rounded-xl transition-all"
                 >
@@ -267,28 +260,27 @@ function CommunityContent() {
               </button>
             </div>
 
-
             <div className="flex-1 relative overflow-hidden">
               <div className="absolute inset-0 overflow-y-auto custom-scrollbar">
                 <div className="relative z-10 min-h-full flex flex-col">
-                  {/* Prop onJoin dikirim ke GroupList */}
-                  <GroupList 
-                    categoryId={selectedCategory} 
+                  {}
+                  <GroupList
+                    categoryId={selectedCategory}
                     viewMode={viewMode}
                     onJoin={(id) => {
                       setActiveGroupId(id);
                       setViewMode("joined");
-                    }} 
+                    }}
                   />
                 </div>
               </div>
             </div>
           </>
         ) : (
-          /* Tampilan Chat Room */
-          <GroupChat 
-            groupId={activeGroupId} 
-            onBack={() => setActiveGroupId(null)} 
+
+          <GroupChat
+            groupId={activeGroupId}
+            onBack={() => setActiveGroupId(null)}
             onToggleSidebar={() => setIsSidebarOpen(true)}
           />
 

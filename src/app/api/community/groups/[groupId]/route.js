@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 
- 
 export async function GET(req, { params }) {
   try {
     const session = await auth();
@@ -25,7 +24,7 @@ export async function GET(req, { params }) {
               }
             }
           },
-          orderBy: { role: "asc" } // Admin usually comes first
+          orderBy: { role: "asc" }
         },
         _count: {
           select: { members: { where: { status: "approved" } } }
@@ -42,7 +41,6 @@ export async function GET(req, { params }) {
   }
 }
 
-
 export async function DELETE(req, { params }) {
   try {
     const session = await auth();
@@ -57,7 +55,6 @@ export async function DELETE(req, { params }) {
        return NextResponse.json({ message: "Group ID is missing" }, { status: 400 });
     }
 
-    // 1. Get Group 
     const group = await prisma.communityGroup.findUnique({
       where: { id: groupId }
     });
@@ -66,14 +63,10 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ message: "Grup tidak ditemukan" }, { status: 404 });
     }
 
-    // 2. Verify Ownership
     if (group.created_by !== session.user.id && session.user.role !== "admin") {
       return NextResponse.json({ message: "Hanya pembuat grup atau admin yang bisa menghapus grup ini" }, { status: 403 });
     }
 
-    // 3. Delete Group
-    // Prisma will cascade delete GroupMember and GroupMessage if configured correctly
-    // In our schema: onDelete: Cascade is present on GroupMember.group and GroupMessage.group
     await prisma.communityGroup.delete({
       where: { id: groupId }
     });
@@ -104,7 +97,6 @@ export async function PATCH(req, { params }) {
 
     if (!group) return NextResponse.json({ message: "Group not found" }, { status: 404 });
 
-    // Verify Admin/Owner
     if (group.created_by !== session.user.id && session.user.role !== "admin") {
       return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
     }

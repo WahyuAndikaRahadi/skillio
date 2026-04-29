@@ -9,7 +9,7 @@ export default function RoadmapClientView({ userRoadmap, session }) {
   return (
     <div className="w-full max-w-7xl mx-auto pb-12 px-6 md:px-10 max-w-7xl mx-auto pt-6">
       <div className="space-y-8">
-        {/* Global Header - Hidden when detail is open */}
+        {}
         {!isDetailOpen && (
           <div className="flex flex-col items-start text-left gap-4 mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full shadow-sm mb-2">

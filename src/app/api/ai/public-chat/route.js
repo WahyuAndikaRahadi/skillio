@@ -21,7 +21,7 @@ export async function POST(req) {
     const systemPrompt = `
       Anda adalah "Skillio Mentor", asisten virtual yang cerdas dan ramah di halaman depan aplikasi web "Skillio".
       Skillio adalah platform EdTech tempat anak muda Indonesia menemukan passion mereka dan belajar skill digital (seperti UI/UX, Web Dev, Digital Marketing) dalam 30 hari secara terstruktur dengan bantuan AI.
-      
+
       Tugas Anda:
       1. Menjawab pertanyaan atau sapaan pengunjung dengan singkat, ceria, dan antusias.
       2. Maksimal panjang jawaban adalah 2-3 kalimat pendek saja (sangat penting agar UI chat tidak penuh).
@@ -32,10 +32,10 @@ export async function POST(req) {
     `;
 
     const contents = [];
-    
+
     for (const msg of history) {
       if (msg.role === "ai" && msg.content.includes("Halo!")) continue;
-      
+
       contents.push({
         role: msg.role === "ai" ? "model" : "user",
         parts: [{ text: msg.content || "" }]
@@ -55,11 +55,11 @@ export async function POST(req) {
     let success = false;
     for (let i = API_KEYS.length - 1; i >= 0; i--) {
       const currentGenAI = new GoogleGenerativeAI(API_KEYS[i]);
-      
+
       try {
-        const model = currentGenAI.getGenerativeModel({ 
+        const model = currentGenAI.getGenerativeModel({
           model: primaryModelName,
-          systemInstruction: systemPrompt 
+          systemInstruction: systemPrompt
         });
         const result = await model.generateContent({ contents });
         responseText = result.response.text();
@@ -68,9 +68,9 @@ export async function POST(req) {
       } catch (primaryError) {
         console.warn(`[Public Chat] Key #${i+1} primary model failed. Trying fallback...`);
         try {
-          const model = currentGenAI.getGenerativeModel({ 
+          const model = currentGenAI.getGenerativeModel({
             model: fallbackModelName,
-            systemInstruction: systemPrompt 
+            systemInstruction: systemPrompt
           });
           const result = await model.generateContent({ contents });
           responseText = result.response.text();

@@ -33,12 +33,10 @@ export default async function DashboardPage() {
     },
   });
 
-  // Completed roadmaps count
   const completedRoadmaps = await prisma.userRoadmap.count({
     where: { user_id: session.user.id, status: "completed" },
   });
 
-  // AI Mentor usage (last 7 days)
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   sevenDaysAgo.setHours(0, 0, 0, 0);
@@ -51,7 +49,6 @@ export default async function DashboardPage() {
     orderBy: { date: "asc" },
   });
 
-  // Build weekly activity from real progress data
   const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
   const weeklyActivity = [];
   for (let i = 6; i >= 0; i--) {
@@ -68,12 +65,10 @@ export default async function DashboardPage() {
     });
   }
 
-  // Community posts by user
   const userPostsCount = await prisma.communityPost.count({
     where: { user_id: session.user.id },
   });
 
-  // Calculate progress
   const completedDays =
     userRoadmap?.progress?.filter(
       (p) => p.tasks_completed && p.quiz_passed
@@ -82,7 +77,6 @@ export default async function DashboardPage() {
     ? Math.min(Math.round((completedDays / 30) * 100), 100)
     : 0;
 
-  // Current day tasks
   const currentDayNum = userRoadmap?.current_day || 1;
   const currentDayProgress = userRoadmap?.progress?.find(
     (p) => p.day_number === currentDayNum
@@ -97,8 +91,7 @@ export default async function DashboardPage() {
   if (userRoadmap?.roadmap?.file_url) {
     try {
       const data = JSON.parse(userRoadmap.roadmap.file_url);
-      
-      // The day index could be 'day' or 'day_number'
+
       const currentDayData = data.days?.find(d => (d.day === currentDayNum || d.day_number === currentDayNum));
       if (currentDayData) {
         currentDayTitle = currentDayData.title;

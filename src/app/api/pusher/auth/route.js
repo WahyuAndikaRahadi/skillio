@@ -13,7 +13,6 @@ export async function POST(req) {
     const socketId = body.get("socket_id");
     const channelName = body.get("channel_name");
 
-    // Metadata untuk Presence Channel
     const presenceData = {
       user_id: session.user.id,
       user_info: {
@@ -23,7 +22,7 @@ export async function POST(req) {
     };
 
     const authResponse = pusherServer.authorizeChannel(socketId, channelName, presenceData);
-    
+
     return NextResponse.json(authResponse);
   } catch (error) {
     console.error("Pusher auth error:", error);

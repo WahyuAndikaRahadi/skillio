@@ -23,11 +23,6 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Swal from "sweetalert2";
 
-// Import BadgesContent from the main page file if possible, 
-// but since it's defined inside the file, I'll copy the theme logic and component here 
-// or I can try to import it if I export it.
-// To keep it simple and avoid circular deps, I'll define it here as a standalone public view.
-
 const badgeThemes = {
   milestone: { icon: Trophy, gradient: "from-amber-600 to-orange-500", lightGradient: "from-amber-50 to-orange-50", accent: "text-amber-600", bgAccent: "bg-amber-100" },
   streak: { icon: Flame, gradient: "from-red-600 to-rose-500", lightGradient: "from-red-50 to-rose-50", accent: "text-red-600", bgAccent: "bg-red-100" },
@@ -89,7 +84,7 @@ function PublicBadgesContent() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-10 py-16 relative z-10">
-      {/* Header */}
+      {}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -119,7 +114,7 @@ function PublicBadgesContent() {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none" />
       </motion.div>
 
-      {/* Badges Grid */}
+      {}
       {earnedBadges.length === 0 ? (
         <div className="bg-white border-2 border-dashed border-slate-200 rounded-[40px] p-20 text-center">
           <Trophy size={60} className="text-slate-200 mx-auto mb-6" />

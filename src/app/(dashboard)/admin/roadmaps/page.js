@@ -8,8 +8,8 @@ export default function AdminRoadmapsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredCategories = categories.filter(category => 
-    category.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredCategories = categories.filter(category =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     category.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -60,13 +60,13 @@ export default function AdminRoadmapsPage() {
         </div>
       </div>
 
-      {/* Info Banner */}
+      {}
       <div className="flex items-start gap-4 p-5 bg-emerald-50 border border-emerald-100 rounded-2xl">
         <Zap className="text-emerald-600 shrink-0 mt-0.5" size={20} />
         <div>
           <p className="font-black text-emerald-900">Sistem Auto-Generate Aktif</p>
           <p className="text-emerald-700 text-sm font-medium mt-1">
-            Saat user memilih suatu bidang dan membuka Ruang Belajar, sistem akan otomatis meminta AI untuk membuat kurikulum jika belum tersedia. 
+            Saat user memilih suatu bidang dan membuka Ruang Belajar, sistem akan otomatis meminta AI untuk membuat kurikulum jika belum tersedia.
             Kurikulum yang sudah dibuat akan disimpan dan digunakan ulang untuk semua user yang memilih bidang yang sama.
           </p>
         </div>
@@ -86,7 +86,7 @@ export default function AdminRoadmapsPage() {
             <Search className="h-5 w-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" size={20} />
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredCategories.length > 0 ? filteredCategories.map((category) => {
             const isFilled = !!category.roadmap?.file_url;

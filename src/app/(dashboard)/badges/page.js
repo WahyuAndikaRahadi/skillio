@@ -23,7 +23,6 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Swal from "sweetalert2";
 
-// Badge category themes with icons
 const badgeThemes = {
   milestone: { icon: Trophy, gradient: "from-amber-600 to-orange-500", lightGradient: "from-amber-50 to-orange-50", accent: "text-amber-600", bgAccent: "bg-amber-100" },
   streak: { icon: Flame, gradient: "from-red-600 to-rose-500", lightGradient: "from-red-50 to-rose-50", accent: "text-red-600", bgAccent: "bg-red-100" },
@@ -109,7 +108,7 @@ function BadgesContent({ isPublicView = false }) {
 
   return (
     <div className="relative min-h-screen">
-      {/* Decorative Background Elements */}
+      {}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-40 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl" />
         <div className="absolute top-1/3 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
@@ -120,45 +119,45 @@ function BadgesContent({ isPublicView = false }) {
         "max-w-7xl mx-auto px-6 md:px-10 relative z-10",
         isPublicView ? "py-16" : "py-12"
       )}>
-        {/* Header Section - The "Showroom" */}
+        {}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative group mb-20 md:mb-28"
         >
-          {/* Main Card */}
+          {}
           <div className="relative overflow-hidden rounded-[50px] md:rounded-[70px] bg-gradient-to-br from-primary-blue to-blue-700 border border-blue-400/30 shadow-[0_20px_50px_rgba(59,130,246,0.3)]">
-            
-            {/* Immersive Animated Background */}
+
+            {}
             <div className="absolute inset-0 z-0">
                <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800" />
-               <motion.div 
-                 animate={{ 
+               <motion.div
+                 animate={{
                    scale: [1, 1.2, 1],
                    opacity: [0.3, 0.5, 0.3],
                    rotate: [0, 90, 0]
                  }}
                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                 className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl" 
+                 className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl"
                />
-               <motion.div 
-                 animate={{ 
+               <motion.div
+                 animate={{
                    scale: [1, 1.5, 1],
                    opacity: [0.2, 0.4, 0.2],
                    rotate: [0, -90, 0]
                  }}
                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                 className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)] blur-3xl" 
+                 className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)] blur-3xl"
                />
-               
-               {/* Pattern overlay */}
+
+               {}
                <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             </div>
 
             <div className="relative z-10 p-8 md:p-14 lg:p-16 flex flex-col lg:flex-row items-center gap-12">
-              
-              {/* Left Content */}
+
+              {}
               <div className="flex-1 text-center lg:text-left space-y-6">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -183,29 +182,28 @@ function BadgesContent({ isPublicView = false }) {
                       Lencana
                     </span>
                   </motion.h1>
-                  
+
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
                     className="text-base md:text-lg text-white/80 font-medium max-w-lg leading-relaxed"
                   >
-                    {isPublicView 
+                    {isPublicView
                       ? `Lihat koleksi lencana prestisius yang telah diraih oleh ${viewedUser?.name || 'user'} dalam perjalanan belajarnya di Skillio.`
                       : "Kumpulkan lencana prestisius dengan menyelesaikan misi dan tantangan. Setiap lencana adalah bukti nyata dedikasi dan kerja keras Anda."
                     }
                   </motion.p>
                 </div>
 
-
                 {!isPublicView && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
                     className="pt-4"
                   >
-                    <button 
+                    <button
                       onClick={() => setActiveTab("misi")}
                       className="px-6 py-3.5 bg-white text-blue-700 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10"
                     >
@@ -224,12 +222,11 @@ function BadgesContent({ isPublicView = false }) {
                 )}
               </div>
 
-
-              {/* Right Content - Visual Showcase */}
+              {}
               <div className="relative shrink-0">
-                {/* Floating Elements Container */}
+                {}
                 <div className="relative w-64 h-64 md:w-80 md:h-80">
-                   {/* Main Trophy Icon (Central) */}
+                   {}
                    <motion.div
                      animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
                      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -241,7 +238,7 @@ function BadgesContent({ isPublicView = false }) {
                      </div>
                    </motion.div>
 
-                   {/* Orbital Icons */}
+                   {}
                    {[
                      { Icon: Star, color: "text-yellow-400", pos: "top-0 left-0", delay: 0 },
                      { Icon: Gem, color: "text-cyan-400", pos: "top-8 right-0", delay: 1 },
@@ -250,7 +247,7 @@ function BadgesContent({ isPublicView = false }) {
                    ].map((item, i) => (
                      <motion.div
                        key={i}
-                       animate={{ 
+                       animate={{
                          y: [0, -10, 0],
                          rotate: [0, 10, 0],
                          scale: [1, 1.1, 1]
@@ -262,7 +259,7 @@ function BadgesContent({ isPublicView = false }) {
                      </motion.div>
                    ))}
 
-                   {/* Total Count Bubble */}
+                   {}
                    <motion.div
                      initial={{ scale: 0 }}
                      animate={{ scale: 1 }}
@@ -278,13 +275,12 @@ function BadgesContent({ isPublicView = false }) {
             </div>
           </div>
 
-          {/* Decorative floating shapes outside card */}
+          {}
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-400/20 blur-[100px] rounded-full pointer-events-none" />
           <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-blue-500/20 blur-[120px] rounded-full pointer-events-none" />
         </motion.div>
 
-
-        {/* Tabs Navigation */}
+        {}
         {!isPublicView && (
           <div className="flex justify-center mb-16">
             <div className="bg-slate-100/50 backdrop-blur-md p-1.5 rounded-3xl flex gap-1 border border-slate-200">
@@ -298,8 +294,8 @@ function BadgesContent({ isPublicView = false }) {
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
                     "flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-sm font-black transition-all",
-                    activeTab === tab.id 
-                      ? "bg-white text-primary-blue shadow-lg shadow-blue-500/10" 
+                    activeTab === tab.id
+                      ? "bg-white text-primary-blue shadow-lg shadow-blue-500/10"
                       : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                   )}
                 >
@@ -311,7 +307,7 @@ function BadgesContent({ isPublicView = false }) {
           </div>
         )}
 
-        {/* Tab Content */}
+        {}
         {(() => {
           if (activeTab === "misi" && !isPublicView) {
             const lockedBadges = badges.filter(b => !userBadgeIds.has(b.id));
@@ -345,7 +341,7 @@ function BadgesContent({ isPublicView = false }) {
                         <p className="text-sm text-slate-500 font-medium mb-4 leading-relaxed">{badge.description}</p>
                         <div className="flex items-center justify-between pt-4 border-t border-slate-50">
                           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Progress: 0%</span>
-                          <button 
+                          <button
                             onClick={() => {
                               if (badge.requirement?.type === "roadmaps_completed" || !activeRoadmapId) {
                                 router.push("/roadmap");
@@ -384,7 +380,7 @@ function BadgesContent({ isPublicView = false }) {
                       {isPublicView ? "User ini belum memiliki sertifikat kelulusan." : "Selesaikan 30 hari belajarmu untuk mendapatkan sertifikat profesional pertamamu!"}
                     </p>
                     {!isPublicView && (
-                      <button 
+                      <button
                         onClick={() => router.push("/roadmap")}
                         className="mt-8 px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20"
                       >
@@ -435,13 +431,12 @@ function BadgesContent({ isPublicView = false }) {
             );
           }
 
-          // Default: Lencana
           const earnedBadges = badges.filter(b => userBadgeIds.has(b.id));
           return (
             <>
               {earnedBadges.length === 0 ? (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }} 
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="bg-white border-2 border-dashed border-slate-200 rounded-[40px] p-20 text-center mb-24"
                 >
@@ -453,7 +448,7 @@ function BadgesContent({ isPublicView = false }) {
                     {isPublicView ? "User ini belum mengoleksi lencana." : "Anda belum memiliki lencana. Selesaikan misi pertama Anda untuk memajang lencana prestisius di sini!"}
                   </p>
                   {!isPublicView && (
-                    <button 
+                    <button
                       onClick={() => setActiveTab("misi")}
                       className="px-8 py-3.5 bg-primary-blue text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all"
                     >
@@ -502,18 +497,18 @@ function BadgesContent({ isPublicView = false }) {
                           )}
                         >
                           <div className={`absolute inset-0 bg-gradient-to-br ${theme.lightGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                          
+
                           <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
                             <motion.div
-                              animate={{ 
+                              animate={{
                                 x: ["-100%", "200%"],
-                                opacity: [0, 0.5, 0] 
+                                opacity: [0, 0.5, 0]
                               }}
-                              transition={{ 
-                                duration: 3, 
-                                repeat: Infinity, 
+                              transition={{
+                                duration: 3,
+                                repeat: Infinity,
                                 repeatDelay: 4,
-                                ease: "easeInOut" 
+                                ease: "easeInOut"
                               }}
                               className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12"
                             />

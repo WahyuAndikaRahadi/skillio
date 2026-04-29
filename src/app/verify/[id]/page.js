@@ -12,7 +12,7 @@ export async function generateMetadata({ params }) {
       category: true,
     },
   });
-// ... (rest of metadata logic remains same)
+
   if (!data) return { title: "Certificate Not Found | Skillio" };
 
   const name = data.user.name || "Peserta Skillio";
@@ -60,7 +60,6 @@ export default async function VerifyPage({ params }) {
     notFound();
   }
 
-  // Security Check: Only show if status is 'completed'
   if (certificate.status !== "completed") {
     return (
       <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
@@ -80,7 +79,6 @@ export default async function VerifyPage({ params }) {
     );
   }
 
-  // Formatting data for client component
   const certData = {
     id: certificate.id,
     participantName: certificate.user.name || "Anonymous User",
@@ -96,5 +94,4 @@ export default async function VerifyPage({ params }) {
   );
 }
 
-// Minimal imports needed for the error state
 import { Clock } from "lucide-react";

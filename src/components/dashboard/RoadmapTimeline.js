@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  CheckCircle2, Lock, PlayCircle, Trophy, BookOpen, 
+import {
+  CheckCircle2, Lock, PlayCircle, Trophy, BookOpen,
   ChevronDown, ExternalLink, Target, Calendar, ArrowRight, ArrowLeft, Star,
   Zap, Flame, Award, ShieldCheck, Sparkles, ChevronRight, ChevronLeft,
   X, HelpCircle, Loader2, XCircle, RotateCcw
@@ -19,7 +19,7 @@ const MySwal = withReactContent(Swal);
 const cleanAiText = (text) => {
   if (!text) return "";
   let cleaned = text.replace(/[#*]/g, "");
-  // Tambahkan baris baru sebelum angka (2., 3., dst) jika tidak ada
+
   cleaned = cleaned.replace(/([^\n])\s*(\d+\.)/g, "$1\n\n$2");
   return cleaned.trim();
 };
@@ -30,33 +30,32 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
   const [loadingDays, setLoadingDays] = useState(true);
   const [progress, setProgress] = useState(userRoadmap.progress || []);
   const [currentDay, setCurrentDay] = useState(userRoadmap.current_day || 1);
-  
+
   useEffect(() => {
     const fetchRoadmapJson = async () => {
       try {
         const res = await fetch(`/api/roadmaps/curriculum?slug=${userRoadmap.category.slug}`);
         const result = await res.json();
-        
+
         if (!res.ok) {
           setLoadingDays(false);
           return;
         }
 
-        const data = result.data; // this is the parsed content_json
+        const data = result.data;
 
-        // Assume JSON has structure: { title, description, days: [...] }
         if (data && Array.isArray(data.days)) {
-          setDays(data.days.map(d => ({ 
-            ...d, 
+          setDays(data.days.map(d => ({
+            ...d,
             day_number: d.day_number || d.day,
-            material: d.material || d.description 
+            material: d.material || d.description
           })));
         } else if (Array.isArray(data)) {
-          // Fallback if the JSON is just an array of days
-          setDays(data.map(d => ({ 
-            ...d, 
+
+          setDays(data.map(d => ({
+            ...d,
             day_number: d.day_number || d.day,
-            material: d.material || d.description 
+            material: d.material || d.description
           })));
         }
 
@@ -68,13 +67,11 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
     };
     fetchRoadmapJson();
   }, [userRoadmap.category.slug]);
-  
-  // View States
-  const [viewMode, setViewMode] = useState('roadmap'); // 'roadmap', 'theory', 'quiz'
+
+  const [viewMode, setViewMode] = useState('roadmap');
   const [selectedDay, setSelectedDay] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  
-  // Quiz Specific States
+
   const [quizzes, setQuizzes] = useState([]);
   const [quizLoading, setQuizLoading] = useState(false);
   const [quizIndex, setQuizIndex] = useState(0);
@@ -87,18 +84,16 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
   const [isToggling, setIsToggling] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
 
-  // Notify parent and store when detail view opens/closes
   useEffect(() => {
     const isImmersive = viewMode === 'theory' || viewMode === 'quiz';
     if (onToggleDetail) {
       onToggleDetail(isImmersive);
     }
     setIsImmersiveMode(isImmersive);
-    
-    // Cleanup on unmount
+
     return () => setIsImmersiveMode(false);
   }, [viewMode, onToggleDetail, setIsImmersiveMode]);
-  
+
   const getLastCompletionTime = () => {
     const sortedProgress = [...progress].sort((a, b) => b.day_number - a.day_number);
     const lastCompleted = sortedProgress.find(p => p.quiz_passed);
@@ -106,38 +101,32 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
   };
 
   const checkLockout = (dayNum) => {
-    // Hari pertama selalu terbuka jika belum ada progres
+
     if (dayNum === 1) return { isLocked: false };
 
-    // Ambil progres hari ini dan hari sebelumnya
     const dayProg = getDayProgress(dayNum);
     const prevDayProg = getDayProgress(dayNum - 1);
 
-    // Jika hari ini sudah lulus kuis, berarti sudah terbuka (untuk review)
     if (dayProg.quiz_passed) return { isLocked: false };
 
-    // Jika hari sebelumnya BELUM lulus kuis, maka hari ini terkunci
     if (!prevDayProg.quiz_passed) return { isLocked: true, reason: "Selesaikan misi sebelumnya" };
 
-    // Jika hari sebelumnya SUDAH lulus, cek apakah sudah berganti hari (kalender)
     const p = progress.find(item => item.day_number === dayNum - 1);
     if (p && p.completed_at) {
       const lastCompletedAt = new Date(p.completed_at);
       const now = new Date();
-      
-      // Buat objek tanggal untuk membandingkan hari saja
+
       const lastDate = new Date(lastCompletedAt);
       lastDate.setHours(0, 0, 0, 0);
-      
+
       const todayDate = new Date(now);
       todayDate.setHours(0, 0, 0, 0);
-      
-      // Jika hari ini masih sama dengan hari terakhir selesai, maka kunci
+
       if (todayDate.getTime() <= lastDate.getTime()) {
         const nextMidnight = new Date(todayDate);
         nextMidnight.setDate(nextMidnight.getDate() + 1);
         nextMidnight.setHours(0, 0, 0, 0);
-        
+
         return { isLocked: true, reason: "Locked", unlockAt: nextMidnight };
       }
     }
@@ -160,17 +149,17 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
     }, 1000);
     return () => clearInterval(timer);
   }, [progress, currentDay]);
-  
+
   const [expandedContent, setExpandedContent] = useState({});
   const [isExpanding, setIsExpanding] = useState(false);
 
   useEffect(() => {
     if (selectedDay) {
-      // Jika ekspansi sudah ada di JSON (dari cache server), langsung gunakan
+
       if (selectedDay.expansion && !expandedContent[selectedDay.day_number]) {
         setExpandedContent(prev => ({ ...prev, [selectedDay.day_number]: selectedDay.expansion }));
-      } 
-      // Jika belum ada di JSON dan belum ada di state lokal, baru panggil API
+      }
+
       else if (!expandedContent[selectedDay.day_number] && !isExpanding) {
         handleExpandMaterial();
       }
@@ -197,8 +186,8 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
       if (dayIdx !== -1) {
         const currentCompleted = Array.isArray(updated[dayIdx].completed_tasks) ? updated[dayIdx].completed_tasks : [];
         const isCurrentlyDone = currentCompleted.includes(taskId);
-        updated[dayIdx] = { 
-          ...updated[dayIdx], 
+        updated[dayIdx] = {
+          ...updated[dayIdx],
           completed_tasks: isCurrentlyDone ? currentCompleted.filter(id => id !== taskId) : [...currentCompleted, taskId]
         };
       } else {
@@ -235,11 +224,11 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
       const res = await fetch("/api/roadmap/day/expand", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           user_roadmap_id: userRoadmap.id,
-          day_number: selectedDay.day_number, 
-          title: selectedDay.title, 
-          material: selectedDay.material 
+          day_number: selectedDay.day_number,
+          title: selectedDay.title,
+          material: selectedDay.material
         })
       });
       const data = await res.json();
@@ -253,12 +242,11 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
     }
   };
 
-  // ═══ START QUIZ FLOW ═══
   const handleStartQuiz = async () => {
     if (!selectedDay) return;
     setQuizLoading(true);
     try {
-      // Because we use JSON, quizzes are directly available on selectedDay
+
       const quizArray = selectedDay.quizzes || [];
       setQuizzes(quizArray);
       setQuizIndex(0);
@@ -298,28 +286,27 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
     } else {
       setQuizFinished(true);
       const finalScore = Math.round((score / quizzes.length) * 100);
-      
+
       const isPassed = finalScore >= 60;
-      
-      // Optimistic Update: Only mark as passed if they actually passed
+
       const now = new Date().toISOString();
       setProgress(prev => {
         const updated = [...prev];
         const idx = updated.findIndex(p => p.day_number === selectedDay.day_number);
         if (idx !== -1) {
-          updated[idx] = { 
-            ...updated[idx], 
-            quiz_passed: updated[idx].quiz_passed || isPassed, 
+          updated[idx] = {
+            ...updated[idx],
+            quiz_passed: updated[idx].quiz_passed || isPassed,
             quiz_score: Math.max(updated[idx].quiz_score || 0, finalScore),
-            completed_at: now 
+            completed_at: now
           };
         } else {
-          updated.push({ 
-            day_number: selectedDay.day_number, 
-            quiz_passed: isPassed, 
+          updated.push({
+            day_number: selectedDay.day_number,
+            quiz_passed: isPassed,
             quiz_score: finalScore,
-            completed_at: now, 
-            completed_tasks: [] 
+            completed_at: now,
+            completed_tasks: []
           });
         }
         return updated;
@@ -334,13 +321,13 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
         const res = await fetch("/api/quiz/complete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            user_roadmap_id: userRoadmap.id, 
-            day_number: selectedDay.day_number, 
-            score: finalScore 
+          body: JSON.stringify({
+            user_roadmap_id: userRoadmap.id,
+            day_number: selectedDay.day_number,
+            score: finalScore
           })
         });
-        // Jika berhasil, refresh stats global
+
         if (res.ok) {
            await refreshStats();
         } else {
@@ -354,7 +341,6 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
     }
   };
 
-  // ═══ RENDER QUIZ VIEW ═══
   const renderQuizView = () => {
     if (quizFinished) {
       const finalScore = Math.round((score / quizzes.length) * 100);
@@ -372,7 +358,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
              </div>
              <h2 className="text-4xl font-black text-slate-900 mb-3">Misi Selesai!</h2>
              <p className="text-slate-500 font-bold mb-6">Skor Anda: {finalScore}/100</p>
-             
+
              <div className="flex flex-col gap-3 mb-10">
                 <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">XP Didapatkan</p>
@@ -380,7 +366,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                 </div>
 
                 {isPassed && (
-                  <button 
+                  <button
                     onClick={async () => {
                       const result = await MySwal.fire({
                         title: '<span class="font-black text-slate-900">Bagikan ke Komunitas?</span>',
@@ -456,11 +442,11 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
         </div>
         <div className="max-w-5xl mx-auto w-full flex-grow flex flex-col justify-start py-8">
           <AnimatePresence mode="wait">
-            <motion.div 
-              key={quizIndex} 
-              initial={{ opacity: 0, y: 10 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              exit={{ opacity: 0, y: -10 }} 
+            <motion.div
+              key={quizIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               className="space-y-8"
             >
               <div className="space-y-4">
@@ -477,36 +463,36 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                   const isSelected = selectedAnswer === option;
                   const isAnsCorrect = isSubmitted && option === currentQuiz.correct_option;
                   const isAnsWrong = isSubmitted && isSelected && selectedAnswer !== currentQuiz.correct_option;
-                  
+
                   return (
-                    <button 
-                      key={index} 
-                      disabled={isSubmitted} 
-                      onClick={() => setSelectedAnswer(option)} 
+                    <button
+                      key={index}
+                      disabled={isSubmitted}
+                      onClick={() => setSelectedAnswer(option)}
                       className={cn(
-                        "flex items-center justify-between p-5 md:p-6 rounded-3xl border-2 transition-all text-left group cursor-pointer", 
-                        isSelected && !isSubmitted && "border-skillio-500 bg-skillio-50/30 shadow-md", 
-                        isAnsCorrect && "border-emerald-500 bg-emerald-50/50", 
-                        isAnsWrong && "border-red-500 bg-red-50/50", 
+                        "flex items-center justify-between p-5 md:p-6 rounded-3xl border-2 transition-all text-left group cursor-pointer",
+                        isSelected && !isSubmitted && "border-skillio-500 bg-skillio-50/30 shadow-md",
+                        isAnsCorrect && "border-emerald-500 bg-emerald-50/50",
+                        isAnsWrong && "border-red-500 bg-red-50/50",
                         !isSelected && !isSubmitted && "border-slate-100 bg-white hover:border-skillio-200"
                       )}
                     >
                       <span className={cn(
-                        "font-bold text-base md:text-lg transition-colors", 
-                        isSelected && !isSubmitted ? "text-skillio-600" : "text-slate-700", 
-                        isAnsCorrect && "text-emerald-700", 
+                        "font-bold text-base md:text-lg transition-colors",
+                        isSelected && !isSubmitted ? "text-skillio-600" : "text-slate-700",
+                        isAnsCorrect && "text-emerald-700",
                         isAnsWrong && "text-red-700"
                       )}>
                         {option}
                       </span>
                       <div className={cn(
-                        "w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0", 
-                        isAnsCorrect ? "bg-emerald-500 border-emerald-500 text-white" : 
+                        "w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0",
+                        isAnsCorrect ? "bg-emerald-500 border-emerald-500 text-white" :
                         isAnsWrong ? "bg-red-500 border-red-500 text-white" :
                         isSelected ? "bg-skillio-500 border-skillio-500 text-white" : "border-slate-200"
                       )}>
-                         {isAnsCorrect ? <CheckCircle2 size={14} /> : 
-                          isAnsWrong ? <XCircle size={14} /> : 
+                         {isAnsCorrect ? <CheckCircle2 size={14} /> :
+                          isAnsWrong ? <XCircle size={14} /> :
                           isSelected ? <div className="w-1.5 h-1.5 bg-white rounded-full" /> : null}
                       </div>
                     </button>
@@ -516,9 +502,9 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
 
               <AnimatePresence>
                 {isSubmitted && (
-                  <motion.div 
-                    initial={{ height: 0, opacity: 0 }} 
-                    animate={{ height: "auto", opacity: 1 }} 
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
                     className="pt-4"
                   >
                      <div className="bg-white border border-slate-100 rounded-[32px] shadow-xl shadow-slate-100/50 overflow-hidden">
@@ -554,13 +540,10 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
     );
   };
 
-
-  // ═══ THEORY DETAIL VIEW ═══
   const renderDayDetail = () => {
     if (!selectedDay) return null;
     const dayProg = getDayProgress(selectedDay.day_number);
-    
-    // Perbaikan: Gunakan logika ID yang sama dengan di render loop (task.id || taskIdx)
+
     const allTasksDone = selectedDay.tasks?.length > 0 && selectedDay.tasks.every((t, idx) => {
       const taskId = t.id || t.order_number || idx.toString();
       return dayProg.completed_tasks.includes(taskId);
@@ -598,10 +581,10 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                       <div className="bg-gradient-to-r from-skillio-600 to-skillio-500 p-5 md:p-6 flex items-center justify-between">
                          <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-white/20 rounded-2xl backdrop-blur-md flex items-center justify-center overflow-hidden border border-white/30">
-                               <img 
-                                 src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=ua&backgroundColor=b6e3f4" 
-                                 alt="AI Mentor" 
-                                 className="w-full h-full object-cover scale-110" 
+                               <img
+                                 src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=ua&backgroundColor=b6e3f4"
+                                 alt="AI Mentor"
+                                 className="w-full h-full object-cover scale-110"
                                />
                             </div>
                             <div>
@@ -682,10 +665,10 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                 <div className="space-y-2 max-w-lg">
                    <h3 className="text-2xl font-black text-slate-900">{dayProg.quiz_passed ? "Tingkatkan Skor?" : "Siap untuk Kuis?"}</h3>
                    <p className="text-sm text-slate-500 font-medium leading-relaxed px-4">
-                     {dayProg.quiz_passed 
-                       ? "Kamu sudah lulus misi ini. Coba lagi untuk hasil sempurna!" 
-                       : allTasksDone 
-                         ? "Semua materi selesai. Waktunya mengunci progresmu." 
+                     {dayProg.quiz_passed
+                       ? "Kamu sudah lulus misi ini. Coba lagi untuk hasil sempurna!"
+                       : allTasksDone
+                         ? "Semua materi selesai. Waktunya mengunci progresmu."
                          : "Selesaikan semua tugas praktik dulu ya agar pemahamanmu maksimal."}
                    </p>
                 </div>
@@ -716,17 +699,17 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                 )}
 
                 <div className="w-full max-w-sm pt-2">
-                   <button 
-                      onClick={handleStartQuiz} 
-                      disabled={(!allTasksDone && !dayProg.quiz_passed) || quizLoading} 
+                   <button
+                      onClick={handleStartQuiz}
+                      disabled={(!allTasksDone && !dayProg.quiz_passed) || quizLoading}
                       className={cn(
-                        "w-full py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 cursor-pointer", 
+                        "w-full py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 cursor-pointer",
                         (allTasksDone || dayProg.quiz_passed) ? "bg-skillio-600 text-white hover:scale-105 shadow-xl shadow-skillio-900/20" : "bg-slate-200 text-slate-400 cursor-not-allowed"
                       )}
                     >
                       {quizLoading ? <Loader2 className="animate-spin" size={24} /> : (
                         <>
-                          <PlayCircle size={24} /> 
+                          <PlayCircle size={24} />
                           {dayProg.quiz_passed ? "Ulangi Kuis" : "Mulai Kuis"}
                         </>
                       )}
@@ -791,7 +774,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
             <div className="lg:col-span-8 relative py-10">
               <div className="absolute left-8 md:left-1/2 top-0 bottom-0 border-l-[3px] border-dashed border-slate-200 md:-translate-x-1/2 z-0" />
               <div className="space-y-6 md:space-y-12">
-            {/* Certificate Claim Banner — Simple & Clean */}
+            {}
             {(completedDaysCount >= 25 || (days.length > 0 && currentDay > days.length)) && (
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
@@ -817,7 +800,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                       });
                       if (res.ok) {
                         window.open(`/verify/${userRoadmap.id}`, "_blank");
-                        // Refresh page to show NewRoadmapBanner if they are on /belajar
+
                         window.location.reload();
                       }
                     } catch (err) {
@@ -841,44 +824,44 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                    return (
                      <div key={day.day_number || idx} className="relative w-full flex items-center">
                         <div className={cn("w-full flex md:w-1/2 pl-16 md:pl-0", isEven ? "md:justify-end md:pr-12" : "md:absolute md:right-0 md:justify-start md:pl-12")}>
-                           <button 
+                           <button
                              onClick={() => {
                                if (!isLocked) {
-                                 setSelectedDay(day); 
+                                 setSelectedDay(day);
                                  setViewMode('theory');
                                  window.scrollTo(0,0);
                                }
-                             }} 
-                             disabled={isLocked} 
+                             }}
+                             disabled={isLocked}
                              className={cn(
-                               "group relative w-full max-w-sm p-5 md:p-6 rounded-3xl border-2 transition-all text-left overflow-hidden", 
-                               isLocked 
-                                 ? "bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed" 
-                                 : isCompleted 
-                                   ? "bg-emerald-50 border-emerald-100 hover:border-emerald-300 cursor-pointer" 
+                               "group relative w-full max-w-sm p-5 md:p-6 rounded-3xl border-2 transition-all text-left overflow-hidden",
+                               isLocked
+                                 ? "bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed"
+                                 : isCompleted
+                                   ? "bg-emerald-50 border-emerald-100 hover:border-emerald-300 cursor-pointer"
                                    : "bg-white border-skillio-100 hover:border-skillio-300 hover:shadow-xl hover:shadow-skillio-100 cursor-pointer"
                              )}
                            >
                              {isCurrent && !isLocked && <div className="absolute inset-0 bg-gradient-to-br from-skillio-50 to-transparent pointer-events-none" />}
                              <div className="relative z-10 flex items-start gap-4">
                                 <div className={cn(
-                                  "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 font-black text-xl transition-transform", 
-                                  isCompleted ? "bg-emerald-500 text-white" : 
-                                  isLocked ? "bg-slate-200 text-slate-400" : 
+                                  "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 font-black text-xl transition-transform",
+                                  isCompleted ? "bg-emerald-500 text-white" :
+                                  isLocked ? "bg-slate-200 text-slate-400" :
                                   "bg-skillio-100 text-skillio-600 group-hover:scale-110 group-hover:bg-skillio-500 group-hover:text-white"
                                 )}>
                                   {isCompleted ? <CheckCircle2 size={24} /> : isLocked ? <Lock size={20} /> : isMilestone ? <Star size={24} /> : day.day_number}
                                 </div>
                                 <div>
                                    <p className={cn(
-                                     "text-[10px] font-black uppercase tracking-widest mb-1", 
-                                     isCompleted ? "text-emerald-500" : 
+                                     "text-[10px] font-black uppercase tracking-widest mb-1",
+                                     isCompleted ? "text-emerald-500" :
                                      isLocked ? "text-slate-400" : "text-skillio-500"
                                    )}>
                                       {isCompleted ? "Selesai" : isLocked ? "Terkunci" : "Terbuka"}
                                    </p>
                                    <h4 className={cn(
-                                     "text-base md:text-lg font-black leading-tight", 
+                                     "text-base md:text-lg font-black leading-tight",
                                      isLocked ? "text-slate-300" : "text-slate-900"
                                    )}>
                                      {day.title}
@@ -896,8 +879,8 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
             <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
                 <div className={cn(
                   "rounded-3xl p-6 shadow-2xl transition-all duration-500",
-                  !stats.isActiveToday 
-                    ? "bg-gradient-to-br from-blue-400 to-blue-500 border border-white/20" 
+                  !stats.isActiveToday
+                    ? "bg-gradient-to-br from-blue-400 to-blue-500 border border-white/20"
                     : "bg-gradient-to-br from-skillio-500 via-skillio-600 to-blue-700 shadow-skillio-500/30"
                 )}>
                    <div className="flex items-center justify-between mb-8">
@@ -907,7 +890,7 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                            !stats.isActiveToday ? "bg-white/10 border-white/20" : "bg-white/10 border-white/20"
                          )}>
                             <Flame className={cn(
-                              "transition-all", 
+                              "transition-all",
                               !stats.isActiveToday ? "text-white/30 fill-white/20" : "text-orange-400 fill-orange-400 animate-pulse"
                             )} size={20} />
                          </div>
@@ -934,12 +917,12 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                        "w-full h-2 rounded-full overflow-hidden",
                        !stats.isActiveToday ? "bg-slate-700" : "bg-white/10"
                      )}>
-                       <div 
+                       <div
                          className={cn(
                            "h-full rounded-full transition-all duration-1000",
                            !stats.isActiveToday ? "bg-slate-600" : "bg-gradient-to-r from-skillio-500 to-teal-400"
-                         )} 
-                         style={{ width: `${(completedDaysCount / 30) * 100}%` }} 
+                         )}
+                         style={{ width: `${(completedDaysCount / 30) * 100}%` }}
                        />
                      </div>
                    </div>
@@ -957,25 +940,25 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
                            <p className="text-[10px] font-black text-skillio-600 uppercase tracking-widest mb-1">Hari {currentDayData.day_number}</p>
                            <p className="font-bold text-slate-800 leading-snug">{currentDayData.title}</p>
                         </div>
-                        
+
                         {(() => {
                            const lock = checkLockout(currentDayData.day_number);
                            const isLocked = lock.isLocked;
-                           
+
                            return (
-                              <button 
-                                 onClick={() => { 
+                              <button
+                                 onClick={() => {
                                     if (!isLocked) {
-                                       setSelectedDay(currentDayData); 
-                                       setViewMode('theory'); 
-                                       window.scrollTo(0,0); 
+                                       setSelectedDay(currentDayData);
+                                       setViewMode('theory');
+                                       window.scrollTo(0,0);
                                     }
-                                 }} 
+                                 }}
                                  disabled={isLocked}
                                  className={cn(
                                     "w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer",
-                                    isLocked 
-                                       ? "bg-slate-100 text-slate-400 cursor-not-allowed opacity-60" 
+                                    isLocked
+                                       ? "bg-slate-100 text-slate-400 cursor-not-allowed opacity-60"
                                        : "bg-gradient-to-r from-skillio-500 to-blue-600 text-white hover:shadow-skillio-500/40 shadow-lg shadow-skillio-500/20"
                                  )}
                               >
@@ -1029,7 +1012,6 @@ const RoadmapTimeline = ({ roadmap, userRoadmap, onToggleDetail }) => {
 
 export default RoadmapTimeline;
 
-// Add this to your global CSS or keep it here if your framework allows
 const scrollbarStyles = `
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

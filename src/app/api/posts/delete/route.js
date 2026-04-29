@@ -21,7 +21,6 @@ export async function POST(req) {
       return NextResponse.json({ message: "Post not found" }, { status: 404 });
     }
 
-    // Only Admin or the post owner can delete it
     if (post.user_id !== session.user.id && session.user.role !== "admin") {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }

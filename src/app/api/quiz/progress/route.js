@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 
-// GET progress (Resume)
 export async function GET() {
   try {
     const session = await auth();
@@ -18,7 +17,6 @@ export async function GET() {
   }
 }
 
-// POST progress (Save)
 export async function POST(req) {
   try {
     const session = await auth();
@@ -50,7 +48,6 @@ export async function POST(req) {
   }
 }
 
-// DELETE progress (Clear when finished)
 export async function DELETE() {
   try {
     const session = await auth();

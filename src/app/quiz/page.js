@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PHASE_1_QUESTIONS } from "@/constants/quiz";
-import { 
-  Sparkles, ArrowRight, ArrowLeft, BrainCircuit, 
+import {
+  Sparkles, ArrowRight, ArrowLeft, BrainCircuit,
   CheckCircle2, RotateCcw, Target, ShieldCheck,
   Zap, Compass, Loader2
 } from "lucide-react";
@@ -35,7 +35,6 @@ const QuizPage = () => {
     loadProgress();
   }, []);
 
-  // Save to LocalStorage whenever critical state changes
   useEffect(() => {
     if (answers.length > 0) {
       const stateToSave = {
@@ -56,7 +55,7 @@ const QuizPage = () => {
 
   const loadProgress = async () => {
     try {
-      // 1. Try Loading from Server
+
       let serverData = null;
       try {
         const response = await fetch("/api/quiz/progress");
@@ -65,13 +64,11 @@ const QuizPage = () => {
         console.error("Server progress load failed, falling back to local storage");
       }
 
-      // 2. Check Local Storage
       const localDataRaw = localStorage.getItem(LS_KEY);
       const localData = localDataRaw ? JSON.parse(localDataRaw) : null;
 
-      // 3. Compare and pick the most advanced progress
       let finalData = serverData;
-      
+
       if (localData && (!serverData || localData.answers.length > serverData.answers.length)) {
         finalData = localData;
       }
@@ -109,10 +106,10 @@ const QuizPage = () => {
     if (!selectedOption) return;
     const newAnswers = [...answers];
     const existingIdx = newAnswers.findIndex(a => a.phase === phase && a.index === currentQuestion);
-    const answerObj = { 
+    const answerObj = {
       phase, index: currentQuestion,
-      question: questions[currentQuestion].question || questions[currentQuestion].question_text, 
-      answer: selectedOption 
+      question: questions[currentQuestion].question || questions[currentQuestion].question_text,
+      answer: selectedOption
     };
     if (existingIdx !== -1) newAnswers[existingIdx] = answerObj;
     else newAnswers.push(answerObj);
@@ -122,7 +119,6 @@ const QuizPage = () => {
     const nextPhase = isLastInPhase ? phase + 1 : phase;
     const nextIndex = isLastInPhase ? 0 : currentQuestion + 1;
 
-    // Save to server (async, don't block)
     fetch("/api/quiz/progress", {
       method: "POST",
       body: JSON.stringify({
@@ -171,7 +167,6 @@ const QuizPage = () => {
   if (isLoadingProgress) return null;
   const currentQuestionData = questions[currentQuestion];
 
-  // ═══ STATES ═══
   if (showResumeModal) {
     return (
       <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6">
@@ -202,10 +197,10 @@ const QuizPage = () => {
                 <div className="w-16 h-16 rounded-full border-[3px] border-slate-100 border-t-skillio-600 animate-spin" />
              )}
           </div>
-          
+
           <h2 className="text-2xl font-black text-slate-900 mb-3">{isFinished ? "Analisis Selesai!" : "AI Menganalisis..."}</h2>
           <p className="text-sm text-slate-500 font-medium mb-8 leading-relaxed">{isFinished ? "Profil profesional Anda telah siap dihitung. Lihat hasilnya sekarang." : "Mentor AI sedang memproses jawaban Anda untuk tahap berikutnya."}</p>
-          
+
           {isFinished && (
             <button onClick={() => router.push("/quiz/result")} className="w-full bg-skillio-600 text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 shadow-xl shadow-skillio-600/10 active:scale-[0.98] transition-all">
               Buka Rekomendasi <ArrowRight size={18} />
@@ -225,8 +220,8 @@ const QuizPage = () => {
 
       <div className="w-full px-6 py-10 md:py-14">
         <div className="max-w-3xl mx-auto space-y-10 md:space-y-14">
-          
-          {/* Header - Compact */}
+
+          {}
           <div className="space-y-5">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div className="space-y-2">
@@ -251,7 +246,7 @@ const QuizPage = () => {
               </div>
             </div>
             <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-              <motion.div 
+              <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 1, ease: "circOut" }}
@@ -260,7 +255,7 @@ const QuizPage = () => {
             </div>
           </div>
 
-          {/* Question Area */}
+          {}
           <AnimatePresence mode="wait">
             <motion.div
               key={`${phase}-${currentQuestion}`}
@@ -288,8 +283,8 @@ const QuizPage = () => {
                       onClick={() => setSelectedOption(option)}
                       className={cn(
                         "group relative flex flex-col items-start p-5 md:p-6 rounded-2xl border transition-all duration-300 text-left cursor-pointer",
-                        isSelected 
-                          ? "border-skillio-500 bg-skillio-50/20 shadow-lg scale-[1.01] z-10" 
+                        isSelected
+                          ? "border-skillio-500 bg-skillio-50/20 shadow-lg scale-[1.01] z-10"
                           : "border-slate-100 bg-white/50 hover:border-slate-200 hover:bg-white"
                       )}
                     >
@@ -315,7 +310,7 @@ const QuizPage = () => {
                 })}
               </div>
 
-              {/* Navigation */}
+              {}
               <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-slate-50">
                 <button
                    onClick={handlePrevious}
@@ -325,19 +320,19 @@ const QuizPage = () => {
                    <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                    Sebelumnya
                  </button>
-                 
+
                  <button
                    onClick={handleNext}
                    disabled={!selectedOption}
                    className={cn(
                      "w-full md:w-auto flex items-center justify-center gap-3 px-8 py-3.5 rounded-xl font-black text-base transition-all",
-                     selectedOption 
-                       ? "bg-skillio-600 text-white shadow-xl shadow-skillio-600/10 hover:bg-skillio-700 active:scale-[0.98]" 
+                     selectedOption
+                       ? "bg-skillio-600 text-white shadow-xl shadow-skillio-600/10 hover:bg-skillio-700 active:scale-[0.98]"
                        : "bg-slate-100 text-slate-300 cursor-not-allowed"
                    )}
                  >
-                   {currentQuestion === questions.length - 1 
-                     ? (phase === 3 ? "Selesai" : "Berikutnya") 
+                   {currentQuestion === questions.length - 1
+                     ? (phase === 3 ? "Selesai" : "Berikutnya")
                      : "Lanjut"}
                    <ArrowRight size={18} className={cn("transition-transform", selectedOption ? "group-hover:translate-x-1" : "")} />
                  </button>

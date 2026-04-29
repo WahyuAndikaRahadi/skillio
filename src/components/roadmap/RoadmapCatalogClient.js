@@ -3,15 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { 
-  Search, CheckCircle2, ChevronRight, BookOpen, Loader2, Code2, 
-  Palette, Database, BarChart3, Smartphone, Zap, Sparkles, 
+import {
+  Search, CheckCircle2, ChevronRight, BookOpen, Loader2, Code2,
+  Palette, Database, BarChart3, Smartphone, Zap, Sparkles,
   Star, Target, Rocket, MousePointer2, Briefcase
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-// Category icon mapping and color themes
 const categoryThemes = {
   web: { icon: Code2, gradient: "from-blue-600 to-cyan-500", lightGradient: "from-blue-50 to-cyan-50", accent: "text-blue-600", bgAccent: "bg-blue-100" },
   design: { icon: Palette, gradient: "from-purple-600 to-pink-500", lightGradient: "from-purple-50 to-pink-50", accent: "text-purple-600", bgAccent: "bg-purple-100" },
@@ -59,8 +58,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
     if (!result.isConfirmed) return;
 
     setLoadingCategory(category.id);
-    
-    // Show immersive loading overlay
+
     Swal.fire({
       title: 'Mempersiapkan Masa Depanmu...',
       html: `
@@ -131,8 +129,8 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
 
   return (
     <div className="min-h-screen bg-slate-50/50">
-      
-      {/* ═══ PREMIUM SHOWROOM HEADER (Matched with Lencana Style) ═══ */}
+
+      {}
       <div className="relative pt-6 px-6 md:px-10 mb-8 md:mb-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -140,38 +138,38 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative group"
         >
-          {/* Main Card */}
+          {}
           <div className="relative overflow-hidden rounded-[50px] md:rounded-[70px] bg-gradient-to-br from-primary-blue to-blue-700 border border-blue-400/30 shadow-[0_20px_50px_rgba(59,130,246,0.3)]">
-            
-            {/* Immersive Animated Background */}
+
+            {}
             <div className="absolute inset-0 z-0">
                <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800" />
-               <motion.div 
-                 animate={{ 
+               <motion.div
+                 animate={{
                    scale: [1, 1.2, 1],
                    opacity: [0.3, 0.5, 0.3],
                    rotate: [0, 90, 0]
                  }}
                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                 className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl" 
+                 className="absolute -top-1/2 -left-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_70%)] blur-3xl"
                />
-               <motion.div 
-                 animate={{ 
+               <motion.div
+                 animate={{
                    scale: [1, 1.5, 1],
                    opacity: [0.2, 0.4, 0.2],
                    rotate: [0, -90, 0]
                  }}
                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                 className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)] blur-3xl" 
+                 className="absolute -bottom-1/2 -right-1/4 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)] blur-3xl"
                />
-               
-               {/* Pattern overlay */}
+
+               {}
                <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             </div>
 
             <div className="relative z-10 p-8 md:p-10 lg:p-12 flex flex-col lg:flex-row items-center gap-12">
-              
-              {/* Left Content */}
+
+              {}
               <div className="flex-1 text-center lg:text-left space-y-6">
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -195,7 +193,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                       Masa Depanmu
                     </span>
                   </motion.h1>
-                  
+
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -206,7 +204,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                   </motion.p>
                 </div>
 
-                <motion.div 
+                <motion.div
                    initial={{ opacity: 0, y: 20 }}
                    animate={{ opacity: 1, y: 0 }}
                    transition={{ delay: 0.6 }}
@@ -224,11 +222,11 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                 </motion.div>
               </div>
 
-              {/* Right Content - Visual Showcase */}
+              {}
               <div className="relative shrink-0 hidden md:block">
-                {/* Floating Elements Container */}
+                {}
                 <div className="relative w-64 h-64 md:w-80 md:h-80">
-                   {/* Main Icon (Central) */}
+                   {}
                    <motion.div
                      animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
                      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -240,7 +238,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                      </div>
                    </motion.div>
 
-                   {/* Orbital Icons */}
+                   {}
                    {[
                      { Icon: Code2, color: "text-blue-400", pos: "top-0 left-0", delay: 0 },
                      { Icon: Palette, color: "text-purple-400", pos: "top-8 right-0", delay: 1 },
@@ -249,7 +247,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                    ].map((item, i) => (
                      <motion.div
                        key={i}
-                       animate={{ 
+                       animate={{
                          y: [0, -10, 0],
                          rotate: [0, 10, 0],
                          scale: [1, 1.1, 1]
@@ -261,7 +259,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                      </motion.div>
                    ))}
 
-                   {/* Count Bubble */}
+                   {}
                    <motion.div
                      initial={{ scale: 0 }}
                      animate={{ scale: 1 }}
@@ -277,15 +275,15 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
             </div>
           </div>
 
-          {/* Decorative floating shapes outside card */}
+          {}
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-400/20 blur-[100px] rounded-full pointer-events-none" />
           <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-indigo-500/20 blur-[120px] rounded-full pointer-events-none" />
         </motion.div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 pb-20 relative z-10">
-        
-        {/* ═══ AI TALENT FINDER BANNER (Below Hero Card) ═══ */}
+
+        {}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -301,7 +299,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                 <h3 className="text-lg md:text-xl font-black text-slate-900 leading-tight">Ikuti kuis ini untuk temukan passion-mu!</h3>
              </div>
           </div>
-          <Link 
+          <Link
             href="/quiz"
             className="w-full md:w-auto px-10 py-4 md:py-4.5 bg-gradient-to-br from-primary-blue via-blue-600 to-blue-800 text-white rounded-[24px] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
           >
@@ -310,12 +308,12 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
         </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-12">
-          
-          {/* ═══ SIDE NAVIGATION (DOMAINS) ═══ */}
+
+          {}
           <div className="lg:w-72 shrink-0">
             <div className="sticky top-24 space-y-6">
-               
-                {/* New Search Location */}
+
+                {}
                <motion.div
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -372,9 +370,9 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                              </div>
                              <span className="truncate max-w-[140px]">{group.title}</span>
                           </div>
-                          
+
                           {isActive && (
-                            <motion.div 
+                            <motion.div
                               layoutId="activeTab"
                               className="absolute inset-0 bg-gradient-to-r from-primary-blue to-blue-700 z-0"
                             />
@@ -392,7 +390,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
             </div>
           </div>
 
-          {/* ═══ MAIN CATALOG CONTENT ═══ */}
+          {}
           <div className="flex-1 min-w-0">
             <AnimatePresence mode="wait">
               <motion.div
@@ -403,7 +401,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                 transition={{ duration: 0.4 }}
                 className="space-y-10"
               >
-                 {/* Domain Header */}
+                 {}
                  <div className="relative">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-1">
                        <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{activeDomain}</h2>
@@ -414,7 +412,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                     <p className="text-slate-500 font-medium text-lg max-w-2xl">{currentGroup?.description}</p>
                  </div>
 
-                 {/* Grid Catalog */}
+                 {}
                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
                   {filteredItems.map((category, idx) => {
                     const isActive = activeRoadmaps.some(r => r.category_id === category.id);
@@ -430,8 +428,8 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                         transition={{ delay: idx * 0.05 }}
                         className={cn(
                           "group relative bg-white border-2 rounded-[35px] p-7 transition-all duration-300 flex flex-col",
-                          isActive 
-                            ? "border-primary-blue ring-4 ring-primary-blue/5 shadow-2xl shadow-blue-500/10" 
+                          isActive
+                            ? "border-primary-blue ring-4 ring-primary-blue/5 shadow-2xl shadow-blue-500/10"
                             : "border-slate-100 hover:border-primary-blue/30 hover:shadow-2xl hover:shadow-slate-300/30"
                         )}
                       >
@@ -449,7 +447,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                               <Briefcase size={14} className="text-slate-400" />
                               <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Peluang Karir: Tinggi</span>
                            </div>
-                           
+
                            {activeRoadmaps.some(r => r.category_id === category.id) ? (
                              <Link href={`/belajar/${activeRoadmaps.find(r => r.category_id === category.id)?.id}`} className="flex items-center gap-2 text-primary-blue font-black text-sm hover:underline">
                                Lanjut Belajar <ChevronRight size={18} />
@@ -460,8 +458,8 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                                disabled={isLoading || activeRoadmaps.length >= 3}
                                className={cn(
                                  "flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all",
-                                 activeRoadmaps.length >= 3 
-                                   ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
+                                 activeRoadmaps.length >= 3
+                                   ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                                    : "bg-slate-50 text-slate-900 group-hover:bg-primary-blue group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-500/30"
                                )}
                              >
@@ -473,7 +471,7 @@ export default function RoadmapCatalogClient({ groupedCategories, activeRoadmaps
                     );
                   })}
 
-                  {/* Empty Search within Domain */}
+                  {}
                   {filteredItems.length === 0 && (
                     <div className="col-span-full py-20 text-center bg-white border-2 border-dashed border-slate-100 rounded-[40px]">
                        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">

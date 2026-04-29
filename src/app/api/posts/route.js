@@ -13,9 +13,9 @@ export async function GET(req) {
       include: {
         user: { select: { id: true, name: true, image: true, role: true } },
         category: { select: { id: true, name: true, icon: true } },
-        comments: { 
-          where: { parent_id: null }, // Only top-level
-          include: { 
+        comments: {
+          where: { parent_id: null },
+          include: {
             user: { select: { name: true, image: true, role: true } },
             replies: {
               include: {
@@ -61,7 +61,6 @@ export async function POST(req) {
       }
     });
 
-    // TRIGGER PUSHER: Real-time update for all users
     try {
       await pusherServer.trigger("community-feed", "new-post", post);
     } catch (pusherError) {

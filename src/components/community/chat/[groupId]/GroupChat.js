@@ -9,11 +9,10 @@ import { useSession } from "next-auth/react";
 import { UploadButton } from "@/lib/uploadthing";
 import Swal from "sweetalert2";
 
-// Ubah parameter dari { params } menjadi props biasa { groupId, onBack }
 export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
 
   const { data: session } = useSession();
-  
+
   const [group, setGroup] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -26,9 +25,9 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  
+
   const scrollRef = useRef(null);
-  
+
   const formatDateHeader = (date) => {
     const d = new Date(date);
     const today = new Date();
@@ -37,14 +36,13 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
 
     if (d.toDateString() === today.toDateString()) return "Hari Ini";
     if (d.toDateString() === yesterday.toDateString()) return "Kemarin";
-    
+
     return d.toLocaleDateString("id-ID", {
       day: "numeric",
       month: "long",
       year: "numeric"
     });
   };
-
 
   useEffect(() => {
     if (!groupId) return;
@@ -56,7 +54,6 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
           setGroup(groupData);
         }
 
-
         const msgRes = await fetch(`/api/community/groups/${groupId}/messages`);
         const msgData = await msgRes.json();
         if (msgRes.ok) setMessages(msgData);
@@ -67,7 +64,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
              text: "Anda bukan anggota grup ini!",
              confirmButtonColor: "#2563eb",
            });
-           onBack(); // Kembali ke list jika gagal
+           onBack();
         }
       } catch (err) {
         console.error("Error loading chat:", err);
@@ -80,7 +77,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
     if (pusherClient) {
       const channel = pusherClient.subscribe(`presence-group-${groupId}`);
       channel.bind("new-message", (data) => setMessages(prev => {
-        // Prevent duplicate: Pusher broadcasts to all subscribers including the sender
+
         if (prev.some(msg => msg.id === data.id)) return prev;
         return [...prev, data];
       }));
@@ -114,21 +111,21 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
   }
 
   return (
-    // Gunakan h-full agar pas di dalam flex container panel kanan CommunityPage
+
     <div className="flex w-full h-full overflow-hidden bg-transparent font-sans">
        <div className="flex-1 flex flex-col min-w-0 relative bg-[#f8fbfd]">
-          {/* Header Chat */}
+          {}
           <div onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="h-[76px] bg-white/90 backdrop-blur-md flex items-center justify-between px-6 cursor-pointer border-b border-[#dbe7f2] shrink-0 z-20">
              <div className="flex items-center gap-4">
-                 {/* Tombol Menu untuk membuka sidebar kategori di mobile */}
-                 <button 
-                   onClick={(e) => { e.stopPropagation(); onToggleSidebar(); }} 
+                 {}
+                 <button
+                   onClick={(e) => { e.stopPropagation(); onToggleSidebar(); }}
                    className="lg:hidden p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors text-[#1f547e] -ml-2"
                  >
                     <Menu size={20} />
                  </button>
 
-                 {/* Tombol Back untuk menutup chat dan kembali ke list */}
+                 {}
                  <button onClick={(e) => { e.stopPropagation(); onBack(); }} className="p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors text-[#1f547e]">
                     <ArrowLeft size={20} />
                  </button>
@@ -144,21 +141,20 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                 </div>
              </div>
              <div className="flex items-center gap-2 text-[#1f547e]">
-                <button 
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    setIsSidebarOpen(true); 
-                  }} 
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsSidebarOpen(true);
+                  }}
                   className="p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors"
                 >
                   <MoreHorizontal size={20} />
                 </button>
              </div>
 
-
           </div>
 
-          {/* Area Pesan */}
+          {}
           <div className="flex-1 overflow-y-auto relative custom-scrollbar">
             <div className="absolute inset-0 pointer-events-none opacity-40" style={{ backgroundImage: `linear-gradient(rgba(146, 183, 214, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(146, 183, 214, 0.15) 1px, transparent 1px)`, backgroundSize: '40px 40px' }}></div>
             <div ref={scrollRef} className="relative z-10 p-6 md:p-8 space-y-4 flex flex-col min-h-full justify-end">
@@ -167,8 +163,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                )}
                {messages.map((msg, index) => {
                  const isMe = msg.user_id === session?.user?.id;
-                 
-                 // Hitung apakah perlu menampilkan separator tanggal
+
                  const msgDate = new Date(msg.createdAt).toDateString();
                  const prevMsgDate = index > 0 ? new Date(messages[index - 1].createdAt).toDateString() : null;
                  const showDateSeparator = msgDate !== prevMsgDate;
@@ -187,20 +182,20 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                          </div>
                        </div>
                      )}
-                     
-                     <motion.div 
-                       initial={{ opacity: 0, y: 10 }} 
-                       animate={{ opacity: 1, y: 0 }} 
+
+                     <motion.div
+                       initial={{ opacity: 0, y: 10 }}
+                       animate={{ opacity: 1, y: 0 }}
                        className={cn("flex w-full", isMe ? "justify-end" : "justify-start")}
                      >
                         <div className={cn(
-                          "max-w-[85%] md:max-w-[70%] rounded-[24px] px-5 py-3.5 relative text-sm shadow-md transition-all", 
+                          "max-w-[85%] md:max-w-[70%] rounded-[24px] px-5 py-3.5 relative text-sm shadow-md transition-all",
                           msg.user.role === "admin"
                             ? isMe
                               ? "bg-[#2b6ea6] text-white rounded-br-sm border-2 border-white/40 ring-4 ring-white/10"
                               : "bg-white text-[#0d2133] rounded-bl-sm border-2 border-[#2b6ea6] ring-4 ring-[#2b6ea6]/10"
-                            : isMe 
-                              ? "bg-[#2b6ea6] text-white rounded-br-sm" 
+                            : isMe
+                              ? "bg-[#2b6ea6] text-white rounded-br-sm"
                               : "bg-white text-[#0d2133] rounded-bl-sm border border-[#dbe7f2]"
                         )}>
                            <div className={cn(
@@ -251,10 +246,10 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
             </div>
           </div>
 
-          {/* Attachment Preview Area */}
+          {}
           <AnimatePresence>
             {showAttachments && (
-              <motion.div 
+              <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
@@ -264,7 +259,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                   <p className="text-[10px] font-black uppercase tracking-widest text-[#92b7d6]">Lampiran</p>
                   <button onClick={() => setShowAttachments(false)} className="text-[#92b7d6] hover:text-[#e11d48]"><X size={14} /></button>
                 </div>
-                
+
                 <div className="flex gap-4">
                   {!imageUrl && !fileUrl ? (
                     <>
@@ -289,7 +284,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="flex-1 group relative">
                         <div className="w-full h-24 bg-[#f3f7fb] rounded-2xl border-2 border-dashed border-[#dbe7f2] flex flex-col items-center justify-center gap-2 group-hover:bg-[#ebf2f8] group-hover:border-[#2b6ea6]/30 transition-all cursor-pointer">
                           <FileText size={24} className="text-[#92b7d6] group-hover:text-[#2b6ea6]" />
@@ -297,8 +292,8 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                         </div>
                         <div className="absolute inset-0 opacity-0 cursor-pointer">
                           <UploadButton
-                            endpoint="imageUploader" // Using imageUploader for simplicity, or change if you have a specific file endpoint
-                            onClientUploadComplete={(res) => { 
+                            endpoint="imageUploader"
+                            onClientUploadComplete={(res) => {
                               if (res?.[0]) {
                                 setFileUrl(res[0].url);
                                 setFileName(res[0].name);
@@ -342,40 +337,40 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
             )}
           </AnimatePresence>
 
-          {/* Input Chat */}
+          {}
           <div className="bg-white border-t border-[#dbe7f2] px-4 py-4 flex items-end gap-3 z-30 shrink-0">
-             <button 
-               type="button" 
-               onClick={() => setShowAttachments(!showAttachments)} 
+             <button
+               type="button"
+               onClick={() => setShowAttachments(!showAttachments)}
                className={cn(
-                 "p-3 rounded-2xl transition-all shrink-0 mb-0.5", 
+                 "p-3 rounded-2xl transition-all shrink-0 mb-0.5",
                  showAttachments || imageUrl || fileUrl ? "bg-[#2b6ea6] text-white" : "bg-[#f3f7fb] text-[#1f547e] hover:bg-[#dbe7f2]"
                )}
              >
                <Paperclip size={22} />
              </button>
              <form onSubmit={handleSendMessage} className="flex-1 flex gap-3 relative">
-                <textarea 
-                  value={newMessage} 
-                  onChange={(e) => { 
-                    setNewMessage(e.target.value); 
-                    e.target.style.height = 'auto'; 
-                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; 
-                  }} 
-                  onKeyDown={(e) => { 
-                    if (e.key === 'Enter' && !e.shiftKey) { 
-                      e.preventDefault(); 
-                      handleSendMessage(e); 
-                    } 
-                  }} 
-                  placeholder="Ketik pesan..." 
-                  className="w-full bg-[#f8fbfd] border border-[#dbe7f2] rounded-[20px] pl-5 pr-14 py-3.5 text-sm text-[#0d2133] focus:outline-none focus:ring-2 focus:ring-[#2b6ea6]/20 resize-none overflow-y-auto custom-scrollbar" 
-                  rows={1} 
-                  style={{ minHeight: '52px' }} 
+                <textarea
+                  value={newMessage}
+                  onChange={(e) => {
+                    setNewMessage(e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage(e);
+                    }
+                  }}
+                  placeholder="Ketik pesan..."
+                  className="w-full bg-[#f8fbfd] border border-[#dbe7f2] rounded-[20px] pl-5 pr-14 py-3.5 text-sm text-[#0d2133] focus:outline-none focus:ring-2 focus:ring-[#2b6ea6]/20 resize-none overflow-y-auto custom-scrollbar"
+                  rows={1}
+                  style={{ minHeight: '52px' }}
                 />
-                <button 
-                  type="submit" 
-                  disabled={(!newMessage.trim() && !imageUrl && !fileUrl) || isSending} 
+                <button
+                  type="submit"
+                  disabled={(!newMessage.trim() && !imageUrl && !fileUrl) || isSending}
                   className={cn(
                     "absolute right-2 bottom-1.5 p-2.5 bg-[#2b6ea6] text-white rounded-xl hover:bg-[#1f547e] transition-all",
                     ((!newMessage.trim() && !imageUrl && !fileUrl) || isSending) ? "opacity-40 cursor-not-allowed" : "opacity-100"
@@ -387,7 +382,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
           </div>
        </div>
 
-       {/* Panel Samping Chat (Info Grup) */}
+       {}
        {isSidebarOpen && (
          <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 340, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="flex-shrink-0 border-l border-[#dbe7f2] bg-white flex flex-col z-40 overflow-hidden shadow-[-10px_0_30px_rgba(23,61,92,0.03)]">
            <div className="h-[76px] bg-white flex items-center px-6 gap-4 border-b border-[#dbe7f2] shrink-0">
@@ -403,7 +398,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                     ) : (
                       group?.name?.[0]
                     )}
-                    
+
                     {isUploading && (
                       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
                          <Loader2 className="w-8 h-8 text-white animate-spin" />
@@ -411,7 +406,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                     )}
                   </div>
 
-                  {/* Edit Bubble on Avatar */}
+                  {}
                   {(group?.created_by === session?.user?.id || session?.user?.role === "admin") && (
                     <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary-blue text-white rounded-2xl flex items-center justify-center shadow-lg border-4 border-white cursor-pointer hover:scale-110 transition-all overflow-hidden">
                        <ImageIcon size={18} />
@@ -423,8 +418,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                               const url = res?.[0]?.url;
                               if (url) {
                                 const Swal = (await import("sweetalert2")).default;
-                                
-                                // Show premium loading alert
+
                                 Swal.fire({
                                   title: 'Menyinkronkan...',
                                   text: 'Foto grup sedang diperbarui.',
@@ -447,7 +441,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                                   if (updateRes.ok) {
                                     const updated = await updateRes.json();
                                     setGroup(prev => ({ ...prev, image_url: updated.image_url }));
-                                    
+
                                     Swal.fire({
                                       toast: true,
                                       position: 'top-end',
@@ -493,8 +487,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                                 const url = res?.[0]?.url;
                                 if (url) {
                                   const Swal = (await import("sweetalert2")).default;
-                                  
-                                  // Show premium loading alert
+
                                   Swal.fire({
                                     title: 'Menyinkronkan...',
                                     text: 'Foto grup sedang diperbarui.',
@@ -517,7 +510,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                                     if (updateRes.ok) {
                                       const updated = await updateRes.json();
                                       setGroup(prev => ({ ...prev, image_url: updated.image_url }));
-                                      
+
                                       Swal.fire({
                                         toast: true,
                                         position: 'top-end',
@@ -548,20 +541,20 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
               </div>
 
              {group?.description && <div><p className="text-[11px] font-black text-[#92b7d6] uppercase tracking-widest mb-2">Deskripsi</p><p className="text-sm text-[#0d2133] font-medium">{group.description}</p></div>}
-             
+
              <div className="space-y-4">
                  <p className="text-[11px] font-black text-[#92b7d6] uppercase tracking-widest">Informasi</p>
                  <div className="flex items-center gap-3 bg-[#f3f7fb] p-3.5 rounded-2xl">
-                   <Lock size={16} className="text-[#2b6ea6]"/> 
+                   <Lock size={16} className="text-[#2b6ea6]"/>
                    <p className="text-sm font-bold text-[#0d2133]">Privasi {group?.privacy}</p>
                  </div>
                  <div className="flex items-center gap-3 bg-[#f3f7fb] p-3.5 rounded-2xl">
-                   <Users size={16} className="text-[#68b9b2]"/> 
+                   <Users size={16} className="text-[#68b9b2]"/>
                    <p className="text-sm font-bold text-[#0d2133]">{group?._count?.members || 0} Member</p>
                  </div>
              </div>
 
-             {/* Daftar Anggota */}
+             {}
              <div className="space-y-4 pt-2">
                  <p className="text-[11px] font-black text-[#92b7d6] uppercase tracking-widest">Anggota Komunitas</p>
                  <div className="space-y-3">
@@ -591,8 +584,8 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
              </div>
 
               <div className="pt-6 space-y-3">
-                <button 
-                  onClick={async () => { 
+                <button
+                  onClick={async () => {
                     const result = await Swal.fire({
                       title: "Keluar Grup?",
                       text: "Anda yakin ingin keluar dari grup ini?",
@@ -604,19 +597,19 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                       cancelButtonText: "Batal"
                     });
 
-                    if (result.isConfirmed) { 
-                      const res = await fetch(`/api/community/groups/${groupId}/join`, { method: "DELETE" }); 
-                      if (res.ok) onBack(); 
-                    } 
-                  }} 
+                    if (result.isConfirmed) {
+                      const res = await fetch(`/api/community/groups/${groupId}/join`, { method: "DELETE" });
+                      if (res.ok) onBack();
+                    }
+                  }}
                   className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-white text-slate-500 rounded-2xl font-bold border border-slate-200 hover:bg-slate-50 transition-colors"
                 >
                   <ArrowLeft size={16} /> Keluar Grup
                 </button>
 
                 {(group?.created_by === session?.user?.id || session?.user?.role === "admin") && (
-                  <button 
-                    onClick={async () => { 
+                  <button
+                    onClick={async () => {
                       const result = await Swal.fire({
                         title: "Hapus Grup?",
                         text: "Hapus grup permanen? Tindakan ini tidak bisa dibatalkan!",
@@ -628,11 +621,11 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
                         cancelButtonText: "Batal"
                       });
 
-                      if (result.isConfirmed) { 
-                        await fetch(`/api/community/groups/${groupId}`, { method: "DELETE" }); 
-                        onBack(); 
-                      } 
-                    }} 
+                      if (result.isConfirmed) {
+                        await fetch(`/api/community/groups/${groupId}`, { method: "DELETE" });
+                        onBack();
+                      }
+                    }}
                     className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-[#fff1f2] text-[#e11d48] rounded-2xl font-bold border border-[#fecdd3] hover:bg-red-50 transition-colors"
                   >
                     <ShieldAlert size={16} /> Hapus Grup

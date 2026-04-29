@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  CheckCircle2, 
-  XCircle, 
-  ArrowRight, 
-  Trophy, 
-  Loader2, 
+import {
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  Trophy,
+  Loader2,
   Sparkles,
   HelpCircle,
   Award,
@@ -24,7 +24,7 @@ export default function DailyQuizPage() {
   const { dayId } = useParams();
   const router = useRouter();
   const { setIsImmersiveMode } = useAppStore();
-  
+
   const [loading, setLoading] = useState(true);
   const [quizzes, setQuizzes] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,7 +34,6 @@ export default function DailyQuizPage() {
   const [quizFinished, setQuizFinished] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // Set immersive mode
   useEffect(() => {
     setIsImmersiveMode(true);
     return () => setIsImmersiveMode(false);
@@ -113,8 +112,8 @@ export default function DailyQuizPage() {
            <h2 className="text-3xl font-black text-slate-900 mb-2">Kuis Belum Tersedia</h2>
            <p className="text-slate-500 font-medium">Sistem sedang menyiapkan pertanyaan kuis untuk hari ini.</p>
         </div>
-        <button 
-          onClick={() => router.back()} 
+        <button
+          onClick={() => router.back()}
           className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm shadow-xl cursor-pointer"
         >
           Kembali ke Roadmap
@@ -131,15 +130,15 @@ export default function DailyQuizPage() {
       <div className="w-full flex flex-col min-h-[85vh] relative pt-12 items-center justify-center">
         <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-skillio-50/40 rounded-full blur-[120px] -z-10 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[30%] h-[30%] bg-teal-50/30 rounded-full blur-[100px] -z-10 pointer-events-none" />
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-xl w-full bg-white rounded-[40px] border border-slate-100 p-10 md:p-14 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] text-center relative overflow-hidden"
         >
-           {/* Celebration Decor */}
+           {}
            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-skillio-500 to-teal-400" />
-           
+
            <div className="flex justify-center mb-8">
               <div className={cn(
                 "w-24 h-24 rounded-3xl flex items-center justify-center shadow-xl rotate-3",
@@ -148,17 +147,17 @@ export default function DailyQuizPage() {
                  {isPassed ? <Trophy size={48} /> : <Award size={48} />}
               </div>
            </div>
-           
+
            <h2 className="text-4xl font-black text-slate-900 mb-3">Misi Selesai!</h2>
            <p className="text-slate-500 font-bold mb-10">Skor Anda: {finalScore}/100</p>
-           
+
            <div className="bg-slate-50 rounded-3xl p-8 mb-10 border border-slate-100">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">XP Didapatkan</p>
               <h3 className="text-5xl font-black text-skillio-600">+50 XP</h3>
            </div>
 
            <p className="text-slate-600 font-medium mb-10 leading-relaxed">
-             {isPassed 
+             {isPassed
                ? "Luar biasa! Pemahaman Anda sangat baik. Progress hari ini telah tersimpan secara permanen."
                : "Hampir saja! Anda tetap mendapatkan progres hari ini, namun jangan lupa tinjau kembali materi kuisnya ya."}
            </p>
@@ -176,22 +175,22 @@ export default function DailyQuizPage() {
 
   return (
     <div className="w-full flex flex-col min-h-[85vh] relative pt-2">
-      {/* Background Orbs */}
+      {}
       <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-skillio-50/40 rounded-full blur-[120px] -z-10 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[30%] h-[30%] bg-teal-50/30 rounded-full blur-[100px] -z-10 pointer-events-none" />
 
-      {/* Top Progress Bar - Fixed & Full Width */}
+      {}
       <div className="fixed top-0 left-0 w-full z-[60] bg-white px-6 py-4 border-b border-slate-100 flex justify-center">
          <div className="max-w-7xl w-full flex items-center gap-6">
-            <button 
+            <button
               onClick={() => router.back()}
               className="p-2 text-slate-300 hover:text-slate-900 transition-colors cursor-pointer"
             >
                <X size={24} />
             </button>
             <div className="flex-grow h-2 bg-slate-100 rounded-full overflow-hidden">
-               <motion.div 
-                 className="h-full bg-gradient-to-r from-skillio-500 to-teal-400" 
+               <motion.div
+                 className="h-full bg-gradient-to-r from-skillio-500 to-teal-400"
                  initial={{ width: 0 }}
                  animate={{ width: `${progressPercent}%` }}
                  transition={{ duration: 0.5 }}
@@ -205,7 +204,7 @@ export default function DailyQuizPage() {
 
       <div className="max-w-4xl mx-auto w-full flex-grow flex flex-col justify-center py-16">
         <AnimatePresence mode="wait">
-          <motion.div 
+          <motion.div
             key={currentIndex}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -250,12 +249,12 @@ export default function DailyQuizPage() {
                     </span>
                     <div className={cn(
                       "w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all",
-                      isAnswerCorrect ? "bg-emerald-500 border-emerald-500 text-white" : 
+                      isAnswerCorrect ? "bg-emerald-500 border-emerald-500 text-white" :
                       isAnswerWrong ? "bg-red-500 border-red-500 text-white" :
                       isSelected ? "bg-skillio-500 border-skillio-500 text-white" : "border-slate-200"
                     )}>
-                       {isAnswerCorrect ? <CheckCircle2 size={18} /> : 
-                        isAnswerWrong ? <XCircle size={18} /> : 
+                       {isAnswerCorrect ? <CheckCircle2 size={18} /> :
+                        isAnswerWrong ? <XCircle size={18} /> :
                         isSelected ? <div className="w-2 h-2 bg-white rounded-full" /> : null}
                     </div>
                   </button>
@@ -265,7 +264,7 @@ export default function DailyQuizPage() {
 
             <AnimatePresence>
               {isSubmitted && (
-                <motion.div 
+                <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   className={cn(
@@ -284,7 +283,7 @@ export default function DailyQuizPage() {
         </AnimatePresence>
       </div>
 
-      {/* Footer Navigation - Fixed & Full Width */}
+      {}
       <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-100 p-6 flex justify-center z-50">
          <div className="max-w-7xl w-full flex items-center justify-end">
             {!isSubmitted ? (
@@ -293,8 +292,8 @@ export default function DailyQuizPage() {
                 disabled={!selectedAnswer}
                 className={cn(
                   "px-12 py-5 rounded-2xl font-black text-lg transition-all shadow-xl flex items-center gap-3 cursor-pointer",
-                  selectedAnswer 
-                    ? "bg-slate-900 text-white hover:bg-skillio-600" 
+                  selectedAnswer
+                    ? "bg-slate-900 text-white hover:bg-skillio-600"
                     : "bg-slate-200 text-slate-400 cursor-not-allowed"
                 )}
               >

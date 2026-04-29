@@ -38,7 +38,7 @@ export default function CategoriesAndTestimonials() {
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
             <PWAInstallButton className="bg-white text-skillio-700 shadow-xl shadow-white/10 hover:bg-slate-50" />
           </div>
-          
+
           <p className="mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
             Tersedia untuk Android, iOS, dan Desktop
           </p>

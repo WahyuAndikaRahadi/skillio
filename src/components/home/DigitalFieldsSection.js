@@ -72,7 +72,6 @@ const coloredFields = allDigitalFields.map((item, index) => ({
   colorClass: colorPalette[index % colorPalette.length]
 }));
 
-// Split into 3 rows for the marquee
 const row1 = coloredFields.slice(0, 17);
 const row2 = coloredFields.slice(17, 34);
 const row3 = coloredFields.slice(34, 50);
@@ -125,7 +124,7 @@ export default function DigitalFieldsSection() {
         <FieldMarqueeRow items={row2} direction="right" duration={60} />
         <FieldMarqueeRow items={row3} direction="left" duration={45} />
 
-        {/* Fade Overlays */}
+        {}
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-slate-50/50 to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-slate-50/50 to-transparent" />
       </div>

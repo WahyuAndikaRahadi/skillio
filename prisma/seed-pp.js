@@ -17,7 +17,7 @@ async function main() {
 
   for (const user of usersWithoutImage) {
     const defaultImage = `https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(user.name || 'User')}&backgroundColor=0a5a97,0d76c6,12a1ef`;
-    
+
     await prisma.user.update({
       where: { id: user.id },
       data: { image: defaultImage }

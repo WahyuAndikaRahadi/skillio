@@ -34,7 +34,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative overflow-hidden px-5 pb-14 pt-28 sm:px-6 sm:pt-32 lg:px-8 lg:pb-24">
-      {/* Soft Background Accents */}
+      {}
       <div className="absolute top-0 right-0 -z-10 h-full w-full opacity-60">
         <div className="absolute top-[-10%] right-[-5%] h-[600px] w-[600px] rounded-full bg-skillio-100/40 blur-[120px]" />
         <div className="absolute bottom-[-10%] left-[-5%] h-[500px] w-[500px] rounded-full bg-teal-50/50 blur-[100px]" />
@@ -45,7 +45,7 @@ export default function HeroSection() {
           <div className="flex flex-col items-center space-y-8 text-center lg:items-start lg:text-left">
             <div className="fade-up section-kicker mx-auto lg:mx-0">Temukan Jalanmu Bersama Skillio</div>
 
-            {/* Image for Mobile only - between Kicker and Title */}
+            {}
             <HeroImage className="my-6 lg:hidden" />
 
             <div className="fade-up space-y-6">
@@ -85,7 +85,7 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Image for Desktop only */}
+          {}
           <HeroImage className="hidden lg:block" />
         </div>
       </div>

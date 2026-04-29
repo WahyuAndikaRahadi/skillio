@@ -7,12 +7,10 @@ export default async function RoadmapCatalogPage() {
   const session = await auth();
   if (!session) redirect("/auth/login");
 
-  // Fetch all categories
   const categories = await prisma.category.findMany({
-    orderBy: { id: "asc" } // Keep the order of insertion (1-50)
+    orderBy: { id: "asc" }
   });
 
-  // Grouping definitions
   const domains = [
     {
       title: "Teknologi & Pengembangan",
@@ -52,7 +50,6 @@ export default async function RoadmapCatalogPage() {
     }
   ];
 
-  // Group categories into the domains
   const groupedCategories = domains.map(domain => {
     return {
       ...domain,
@@ -60,7 +57,6 @@ export default async function RoadmapCatalogPage() {
     };
   });
 
-  // Check if user already has an active roadmap
   const activeRoadmaps = await prisma.userRoadmap.findMany({
     where: { user_id: session.user.id, status: "active" },
     include: { category: true }

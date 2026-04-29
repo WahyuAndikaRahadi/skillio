@@ -22,7 +22,6 @@ export async function POST(req, { params }) {
 
     console.log(`User ${session.user.id} attempting to join group ${groupId}`);
 
-    // 1. Get Group Privacy
     const group = await prisma.communityGroup.findUnique({
       where: { id: groupId }
     });
@@ -32,7 +31,6 @@ export async function POST(req, { params }) {
       return NextResponse.json({ message: "Grup tidak ditemukan" }, { status: 404 });
     }
 
-    // 2. Check if already a member
     const existingMember = await prisma.groupMember.findUnique({
       where: {
         group_id_user_id: {
@@ -43,20 +41,19 @@ export async function POST(req, { params }) {
     });
 
     if (existingMember) {
-      return NextResponse.json({ 
-        message: existingMember.status === "approved" ? "Sudah menjadi anggota" : "Permintaan masih pending", 
-        status: existingMember.status 
+      return NextResponse.json({
+        message: existingMember.status === "approved" ? "Sudah menjadi anggota" : "Permintaan masih pending",
+        status: existingMember.status
       });
     }
 
-    // 3. Join Logic (Password check for private)
     if (group.privacy === "private") {
-      // Admins can bypass password
+
       if (session.user.role !== "admin") {
         if (!password) {
           return NextResponse.json({ message: "Password dibutuhkan", requirePassword: true }, { status: 401 });
         }
-        
+
         const isMatch = await bcrypt.compare(password, group.password);
         if (!isMatch) {
           return NextResponse.json({ message: "Password salah" }, { status: 401 });
@@ -77,9 +74,9 @@ export async function POST(req, { params }) {
 
     console.log(`Join successful for user ${session.user.id} in group ${groupId} with status ${status}`);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: "Berhasil bergabung!",
-      status 
+      status
     });
   } catch (error) {
     console.error("CRITICAL ERROR JOIN GROUP:", error);
@@ -96,7 +93,6 @@ export async function DELETE(req, { params }) {
 
     const { groupId } = await params;
 
-    // Remove membership
     await prisma.groupMember.delete({
       where: {
         group_id_user_id: {

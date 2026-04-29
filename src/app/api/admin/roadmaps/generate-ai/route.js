@@ -26,7 +26,7 @@ SANGAT KRITIKAL DAN WAJIB DIPATUHI:
 1. Anda WAJIB menghasilkan data lengkap untuk 30 HARI tanpa henti. DILARANG KERAS berhenti di tengah jalan (misal hanya sampai hari 15 atau 20).
 2. Output HARUS murni berupa objek JSON yang valid. Jangan tambahkan teks markdown seperti \`\`\`json.
 3. Setiap hari wajib memiliki tepat 5 soal kuis (Pilihan Ganda).
-4. JANGAN menggunakan placeholder seperti "// Lanjutkan sampai hari ke 30" di dalam JSON Anda. Anda harus BENAR-BENAR menuliskan struktur untuk "day": 1, "day": 2, terus hingga "day": 30. Jika output terpotong, json akan rusak.
+4. JANGAN menggunakan placeholder seperti "
 
 FORMAT JSON YANG DIHARAPKAN:
 {
@@ -44,7 +44,7 @@ FORMAT JSON YANG DIHARAPKAN:
           "correct_option": "Opsi A",
           "explanation": "Penjelasan mengapa opsi tersebut benar."
         }
-      ] 
+      ]
     }
   ]
 }
@@ -54,8 +54,7 @@ Sekali lagi: TULIS SEMUA HARI DARI 1 SAMPAI 30 SECARA LENGKAP DALAM SATU OUTPUT 
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    
-    // Clean up potential markdown formatting from Gemini response
+
     let cleanJson = responseText.trim();
     if (cleanJson.startsWith("```json")) {
       cleanJson = cleanJson.replace(/^```json\n?/, "").replace(/\n?```$/, "");
@@ -63,7 +62,6 @@ Sekali lagi: TULIS SEMUA HARI DARI 1 SAMPAI 30 SECARA LENGKAP DALAM SATU OUTPUT 
       cleanJson = cleanJson.replace(/^```\n?/, "").replace(/\n?```$/, "");
     }
 
-    // Test parse to make sure it's valid
     let parsedData;
     try {
       parsedData = JSON.parse(cleanJson);

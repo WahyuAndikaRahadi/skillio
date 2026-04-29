@@ -36,7 +36,6 @@ const TopBar = ({ onMenuClick }) => {
     }
   }, [session, refreshStats]);
 
-  // Click outside to close
   useEffect(() => {
     function handleClickOutside(event) {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
@@ -103,7 +102,7 @@ const TopBar = ({ onMenuClick }) => {
             <span className="font-black text-sm">{stats.xp} XP</span>
           </div>
 
-          {/* Notifications */}
+          {}
           <div className="relative" ref={notifRef}>
             <button
               onClick={() => setIsNotifOpen(!isNotifOpen)}
@@ -197,27 +196,27 @@ const TopBar = ({ onMenuClick }) => {
               </div>
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-primary-blue/20 overflow-hidden border-2 border-white shrink-0 group-hover:scale-110 transition-transform">
                 {session?.user?.image ? (
-                  <Image 
-                    src={session.user.image} 
-                    alt="Profil" 
+                  <Image
+                    src={session.user.image}
+                    alt="Profil"
                     width={40}
                     height={40}
-                    className="w-full h-full object-cover" 
+                    className="w-full h-full object-cover"
                   />
                 ) : (
-                  <Image 
-                    src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${session?.user?.name || "guest"}`} 
-                    alt="Profil" 
+                  <Image
+                    src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${session?.user?.name || "guest"}`}
+                    alt="Profil"
                     width={40}
                     height={40}
                     unoptimized
-                    className="w-full h-full object-cover bg-blue-50" 
+                    className="w-full h-full object-cover bg-blue-50"
                   />
                 )}
               </div>
             </button>
 
-            {/* Profile Dropdown */}
+            {}
             <AnimatePresence>
               {isProfileDropdownOpen && (
                 <motion.div
@@ -227,7 +226,7 @@ const TopBar = ({ onMenuClick }) => {
                   transition={{ duration: 0.2 }}
                   className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-light-blue overflow-hidden flex flex-col z-50 top-full"
                 >
-                  {/* User Info Header */}
+                  {}
                   <div className="p-4 border-b border-slate-100 bg-slate-50/50">
                     <p className="text-sm font-black text-dark-blue leading-tight">
                       {session?.user?.name || "Pengguna"}
@@ -237,7 +236,7 @@ const TopBar = ({ onMenuClick }) => {
                     </p>
                   </div>
 
-                  {/* Menu Items */}
+                  {}
                   <div className="divide-y divide-slate-100">
                     <Link
                       href="/profile"

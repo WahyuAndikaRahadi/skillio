@@ -5,15 +5,14 @@ import { generateFullRoadmap } from "@/lib/gemini";
 
 async function generateAndSaveCurriculum(categorySlug, categoryName, roadmapId) {
   console.log(`[AI] Memulai generate kurikulum untuk: ${categoryName}`);
-  
+
   try {
     const curriculum = await generateFullRoadmap(categoryName);
-    
+
     if (!curriculum || !curriculum.days || curriculum.days.length < 25) {
       throw new Error("AI gagal menghasilkan kurikulum yang lengkap (kurang dari 25 hari)");
     }
 
-    // Simpan ke database utama (tabel Roadmap)
     await prismaMain.roadmap.update({
       where: { id: roadmapId },
       data: {
@@ -42,7 +41,6 @@ export async function GET(req) {
       return NextResponse.json({ message: "Slug kategori wajib disertakan" }, { status: 400 });
     }
 
-    // 1. Ambil data kategori dan roadmap-nya dari DB Utama
     const category = await prismaMain.category.findUnique({
       where: { slug },
       include: { roadmap: true }
@@ -54,7 +52,6 @@ export async function GET(req) {
 
     let roadmap = category.roadmap;
 
-    // 2. Jika Roadmap belum ada di database, buat record-nya dulu
     if (!roadmap) {
       roadmap = await prismaMain.roadmap.create({
         data: {
@@ -65,7 +62,6 @@ export async function GET(req) {
       });
     }
 
-    // 3. Cek apakah kurikulum (JSON) ada di kolom file_url DB Utama
     const isLegacy = roadmap.file_url && (roadmap.file_url.startsWith("internal://") || roadmap.file_url.startsWith("http"));
     if (roadmap.file_url && !isLegacy) {
       try {
@@ -76,16 +72,15 @@ export async function GET(req) {
       }
     }
 
-    // 5. Jika kurikulum kosong di kedua tempat, Auto-Generate menggunakan AI
     console.log(`Kurikulum "${category.name}" kosong. Generating via AI...`);
-    
+
     try {
       const generatedData = await generateAndSaveCurriculum(slug, category.name, roadmap.id);
       return NextResponse.json({ message: "Success", data: generatedData });
     } catch (genError) {
-      return NextResponse.json({ 
-        message: "Kurikulum sedang disiapkan oleh AI, silakan muat ulang halaman dalam beberapa saat.", 
-        error: genError.message 
+      return NextResponse.json({
+        message: "Kurikulum sedang disiapkan oleh AI, silakan muat ulang halaman dalam beberapa saat.",
+        error: genError.message
       }, { status: 503 });
     }
 
@@ -97,5 +92,4 @@ export async function GET(req) {
     );
   }
 }
-
 

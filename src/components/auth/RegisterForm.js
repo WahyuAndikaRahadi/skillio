@@ -27,7 +27,7 @@ const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
-  const [step, setStep] = useState("register"); // 'register' or 'verify'
+  const [step, setStep] = useState("register");
   const [registeredEmail, setRegisteredEmail] = useState("");
   const [otp, setOtp] = useState("");
 
@@ -87,7 +87,6 @@ const RegisterForm = () => {
         throw new Error(result.message || "Kode OTP salah");
       }
 
-      // Success - Redirect to login
       router.push("/auth/login?verified=true");
     } catch (err) {
       setError(err.message);
@@ -177,7 +176,7 @@ const RegisterForm = () => {
 
   return (
     <div className="w-full">
-      {/* Full Screen Loading Overlay */}
+      {}
       {isGoogleLoading && (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl">
            <div className="flex flex-col items-center gap-6">

@@ -16,7 +16,6 @@ export default function AiMentorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { isImmersiveMode } = useAppStore();
 
-  // File Upload State
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -30,12 +29,6 @@ export default function AiMentorPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-
-
-
-
-
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -90,7 +83,6 @@ export default function AiMentorPage() {
     e.preventDefault();
     if ((!input.trim() && selectedFiles.length === 0) || isLoading) return;
 
-    // Create attachments payload for UI
     const attachments = selectedFiles.map(file => ({
       name: file.name,
       type: file.type,
@@ -98,7 +90,6 @@ export default function AiMentorPage() {
       url: URL.createObjectURL(file)
     }));
 
-    // Convert files to base64 for API
     let filesData = [];
     if (selectedFiles.length > 0) {
       try {
@@ -109,7 +100,7 @@ export default function AiMentorPage() {
             reader.onload = () => resolve({
               name: file.name,
               type: file.type,
-              base64: reader.result.split(',')[1] // remove data URI prefix
+              base64: reader.result.split(',')[1]
             });
             reader.onerror = error => reject(error);
           });
@@ -124,18 +115,16 @@ export default function AiMentorPage() {
     setInput("");
     setSelectedFiles([]);
     if (fileInputRef.current) fileInputRef.current.value = "";
-    
-    // Prepare history
+
     const historyToSend = messages.map(m => ({
       role: m.role,
       content: m.context || m.content
     }));
 
-    // Add user message to UI
-    const newMessages = [...messages, { 
-      role: "user", 
+    const newMessages = [...messages, {
+      role: "user",
       content: messageToSend,
-      attachments: attachments 
+      attachments: attachments
     }];
     setMessages(newMessages);
     setIsLoading(true);
@@ -144,7 +133,7 @@ export default function AiMentorPage() {
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           message: messageToSend || "Tolong jelaskan gambar/file ini",
           files: filesData,
           history: historyToSend
@@ -152,7 +141,7 @@ export default function AiMentorPage() {
       });
 
       const data = await res.json();
-      
+
       if (res.ok) {
         setMessages(prev => {
           const updatedMessages = [...prev];
@@ -172,7 +161,7 @@ export default function AiMentorPage() {
   };
 
   return (
-    <div 
+    <div
       className={cn(
         "fixed left-0 right-0 bottom-0 flex flex-col bg-slate-50 overflow-hidden z-10 transition-all duration-500",
         !isImmersiveMode ? "top-20 lg:left-64" : "top-12 lg:left-0"
@@ -181,10 +170,10 @@ export default function AiMentorPage() {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {/* Drag Overlay */}
+      {}
       <AnimatePresence>
         {isDragging && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -199,17 +188,17 @@ export default function AiMentorPage() {
         )}
       </AnimatePresence>
 
-      {/* Soft Background Accents */}
+      {}
       <div className="absolute top-0 right-0 -z-0 h-full w-full opacity-60 pointer-events-none">
         <div className="absolute top-[5%] right-[10%] h-[400px] w-[400px] rounded-full bg-skillio-200/50 blur-[100px]" />
         <div className="absolute bottom-[20%] left-[5%] h-[300px] w-[300px] rounded-full bg-teal-200/50 blur-[100px]" />
       </div>
 
-      {/* Chat Area */}
+      {}
       <div className="flex-1 overflow-y-auto px-4 md:px-0 py-8 custom-scrollbar relative z-10">
         <div className="max-w-4xl mx-auto px-4">
-          
-          {/* Header inside scrollable area */}
+
+          {}
           <div className="mb-12 flex flex-col items-center justify-center text-center space-y-4 pt-6">
             <div>
               <h1 className="text-3xl font-display font-bold text-slate-900 flex items-center justify-center gap-2">
@@ -229,20 +218,20 @@ export default function AiMentorPage() {
 
           <div className="space-y-6 pb-10">
             {messages.map((msg, idx) => (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                key={idx} 
+                key={idx}
                 className={cn(
                   "flex gap-3 sm:gap-4",
                   msg.role === "user" ? "flex-row-reverse" : "flex-row"
                 )}
               >
-                {/* Bubble */}
+                {}
                 <div className={cn(
                   "p-4 sm:px-6 sm:py-4 max-w-[85%] sm:max-w-[75%] shadow-sm",
-                  msg.role === "user" 
-                    ? "bg-skillio-600 text-white rounded-[24px] rounded-tr-sm" 
+                  msg.role === "user"
+                    ? "bg-skillio-600 text-white rounded-[24px] rounded-tr-sm"
                     : "bg-white text-slate-700 border border-slate-200 rounded-[24px] rounded-tl-sm prose prose-sm max-w-none"
                 )}>
                   {msg.role === "user" ? (
@@ -255,10 +244,10 @@ export default function AiMentorPage() {
                               file.type.startsWith("image/") ? (
                                 <img key={i} src={file.url} alt="attachment" className="flex-1 min-w-0 aspect-video rounded-lg sm:rounded-xl object-cover border border-white/20 shadow-sm" />
                               ) : (
-                                <a 
-                                  key={i} 
-                                  href={file.url} 
-                                  target="_blank" 
+                                <a
+                                  key={i}
+                                  href={file.url}
+                                  target="_blank"
                                   rel="noopener noreferrer"
                                   className="flex-1 min-w-0 flex items-center justify-center sm:justify-start gap-2 sm:gap-3 bg-white/10 hover:bg-white/20 p-2 sm:p-3 rounded-lg sm:rounded-xl transition-colors border border-white/20 shadow-sm overflow-hidden"
                                 >
@@ -291,7 +280,7 @@ export default function AiMentorPage() {
                 </div>
               </motion.div>
             ))}
-            
+
             {isLoading && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3 sm:gap-4 flex-row">
                 <div className="px-5 sm:px-6 h-[46px] sm:h-[52px] mt-1 sm:mt-0 rounded-[24px] bg-white border border-slate-200 rounded-tl-sm shadow-sm flex items-center gap-1.5 w-fit">
@@ -306,14 +295,14 @@ export default function AiMentorPage() {
         </div>
       </div>
 
-      {/* Floating Input Area */}
+      {}
       <div className="bg-white/50 backdrop-blur-sm border-t border-slate-200/60 p-4 sm:p-6 relative z-20">
         <div className="max-w-4xl mx-auto pointer-events-auto relative">
-          
-          {/* Multiple File Preview Bubbles */}
+
+          {}
           <AnimatePresence>
             {selectedFiles.length > 0 && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -334,9 +323,9 @@ export default function AiMentorPage() {
                           {file.name}
                         </p>
                       </div>
-                      <button 
-                        type="button" 
-                        onClick={() => removeFile(idx)} 
+                      <button
+                        type="button"
+                        onClick={() => removeFile(idx)}
                         className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full p-1.5 transition-colors"
                       >
                         <X size={16} strokeWidth={2.5} />
@@ -346,8 +335,8 @@ export default function AiMentorPage() {
                 </div>
 
                 <div className="flex justify-end mt-4">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => {
                       setSelectedFiles([]);
                       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -362,7 +351,7 @@ export default function AiMentorPage() {
           </AnimatePresence>
 
           <form onSubmit={handleSend} className="relative">
-            {/* Hidden File Input */}
+            {}
             <input
               type="file"
               ref={fileInputRef}
@@ -370,8 +359,8 @@ export default function AiMentorPage() {
               className="hidden"
               multiple
             />
-            
-            {/* Attachment Button */}
+
+            {}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -380,9 +369,7 @@ export default function AiMentorPage() {
               <Plus size={24} />
             </button>
 
-
-
-            {/* Text Input */}
+            {}
             <input
               type="text"
               value={input}
@@ -395,7 +382,7 @@ export default function AiMentorPage() {
               )}
             />
 
-            {/* Send Button */}
+            {}
             <button
               type="submit"
               disabled={(!input.trim() && selectedFiles.length === 0) || isLoading}

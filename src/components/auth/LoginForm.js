@@ -25,7 +25,6 @@ const LoginForm = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Handle NextAuth URL errors
   React.useEffect(() => {
     if (urlError === "OAuthAccountNotLinked") {
       setError("Email ini sudah terdaftar. Silakan masuk menggunakan Email dan Password Anda.");
@@ -81,7 +80,7 @@ const LoginForm = () => {
 
   return (
     <div className="w-full">
-      {/* Full Screen Loading Overlay */}
+      {}
       {isGoogleLoading && (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl">
            <div className="flex flex-col items-center gap-6">
@@ -97,7 +96,7 @@ const LoginForm = () => {
         </div>
       )}
 
-      {/* Mobile Logo */}
+      {}
       <div className="mb-10 lg:hidden">
         <Link href="/" className="inline-flex items-center gap-3 group">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20 group-hover:scale-110 transition-transform">

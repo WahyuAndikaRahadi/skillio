@@ -24,7 +24,6 @@ export async function POST(req) {
       }
     });
 
-    // TRIGGER PUSHER: New comment added
     try {
       await pusherServer.trigger(`post-${post_id}`, "new-comment", comment);
     } catch (err) {

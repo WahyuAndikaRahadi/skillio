@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
-  const [step, setStep] = useState("email"); // 'email', 'otp', 'reset'
+  const [step, setStep] = useState("email");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex bg-white">
-      {/* Left Column - Branding */}
+      {}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden border-r border-slate-100">
         <div className="absolute inset-0 bg-white -z-20" />
         <div className="absolute top-[-10%] right-[-10%] h-[700px] w-[700px] rounded-full bg-skillio-100/60 blur-[120px] -z-10" />
@@ -118,10 +118,10 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
 
-      {/* Right Column - Form */}
+      {}
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-24 xl:px-32 relative bg-white">
         <div className="w-full max-w-sm mx-auto">
-          {/* Mobile Logo */}
+          {}
           <div className="mb-10 lg:hidden">
             <Link href="/" className="inline-flex items-center gap-3 group mb-8">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg shadow-skillio-500/20 group-hover:scale-110 transition-transform">
