@@ -37,7 +37,7 @@ export default function ErrorPage({ code = "404", title = "Halaman Tidak Ditemuk
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-3xl w-full text-center relative z-10 pt-8 md:pt-12"
+        className="max-w-3xl w-full text-center relative z-10 pt-20 md:pt-32"
       >
         <div className="flex flex-col items-center">
           <motion.div
@@ -90,7 +90,7 @@ export default function ErrorPage({ code = "404", title = "Halaman Tidak Ditemuk
         >
           <Link
             href={session ? "/dashboard" : "/"}
-            className="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-5 bg-skillio-600 text-white rounded-2xl font-bold text-lg hover:bg-skillio-700 transition-all shadow-xl shadow-skillio-500/20 active:scale-[0.98]"
+            className="w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-5 bg-slate-950 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-2xl shadow-slate-950/20 active:scale-[0.98]"
           >
             {session ? (
               <>
