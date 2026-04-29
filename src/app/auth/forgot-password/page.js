@@ -9,7 +9,9 @@ import {
   Mail,
   ArrowRight,
   CheckCircle2,
-  ArrowLeft
+  ArrowLeft,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -23,6 +25,20 @@ export default function ForgotPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [resendCount, setResendCount] = useState(0);
+
+  React.useEffect(() => {
+    let timer;
+    if (resendCountdown > 0) {
+      timer = setInterval(() => {
+        setResendCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCountdown]);
 
   const handleRequestOtp = async (e) => {
     e.preventDefault();
@@ -47,7 +63,47 @@ export default function ForgotPasswordPage() {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     if (otp.length !== 6) return;
-    setStep("reset");
+    
+    setIsLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      setStep("reset");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCountdown > 0 || resendCount >= 3) return;
+
+    setIsLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      
+      setOtp("");
+      setResendCountdown(60);
+      setResendCount((prev) => prev + 1);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleResetPassword = async (e) => {
@@ -203,12 +259,30 @@ export default function ForgotPasswordPage() {
                     maxLength={6}
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                    className="w-full text-center text-4xl font-black tracking-[0.5em] py-5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all text-slate-900"
+                    className="w-full text-center text-2xl font-extrabold tracking-[0.5em] py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all text-slate-900 shadow-sm"
                     placeholder="000000"
                     required
                   />
                   <p className="mt-4 text-center text-sm font-medium text-slate-500">
                     Dikirim ke <span className="text-skillio-600 font-bold">{email}</span>
+                  </p>
+                  <p className="mt-4 text-center text-sm font-bold text-slate-500">
+                    Tidak menerima kode?{" "}
+                    {resendCount >= 3 ? (
+                      <span className="text-red-500 font-bold italic underline">Batas kirim ulang tercapai</span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        disabled={resendCountdown > 0 || isLoading}
+                        className={cn(
+                          "text-skillio-600 hover:underline disabled:text-slate-400 disabled:no-underline font-bold transition-all",
+                          resendCountdown > 0 && "cursor-not-allowed"
+                        )}
+                      >
+                        {resendCountdown > 0 ? `Kirim Ulang (${resendCountdown}s)` : "Kirim Ulang"}
+                      </button>
+                    )}
                   </p>
                 </div>
                 <button
@@ -232,25 +306,43 @@ export default function ForgotPasswordPage() {
               >
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Password Baru</label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                    className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900"
-                    placeholder="Minimal 6 karakter"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                      className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900"
+                      placeholder="Minimal 6 karakter"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Konfirmasi Password</label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900"
-                    placeholder="Ulangi password baru"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900"
+                      placeholder="Ulangi password baru"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
                 </div>
                 <button
                   type="submit"

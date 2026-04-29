@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, Github, Mail } from "lucide-react";
+import { Loader2, Github, Mail, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -24,6 +24,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   React.useEffect(() => {
     if (urlError === "OAuthAccountNotLinked") {
@@ -139,15 +140,24 @@ const LoginForm = () => {
 
         <div>
           <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Password</label>
-          <input
-            {...register("password")}
-            type="password"
-            className={cn(
-              "w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
-              errors.password && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
-            )}
-            placeholder="••••••••"
-          />
+          <div className="relative">
+            <input
+              {...register("password")}
+              type={showPassword ? "text" : "password"}
+              className={cn(
+                "w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+                errors.password && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
+              )}
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
           <div className="mt-2 flex items-center justify-between px-1">
             <div className="flex-1">
               {errors.password && <p className="text-xs text-red-500 font-bold">{errors.password.message}</p>}

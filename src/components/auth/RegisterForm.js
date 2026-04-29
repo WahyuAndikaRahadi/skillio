@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Loader2, Mail, ArrowRight, ShieldCheck } from "lucide-react";
+import { Loader2, Mail, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import Image from "next/image";
@@ -30,6 +30,20 @@ const RegisterForm = () => {
   const [step, setStep] = useState("register");
   const [registeredEmail, setRegisteredEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const [resendCount, setResendCount] = useState(0);
+
+  React.useEffect(() => {
+    let timer;
+    if (resendCountdown > 0) {
+      timer = setInterval(() => {
+        setResendCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCountdown]);
 
   const {
     register,
@@ -95,6 +109,45 @@ const RegisterForm = () => {
     }
   };
 
+  const onResendOtp = async () => {
+    if (resendCountdown > 0 || resendCount >= 3) return;
+
+    setIsLoading(true);
+    setError("");
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "User", 
+          email: registeredEmail,
+          password: "dummy_password_for_resend", 
+        }),
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        if (result.message !== "Email sudah terdaftar") {
+          throw new Error(result.message || "Gagal mengirim ulang kode");
+        }
+        const resendRes = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: registeredEmail }),
+        });
+        if (!resendRes.ok) throw new Error("Gagal mengirim ulang kode");
+      }
+
+      setOtp(""); 
+      setResendCountdown(60);
+      setResendCount((prev) => prev + 1);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleGoogleLogin = () => {
     setIsGoogleLoading(true);
     signIn("google", { callbackUrl: "/dashboard" });
@@ -147,7 +200,7 @@ const RegisterForm = () => {
               maxLength={6}
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-              className="w-full text-center text-4xl font-black tracking-[0.5em] py-5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all text-slate-900"
+              className="w-full text-center text-2xl font-extrabold tracking-[0.5em] py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all text-slate-900 shadow-sm"
               placeholder="000000"
               required
             />
@@ -168,7 +221,21 @@ const RegisterForm = () => {
         </form>
 
         <p className="mt-8 text-center text-sm font-bold text-slate-500">
-          Tidak menerima kode? <button className="text-skillio-600 hover:underline">Kirim Ulang</button>
+          Tidak menerima kode?{" "}
+          {resendCount >= 3 ? (
+            <span className="text-red-500">Batas kirim ulang tercapai</span>
+          ) : (
+            <button
+              onClick={onResendOtp}
+              disabled={resendCountdown > 0 || isLoading}
+              className={cn(
+                "text-skillio-600 hover:underline disabled:text-slate-400 disabled:no-underline",
+                resendCountdown > 0 && "cursor-not-allowed"
+              )}
+            >
+              {resendCountdown > 0 ? `Kirim Ulang (${resendCountdown}s)` : "Kirim Ulang"}
+            </button>
+          )}
         </p>
       </div>
     );
@@ -261,29 +328,47 @@ const RegisterForm = () => {
 
         <div>
           <label className="block text-sm font-bold text-slate-700 mb-1 ml-1">Password</label>
-          <input
-            {...register("password")}
-            type="password"
-            className={cn(
-              "w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
-              errors.password && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
-            )}
-            placeholder="••••••••"
-          />
+          <div className="relative">
+            <input
+              {...register("password")}
+              type={showPassword ? "text" : "password"}
+              className={cn(
+                "w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+                errors.password && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
+              )}
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
           {errors.password && <p className="mt-1 text-xs text-red-500 font-bold ml-1">{errors.password.message}</p>}
         </div>
 
         <div>
           <label className="block text-sm font-bold text-slate-700 mb-1 ml-1">Konfirmasi Password</label>
-          <input
-            {...register("confirmPassword")}
-            type="password"
-            className={cn(
-              "w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
-              errors.confirmPassword && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
-            )}
-            placeholder="••••••••"
-          />
+          <div className="relative">
+            <input
+              {...register("confirmPassword")}
+              type={showConfirmPassword ? "text" : "password"}
+              className={cn(
+                "w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 focus:border-skillio-500 focus:ring-4 focus:ring-skillio-500/10 focus:bg-white outline-none transition-all font-medium text-slate-900",
+                errors.confirmPassword && "border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10"
+              )}
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
           {errors.confirmPassword && <p className="mt-1 text-xs text-red-500 font-bold ml-1">{errors.confirmPassword.message}</p>}
         </div>
 

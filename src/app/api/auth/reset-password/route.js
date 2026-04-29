@@ -22,7 +22,9 @@ export async function POST(req) {
     }
 
     if (new Date() > new Date(verificationToken.expires)) {
-      await prisma.verificationToken.delete({ where: { token: otp } });
+      await prisma.verificationToken.delete({ 
+        where: { identifier_token: { identifier: email, token: otp } } 
+      });
       return NextResponse.json({ message: "Kode OTP kedaluwarsa" }, { status: 400 });
     }
 

@@ -22,24 +22,16 @@ export async function POST(req) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expires = new Date(Date.now() + 15 * 60 * 1000);
 
-    await prisma.verificationToken.upsert({
-      where: {
-        identifier_token: { identifier: email, token: otp }
-      },
+    await prisma.verificationToken.deleteMany({
+      where: { identifier: email }
+    });
 
-      create: {
+    await prisma.verificationToken.create({
+      data: {
         identifier: email,
         token: otp,
         expires,
-      },
-      update: {
-        expires
       }
-    }).catch(async () => {
-
-       await prisma.verificationToken.create({
-         data: { identifier: email, token: otp, expires }
-       });
     });
 
     try {
