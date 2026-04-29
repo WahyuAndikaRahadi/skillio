@@ -18,10 +18,17 @@ export async function POST(req) {
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { message: "Email sudah terdaftar" },
-        { status: 400 }
-      );
+      if (existingUser.emailVerified) {
+        return NextResponse.json(
+          { message: "Email sudah terdaftar" },
+          { status: 400 }
+        );
+      }
+      
+      // Jika user ada tapi belum verifikasi, hapus data lama agar bisa daftar ulang
+      await prisma.user.delete({
+        where: { id: existingUser.id }
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -40,6 +47,11 @@ export async function POST(req) {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expires = new Date(Date.now() + 15 * 60 * 1000);
+
+    // Bersihkan token verifikasi lama jika ada untuk email ini
+    await prisma.verificationToken.deleteMany({
+      where: { identifier: email }
+    });
 
     await prisma.verificationToken.create({
       data: {
