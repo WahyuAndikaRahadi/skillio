@@ -5,7 +5,7 @@ export default function NotFound() {
     <ErrorPage 
       code="404"
       title="Halaman Tidak Ditemukan"
-      message="Oops! Sepertinya Anda tersesat. Halaman yang Anda tuju tidak dapat kami temukan."
+      message="Sepertinya langkahmu terhenti di sini. Halaman yang kamu cari tidak dapat kami temukan atau mungkin sudah pindah ke dimensi lain."
     />
   );
 }
