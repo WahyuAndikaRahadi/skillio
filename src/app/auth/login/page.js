@@ -7,7 +7,6 @@ import Image from "next/image";
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex bg-white">
-      {}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden bg-slate-50 border-r border-slate-100">
         <div className="absolute top-[-10%] right-[-10%] h-[700px] w-[700px] rounded-full bg-skillio-100/60 blur-[120px] -z-10" />
         <div className="absolute bottom-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-teal-50/60 blur-[120px] -z-10" />
@@ -48,7 +47,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {}
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-24 xl:px-32 relative bg-white">
         <div className="w-full max-w-sm mx-auto">
           <Suspense fallback={<div className="p-8 flex justify-center"><div className="w-8 h-8 border-4 border-skillio-200 border-t-skillio-600 rounded-full animate-spin"></div></div>}>

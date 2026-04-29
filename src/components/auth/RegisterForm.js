@@ -176,7 +176,6 @@ const RegisterForm = () => {
 
   return (
     <div className="w-full">
-      {}
       {isGoogleLoading && (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl">
            <div className="flex flex-col items-center gap-6">
