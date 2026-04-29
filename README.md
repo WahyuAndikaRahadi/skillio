@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/skillio-logo.png" alt="Skillio Logo" width="180px" />
+  <img src="public/images/skillio-logo.png" alt="Skillio Logo" width="180px" />
 </p>
 
 <h1 align="center">Skillio</h1>
