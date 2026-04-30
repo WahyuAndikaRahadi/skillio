@@ -32,7 +32,7 @@ function CommunityContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState("joined");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { setIsImmersiveMode } = useAppStore();
+  const { setIsImmersiveMode, isImmersiveMode } = useAppStore();
 
   const searchParams = useSearchParams();
   const urlGroupId = searchParams.get("groupId");
@@ -71,8 +71,8 @@ function CommunityContent() {
   return (
 
     <div className={cn(
-      "flex overflow-hidden bg-blue-50/50 relative font-sans",
-      activeGroupId ? "h-screen" : "h-[calc(100vh-56px)] md:h-[calc(100vh-80px)]"
+      "flex overflow-hidden bg-blue-50/50 relative font-sans transition-all duration-500",
+      isImmersiveMode ? "h-screen" : "h-[calc(100vh-56px)] md:h-[calc(100vh-80px)]"
     )}>
 
       {/* Simplified background */}

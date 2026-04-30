@@ -89,13 +89,8 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
   }, [groupId, onBack]);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: "instant"
-      });
-    }
-  }, [messages, showAttachments, isLoading]);
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, showAttachments]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -123,12 +118,7 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
           <div onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="h-[76px] bg-white/90 backdrop-blur-md flex items-center justify-between px-6 cursor-pointer border-b border-[#dbe7f2] shrink-0 z-20">
              <div className="flex items-center gap-4">
                  {}
-                 <button
-                   onClick={(e) => { e.stopPropagation(); onToggleSidebar(); }}
-                   className="lg:hidden p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors text-[#1f547e] -ml-2"
-                 >
-                    <Menu size={20} />
-                 </button>
+                 {/* Hamburger menu hidden in immersive mode */}
 
                  {}
                  <button onClick={(e) => { e.stopPropagation(); onBack(); }} className="p-2.5 hover:bg-[#f3f7fb] rounded-xl transition-colors text-[#1f547e]">
@@ -160,9 +150,9 @@ export default function GroupChat({ groupId, onBack, onToggleSidebar }) {
           </div>
 
           {}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto relative custom-scrollbar">
+          <div className="flex-1 overflow-y-auto relative custom-scrollbar">
             <div className="absolute inset-0 pointer-events-none opacity-40" style={{ backgroundImage: `linear-gradient(rgba(146, 183, 214, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(146, 183, 214, 0.15) 1px, transparent 1px)`, backgroundSize: '40px 40px' }}></div>
-            <div className="relative z-10 p-6 md:p-8 space-y-4 flex flex-col min-h-full justify-end">
+            <div ref={scrollRef} className="relative z-10 p-6 md:p-8 space-y-4 flex flex-col min-h-full justify-end">
                {messages.length === 0 && (
                  <div className="w-full flex justify-center my-6"><div className="bg-white/80 border border-[#dbe7f2] text-[#1f547e] text-xs font-bold px-6 py-3 rounded-full flex items-center gap-2"><MessageSquareIcon size={16} /> Mulai percakapan pertamamu!</div></div>
                )}

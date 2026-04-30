@@ -39,7 +39,7 @@ const adminMenuItems = [
   { name: "Komunitas", href: "/community", icon: Users },
 ];
 
-const Sidebar = ({ isMobile = false, onClose }) => {
+const Sidebar = ({ isMobile = false }) => {
   const pathname = usePathname();
   const { data: session } = useSession();
 
@@ -53,11 +53,7 @@ const Sidebar = ({ isMobile = false, onClose }) => {
     )}>
       {}
       <div className="mb-8 px-2 pt-2">
-        <Link 
-          href={isAdmin ? "/admin/dashboard" : "/dashboard"} 
-          onClick={onClose}
-          className="flex items-center gap-3 group"
-        >
+        <Link href={isAdmin ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-3 group">
           <div className="w-9 h-9 bg-primary-blue rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:rotate-12 transition-all duration-500">
             <Image
               src="/images/skillio-logo.png"
@@ -96,7 +92,6 @@ const Sidebar = ({ isMobile = false, onClose }) => {
               key={item.name}
               href={item.href}
               prefetch={false}
-              onClick={onClose}
               className="relative block group outline-none"
             >
               <div
