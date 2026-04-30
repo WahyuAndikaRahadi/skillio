@@ -41,7 +41,12 @@ export async function GET(req) {
       earned_at: user.badges.find((ub) => ub.badge_id === badge.id)?.earned_at ?? null,
     }));
 
-    const higherXpCount = await prisma.user.count({ where: { xp: { gt: user.xp } } });
+    const higherXpCount = await prisma.user.count({ 
+      where: { 
+        xp: { gt: user.xp },
+        role: { not: "admin" }
+      } 
+    });
 
     return NextResponse.json({
       name: user.name,
@@ -59,7 +64,7 @@ export async function GET(req) {
         completedAt: r.completed_at?.toISOString() ?? r.started_at.toISOString(),
       })),
       joinedAt: user.createdAt,
-      rank: higherXpCount + 1,
+      rank: user.role === "admin" ? null : higherXpCount + 1,
       isOwnProfile: session?.user?.id === targetId
     });
   } catch (error) {
