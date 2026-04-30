@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }) {
         <div className="absolute inset-0 opacity-[0.015] bg-[url('https://www.transparenttextures.com/patterns/grid-me.png')]" />
       </div>
 
-      {!isImmersiveMode && <Sidebar />}
+      <Sidebar />
 
       {}
       <AnimatePresence>
@@ -41,7 +41,7 @@ export default function DashboardLayout({ children }) {
               exit={{ x: -300 }}
               className="fixed left-0 top-0 bottom-0 w-64 bg-white z-50 lg:hidden shadow-2xl"
             >
-               <Sidebar isMobile={true} />
+               <Sidebar isMobile={true} onClose={() => setIsSidebarOpen(false)} />
                <button
                  onClick={() => setIsSidebarOpen(false)}
                  className="absolute top-6 right-6 p-2 text-dark-blue hover:bg-light-blue rounded-xl"
@@ -53,15 +53,12 @@ export default function DashboardLayout({ children }) {
         )}
       </AnimatePresence>
 
-      <div className={cn(
-        "flex flex-col min-h-screen relative transition-all duration-500",
-        !isImmersiveMode ? "lg:ml-64" : "lg:ml-0"
-      )}>
+      <div className="flex flex-col min-h-screen relative transition-all duration-500 lg:ml-64">
         {!isImmersiveMode && <TopBar onMenuClick={() => setIsSidebarOpen(true)} />}
 
         <main className={cn(
-          "flex-grow  w-full transition-all duration-500",
-          !isImmersiveMode ? "pt-20" : "pt-12"
+          "flex-grow w-full transition-all duration-500",
+          !isImmersiveMode ? "pt-20" : "pt-0"
         )}>
           {children}
         </main>

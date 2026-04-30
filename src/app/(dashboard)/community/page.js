@@ -16,6 +16,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
+import { useAppStore } from "@/store/useAppStore";
 
 const getInitials = (name) => {
   const words = name.trim().split(" ");
@@ -31,6 +32,7 @@ function CommunityContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState("joined");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { setIsImmersiveMode } = useAppStore();
 
   const searchParams = useSearchParams();
   const urlGroupId = searchParams.get("groupId");
@@ -52,20 +54,29 @@ function CommunityContent() {
     }
   }, [urlGroupId]);
 
+  useEffect(() => {
+    if (activeGroupId) {
+      setIsImmersiveMode(true);
+    } else {
+      setIsImmersiveMode(false);
+    }
+    
+    return () => setIsImmersiveMode(false);
+  }, [activeGroupId, setIsImmersiveMode]);
+
   const filteredCategories = categories.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
 
-    <div className="flex h-[calc(100vh-56px)] md:h-[calc(100vh-80px)] overflow-hidden bg-[#f0f7ff] relative font-sans">
+    <div className={cn(
+      "flex overflow-hidden bg-blue-50/50 relative font-sans",
+      activeGroupId ? "h-screen" : "h-[calc(100vh-56px)] md:h-[calc(100vh-80px)]"
+    )}>
 
-      {}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-5%] right-[-5%] w-[600px] h-[600px] rounded-full bg-blue-200/20 blur-[130px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-100/30 blur-[110px]" />
-        <div className="absolute top-[20%] left-[30%] w-[400px] h-[400px] rounded-full bg-sky-100/20 blur-[100px]" />
-      </div>
+      {/* Simplified background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none bg-gradient-to-br from-blue-50/50 via-white to-blue-50/30" />
 
       {}
       <AnimatePresence>

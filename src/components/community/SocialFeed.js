@@ -30,7 +30,7 @@ const CommentItem = ({ comment, postId, onReply }) => {
     <div className="group/comment mb-4 last:mb-0">
       <div className="flex gap-3">
         <div className="w-8 h-8 rounded-full bg-slate-100 shrink-0 flex items-center justify-center font-black text-xs text-primary-blue overflow-hidden">
-          {comment.user.image ? <img src={comment.user.image} alt="" /> : comment.user.name[0]}
+          {comment.user.image ? <img src={comment.user.image} alt="" className="w-full h-full object-cover" /> : comment.user.name[0]}
         </div>
         <div className="flex-1">
           <div className={cn(
@@ -63,7 +63,7 @@ const CommentItem = ({ comment, postId, onReply }) => {
               {comment.replies.map(reply => (
                 <div key={reply.id} className="flex gap-2">
                   <div className="w-6 h-6 rounded-full bg-slate-100 shrink-0 flex items-center justify-center font-bold text-[10px] text-primary-blue overflow-hidden">
-                    {reply.user.image ? <img src={reply.user.image} alt="" /> : reply.user.name[0]}
+                    {reply.user.image ? <img src={reply.user.image} alt="" className="w-full h-full object-cover" /> : reply.user.name[0]}
                   </div>
                   <div className="bg-slate-50 rounded-xl p-2 px-3">
                     <div className="flex items-center gap-1.5 mb-0.5">
@@ -306,7 +306,7 @@ const PostCard = ({ post, currentUserId, userRole, onDeletePost, session }) => {
                 )}
                 <div className="flex gap-3 items-center">
                   <div className="w-8 h-8 rounded-full bg-white border border-slate-200 shrink-0 flex items-center justify-center font-bold text-xs text-primary-blue overflow-hidden shadow-sm">
-                    {session?.user?.image ? <img src={session.user.image} alt="Me" /> : (session?.user?.name ? session.user.name[0] : "U")}
+                    {session?.user?.image ? <img src={session.user.image} alt="Me" className="w-full h-full object-cover" /> : (session?.user?.name ? session.user.name[0] : "U")}
                   </div>
                   <div className="relative flex-1">
                     <input
@@ -460,7 +460,7 @@ export default function SocialFeed({ categoryId, searchQuery = "" }) {
         <form onSubmit={handleSubmit}>
           <div className="flex gap-4">
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 font-bold text-slate-500 overflow-hidden">
-              {session?.user?.image ? <img src={session.user.image} alt="User" /> : (session?.user?.name ? session.user.name[0] : "U")}
+              {session?.user?.image ? <img src={session.user.image} alt="User" className="w-full h-full object-cover" /> : (session?.user?.name ? session.user.name[0] : "U")}
             </div>
             <div className="flex-1 space-y-3">
               <textarea

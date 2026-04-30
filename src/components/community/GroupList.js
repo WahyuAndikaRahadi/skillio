@@ -390,18 +390,21 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
         </AnimatePresence>
       ) : (
 
-        <div className="flex flex-col gap-3 p-4 bg-[#f8fbfd] min-h-full">
+        <div className="flex flex-col gap-4 p-6 bg-transparent min-h-full">
           {displayedGroups.map((group) => {
             const isMember = group.members && group.members.length > 0;
             return (
               <motion.div
                 key={group.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 onClick={() => isMember ? onJoin(group.id) : confirmJoin(group)}
-                className="flex items-center gap-4 p-4 bg-white border border-slate-200/60 rounded-2xl hover:border-primary-blue/30 hover:shadow-sm transition-all cursor-pointer group relative"
+                className="flex items-center gap-5 p-5 bg-white border border-blue-200 rounded-[24px] hover:border-primary-blue/40 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-pointer group relative overflow-hidden"
               >
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-blue-100/50 transition-colors" />
 
-                {}
-                <div className="w-14 h-14 shrink-0 rounded-full bg-[#E6F0F9] flex items-center justify-center font-black text-xl text-[#2A75C4] overflow-hidden border-2 border-white shadow-sm">
+                <div className="w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br from-blue-50 to-white flex items-center justify-center font-black text-2xl text-primary-blue overflow-hidden border border-blue-100 shadow-sm relative z-10">
                   {group.image_url ? (
                     <img src={group.image_url} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -412,7 +415,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                 {}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <h4 className="font-black text-[#1E293B] text-base truncate flex items-center gap-2 font-display">
+                    <h4 className="font-black text-dark-blue text-base truncate flex items-center gap-2 font-display group-hover:text-primary-blue transition-colors">
                       {group.name}
                       {group.privacy === "private" && <Lock size={12} className="text-slate-400" />}
                     </h4>
@@ -421,7 +424,7 @@ export default function GroupList({ categoryId, onJoin, viewMode = "all" }) {
                       {group.category?.name || "Umum"}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-400 font-medium truncate pr-10">
+                  <p className="text-sm text-slate-500/80 font-medium truncate pr-10">
                     {group.messages && group.messages.length > 0 ? (
                       <>
                         <span className="text-primary-blue font-bold">{group.messages[0].user.name.split(" ")[0]}: </span>
