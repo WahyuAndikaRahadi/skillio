@@ -60,13 +60,18 @@ export async function DELETE(req) {
       return NextResponse.json({ message: "Anda tidak bisa menghapus diri sendiri." }, { status: 400 });
     }
 
+    console.log(`Admin ${session.user.id} is deleting user ${userId}`);
+    
     await prisma.user.delete({
       where: { id: userId },
     });
 
-    return NextResponse.json({ message: "User deleted successfully" });
+    return NextResponse.json({ message: "User berhasil dihapus beserta seluruh datanya." });
   } catch (error) {
-    console.error("Delete user error:", error);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    console.error("Delete user error detail:", error);
+    return NextResponse.json(
+      { message: "Gagal menghapus user. Silakan coba lagi atau hubungi developer.", error: error.message },
+      { status: 500 }
+    );
   }
 }
