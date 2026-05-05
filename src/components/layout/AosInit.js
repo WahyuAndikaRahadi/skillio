@@ -28,9 +28,11 @@ export default function AosInit() {
 
     // Refresh on window load if it hasn't fired yet
     window.addEventListener('load', AOS.refresh);
+    window.addEventListener('preloader-finished', AOS.refresh);
     
     return () => {
       window.removeEventListener('load', AOS.refresh);
+      window.removeEventListener('preloader-finished', AOS.refresh);
     };
   }, []);
 
