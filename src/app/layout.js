@@ -1,6 +1,5 @@
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-import "aos/dist/aos.css";
 import AuthProvider from "@/components/providers/SessionProvider";
 
 const inter = Inter({

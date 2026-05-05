@@ -8,12 +8,10 @@ import FaqSection from "@/components/home/FaqSection";
 import CategoriesAndTestimonials from "@/components/home/CategoriesAndTestimonials";
 import Footer from "@/components/layout/Footer";
 import LandingAiWidget from "@/components/home/LandingAiWidget";
-import AosInit from "@/components/layout/AosInit";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      <AosInit />
       <Navbar />
       <main className="flex-grow">
         <HeroSection />
