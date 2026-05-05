@@ -6,28 +6,25 @@ import "aos/dist/aos.css";
 
 export default function AosInit() {
   useEffect(() => {
-    const initAOS = () => {
+    const startAOS = () => {
       AOS.init({
         duration: 800,
         once: false,
         easing: "ease-in-out",
-        offset: 100,
-        delay: 50,
+        offset: 80,
+        delay: 0,
       });
-      
-      setTimeout(() => {
-        AOS.refresh();
-      }, 500);
     };
 
-    setTimeout(initAOS, 100);
+    const onPreloaderDone = () => {
+      setTimeout(startAOS, 50);
+    };
 
-    window.addEventListener('load', AOS.refresh);
-    window.addEventListener('preloader-finished', AOS.refresh);
-    
+    window.addEventListener("preloader-finished", onPreloaderDone);
+
     return () => {
-      window.removeEventListener('load', AOS.refresh);
-      window.removeEventListener('preloader-finished', AOS.refresh);
+      window.removeEventListener("preloader-finished", onPreloaderDone);
+      AOS.refreshHard();
     };
   }, []);
 
