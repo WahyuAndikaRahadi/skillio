@@ -68,7 +68,7 @@ export default function FaqSection() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr] lg:gap-16">
           {}
-          <div className="flex flex-col items-start space-y-6">
+          <div className="flex flex-col items-start space-y-6" data-aos="fade-right">
             <p className="section-kicker">Pertanyaan Umum</p>
             <h2 className="font-display text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
               Punya <span className="text-skillio-500">pertanyaan?</span> <br />
@@ -80,7 +80,7 @@ export default function FaqSection() {
           </div>
 
           {}
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4" data-aos="fade-left" data-aos-delay="100">
             {faqs.map((faq, index) => (
               <FaqItem
                 key={index}

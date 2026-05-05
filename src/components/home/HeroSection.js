@@ -14,7 +14,7 @@ const credibility = [
 ];
 
 const HeroImage = ({ className }) => (
-  <div className={`fade-up relative ${className}`} style={{ animationDelay: "150ms" }}>
+  <div className={`relative ${className}`} data-aos="fade-left" data-aos-delay="150">
     <div className="relative z-10 mx-auto max-w-[280px] sm:max-w-[400px] lg:max-w-[500px]">
       <Image
         src="/images/karir2.png"
@@ -43,12 +43,12 @@ export default function HeroSection() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
           <div className="flex flex-col items-center space-y-8 text-center lg:items-start lg:text-left">
-            <div className="fade-up section-kicker mx-auto lg:mx-0">Temukan Jalanmu Bersama Skillio</div>
+            <div className="section-kicker mx-auto lg:mx-0" data-aos="fade-up">Temukan Jalanmu Bersama Skillio</div>
 
             {}
             <HeroImage className="my-6 lg:hidden" />
 
-            <div className="fade-up space-y-6">
+            <div className="space-y-6" data-aos="fade-up" data-aos-delay="100">
               <h1 className="font-display text-3xl font-bold leading-[1.1] text-slate-950 sm:text-4xl lg:text-5xl">
                 Bingung arah karir? <br />
                 <span className="text-skillio-500">Ubah jadi progres nyata.</span>
@@ -60,7 +60,7 @@ export default function HeroSection() {
               </p>
             </div>
 
-            <div className="fade-up flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+            <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start" data-aos="fade-up" data-aos-delay="200">
               <a
                 href="/auth/login"
                 className="shine-line group inline-flex items-center justify-center gap-2 rounded-2xl bg-skillio-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-skillio-500/20 transition-all hover:bg-skillio-700 hover:shadow-skillio-500/30"
@@ -70,7 +70,7 @@ export default function HeroSection() {
               </a>
             </div>
 
-            <div className="fade-up flex flex-wrap justify-center gap-x-6 gap-y-3 lg:justify-start">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 lg:justify-start" data-aos="fade-up" data-aos-delay="300">
               {credibility.map((item) => (
                 <div
                   key={item}

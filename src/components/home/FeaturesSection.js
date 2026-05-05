@@ -59,14 +59,14 @@ export default function FeaturesSection() {
     <section id="features" className="relative px-5 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-16 flex flex-col items-center text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-skillio-600 px-4 py-1.5 text-sm font-bold text-white shadow-sm">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-skillio-600 px-4 py-1.5 text-sm font-bold text-white shadow-sm" data-aos="fade-down">
             Kenapa Skillio?
           </div>
-          <h2 className="max-w-3xl font-display text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">
+          <h2 className="max-w-3xl font-display text-4xl font-bold leading-tight text-slate-900 sm:text-5xl" data-aos="fade-up" data-aos-delay="100">
             Sistem Belajar yang Mengubah <br className="hidden sm:block" />
             <span className="text-skillio-500">Kebingungan Jadi Aksi Nyata.</span>
           </h2>
-          <p className="mt-6 max-w-2xl text-lg text-slate-600">
+          <p className="mt-6 max-w-2xl text-lg text-slate-600" data-aos="fade-up" data-aos-delay="200">
             Kami tidak hanya memberikan materi, kami memberikan arah.
             Membantumu menemukan passion dan memberimu jalan untuk menguasainya.
           </p>
@@ -77,6 +77,8 @@ export default function FeaturesSection() {
             <article
               key={title}
               className="group relative rounded-[2.5rem] border border-skillio-200 bg-slate-100/50 p-8 transition-all duration-300 hover:border-skillio-400 hover:bg-slate-100/80 hover:shadow-2xl hover:shadow-skillio-500/5"
+              data-aos="fade-up"
+              data-aos-delay={index * 100}
             >
               <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${color} shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                 <Icon className="h-7 w-7" />

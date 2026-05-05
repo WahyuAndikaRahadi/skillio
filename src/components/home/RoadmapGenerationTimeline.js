@@ -11,6 +11,7 @@ import {
   Target,
   Users,
 } from "lucide-react";
+import CountUp from "../ui/CountUp";
 
 const roadmapMoments = [
   {
@@ -80,14 +81,23 @@ export default function RoadmapGenerationTimeline() {
     <section id="roadmap-generation" className="relative px-5 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 flex flex-col gap-5 lg:mb-16 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl space-y-4">
+          <div className="max-w-3xl space-y-4" data-aos="fade-right">
             <p className="section-kicker">Proses Skillio</p>
             <h2 className="font-display text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
               Cara Skillio mengubah potensimu <br />
-              jadi <span className="text-skillio-500">roadmap belajar 30 hari.</span>
+              jadi <span className="text-skillio-500">roadmap belajar
+                <CountUp
+                  from={0}
+                  to={30}
+                  separator=","
+                  direction="up"
+                  duration={1}
+                  className="count-up-text"
+                  delay={0}
+                /> hari.</span>
             </h2>
           </div>
-          <div className="rounded-[24px] border border-white/70 bg-white/72 p-5 text-sm leading-7 text-slate-600 shadow-[0_18px_50px_rgba(31,84,126,0.08)] backdrop-blur lg:max-w-sm">
+          <div className="rounded-[24px] border border-white/70 bg-white/72 p-5 text-sm leading-7 text-slate-600 shadow-[0_18px_50px_rgba(31,84,126,0.08)] backdrop-blur lg:max-w-sm" data-aos="fade-left" data-aos-delay="100">
             Visual ini menjelaskan fitur inti Skillio: proses yang bergerak dari
             identifikasi potensi sampai output belajar harian yang siap dijalani.
           </div>
@@ -98,8 +108,10 @@ export default function RoadmapGenerationTimeline() {
             <div key={moment.step} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-2rem)]">
               <article
                 className="group relative h-full overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-6 sm:rounded-[3rem] sm:p-8"
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
               >
-                {}
+                { }
                 <div className={`absolute -right-2 -top-4 select-none font-display text-[7rem] font-black ${moment.stepColor} opacity-[0.25] sm:-right-4 sm:-top-8 sm:text-[10rem]`}>
                   {moment.step}
                 </div>
@@ -134,15 +146,15 @@ export default function RoadmapGenerationTimeline() {
                   </div>
                 </div>
 
-                {}
+                { }
                 <div className={`absolute bottom-0 left-0 h-1.5 w-0 bg-skillio-500 transition-all duration-500 group-hover:w-full`} />
               </article>
             </div>
           ))}
         </div>
 
-        {}
-        <div className="mt-24 rounded-[3rem] border border-skillio-100 bg-slate-50/50 p-8 sm:p-12">
+        { }
+        <div className="mt-24 rounded-[3rem] border border-skillio-100 bg-slate-50/50 p-8 sm:p-12" data-aos="zoom-in" data-aos-offset="50">
           <div className="grid gap-12 sm:grid-cols-3">
             <div className="space-y-4 text-center sm:text-left">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-skillio-600 shadow-sm sm:mx-0">

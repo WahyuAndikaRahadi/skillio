@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import CountUp from "../ui/CountUp";
 
 const allDigitalFields = [
   "Pengembangan Web Frontend",
@@ -108,23 +109,31 @@ function FieldMarqueeRow({ items, direction = "left", duration = 40 }) {
 export default function DigitalFieldsSection() {
   return (
     <section id="digital-fields" className="relative overflow-hidden border-y border-slate-100 bg-slate-50/50 py-24">
-      <div className="mx-auto mb-16 max-w-6xl px-5 text-center sm:px-6 lg:px-8">
+      <div className="mx-auto mb-16 max-w-6xl px-5 text-center sm:px-6 lg:px-8" data-aos="fade-up">
         <p className="section-kicker mx-auto">Katalog Bidang</p>
         <h2 className="font-display text-3xl font-bold leading-tight text-slate-950 sm:text-4xl lg:text-5xl">
           Eksklusif Hanya Untuk <br className="hidden sm:block" />
-          <span className="text-skillio-500">50 Bidang Digital.</span>
+          <span className="text-skillio-500"><CountUp
+            from={0}
+            to={50}
+            separator=","
+            direction="up"
+            duration={1}
+            className="count-up-text"
+            delay={0}
+          /> Bidang Digital.</span>
         </h2>
-        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600 sm:text-xl" data-aos="fade-up" data-aos-delay="200">
           Skillio saat ini didesain <strong>khusus dan hanya berlaku</strong> untuk karir di industri digital. Kami mengkurasi 50 profesi paling relevan untuk kamu kuasai.
         </p>
       </div>
 
-      <div className="relative flex flex-col gap-2">
+      <div className="relative flex flex-col gap-2" data-aos="fade-in" data-aos-delay="300">
         <FieldMarqueeRow items={row1} direction="left" duration={50} />
         <FieldMarqueeRow items={row2} direction="right" duration={60} />
         <FieldMarqueeRow items={row3} direction="left" duration={45} />
 
-        {}
+        { }
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-slate-50/50 to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-slate-50/50 to-transparent" />
       </div>

@@ -17,12 +17,12 @@ import PWAInstallButton from "@/components/layout/PWAInstallButton";
 export default function CategoriesAndTestimonials() {
   return (
     <>
-      <section className="py-24">
+      <section className="py-24" data-aos="fade-up">
         <ClientFeedback />
       </section>
 
       <section className="px-5 pb-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl rounded-[3rem] bg-[linear-gradient(135deg,#102233_0%,#1f547e_52%,#2b6ea6_100%)] px-8 py-12 text-white shadow-[0_40px_100px_rgba(13,33,51,0.2)] flex flex-col items-center text-center lg:px-16 lg:py-20">
+        <div className="mx-auto max-w-6xl rounded-[3rem] bg-[linear-gradient(135deg,#102233_0%,#1f547e_52%,#2b6ea6_100%)] px-8 py-12 text-white shadow-[0_40px_100px_rgba(13,33,51,0.2)] flex flex-col items-center text-center lg:px-16 lg:py-20" data-aos="zoom-in">
           <div className="max-w-3xl space-y-6">
             <p className="text-xs font-black uppercase tracking-[0.3em] text-white/60">
               Nikmati Pengalaman Terbaik
