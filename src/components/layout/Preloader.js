@@ -44,8 +44,6 @@ const Preloader = () => {
 
       document.body.style.overflow = '';
       setIsVisible(false);
-      
-      window.dispatchEvent(new Event('preloader-finished'));
     };
 
     runAnimation();

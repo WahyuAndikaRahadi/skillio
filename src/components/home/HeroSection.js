@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, BadgeCheck } from "lucide-react";
-import Reveal from "@/components/ui/Reveal";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Sparkles,
+} from "lucide-react";
 
 const credibility = [
   "Tes minat & bakat cerdas",
@@ -11,7 +14,7 @@ const credibility = [
 ];
 
 const HeroImage = ({ className }) => (
-  <Reveal direction="left" delay={0.15} className={className}>
+  <div className={`fade-up relative ${className}`} style={{ animationDelay: "150ms" }}>
     <div className="relative z-10 mx-auto max-w-[280px] sm:max-w-[400px] lg:max-w-[500px]">
       <Image
         src="/images/karir2.png"
@@ -21,15 +24,17 @@ const HeroImage = ({ className }) => (
         priority
         fetchPriority="high"
         className="h-auto w-full object-contain transition-transform duration-700 hover:scale-105"
-        style={{ width: "100%", height: "auto" }}
+        style={{ width: '100%', height: 'auto' }}
       />
     </div>
-  </Reveal>
+  </div>
 );
 
 export default function HeroSection() {
+
   return (
     <section className="relative overflow-hidden px-5 pb-14 pt-28 sm:px-6 sm:pt-32 lg:px-8 lg:pb-24">
+      {}
       <div className="absolute top-0 right-0 -z-10 h-full w-full opacity-60">
         <div className="absolute top-[-10%] right-[-5%] h-[600px] w-[600px] rounded-full bg-skillio-100/40 blur-[120px]" />
         <div className="absolute bottom-[-10%] left-[-5%] h-[500px] w-[500px] rounded-full bg-teal-50/50 blur-[100px]" />
@@ -38,51 +43,49 @@ export default function HeroSection() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
           <div className="flex flex-col items-center space-y-8 text-center lg:items-start lg:text-left">
-            <Reveal direction="up">
-              <div className="section-kicker mx-auto lg:mx-0">Temukan Jalanmu Bersama Skillio</div>
-            </Reveal>
+            <div className="fade-up section-kicker mx-auto lg:mx-0">Temukan Jalanmu Bersama Skillio</div>
 
+            {}
             <HeroImage className="my-6 lg:hidden" />
 
-            <Reveal direction="up" delay={0.1}>
-              <div className="space-y-6">
-                <h1 className="font-display text-3xl font-bold leading-[1.1] text-slate-950 sm:text-4xl lg:text-5xl">
-                  Bingung arah karir? <br />
-                  <span className="text-skillio-500">Ubah jadi progres nyata.</span>
-                </h1>
-                <p className="max-w-xl text-lg leading-relaxed text-slate-600 sm:text-xl">
-                  Skillio membantu anak muda Indonesia menemukan bidang yang paling sesuai,
-                  lalu memberikan roadmap 30 hari yang terstruktur untuk benar-benar menguasainya.
-                </p>
-              </div>
-            </Reveal>
+            <div className="fade-up space-y-6">
+              <h1 className="font-display text-3xl font-bold leading-[1.1] text-slate-950 sm:text-4xl lg:text-5xl">
+                Bingung arah karir? <br />
+                <span className="text-skillio-500">Ubah jadi progres nyata.</span>
+              </h1>
 
-            <Reveal direction="up" delay={0.2}>
-              <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
-                <a
-                  href="/auth/login"
-                  className="shine-line group inline-flex items-center justify-center gap-2 rounded-2xl bg-skillio-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-skillio-500/20 transition-all hover:bg-skillio-700 hover:shadow-skillio-500/30"
+              <p className="max-w-xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+                Skillio membantu anak muda Indonesia menemukan bidang yang paling sesuai,
+                lalu memberikan roadmap 30 hari yang terstruktur untuk benar-benar menguasainya.
+              </p>
+            </div>
+
+            <div className="fade-up flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              <a
+                href="/auth/login"
+                className="shine-line group inline-flex items-center justify-center gap-2 rounded-2xl bg-skillio-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-skillio-500/20 transition-all hover:bg-skillio-700 hover:shadow-skillio-500/30"
+              >
+                Mulai Eksplorasi
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </a>
+            </div>
+
+            <div className="fade-up flex flex-wrap justify-center gap-x-6 gap-y-3 lg:justify-start">
+              {credibility.map((item) => (
+                <div
+                  key={item}
+                  className="flex items-center gap-2 text-sm font-semibold text-slate-600"
                 >
-                  Mulai Eksplorasi
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </a>
-              </div>
-            </Reveal>
-
-            <Reveal direction="up" delay={0.3}>
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 lg:justify-start">
-                {credibility.map((item) => (
-                  <div key={item} className="flex items-center gap-2 text-sm font-semibold text-slate-600">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-600 text-white shadow-sm">
-                      <BadgeCheck className="h-4 w-4" />
-                    </div>
-                    <span>{item}</span>
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-teal-600 text-white shadow-sm">
+                    <BadgeCheck className="h-4 w-4" />
                   </div>
-                ))}
-              </div>
-            </Reveal>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
+          {}
           <HeroImage className="hidden lg:block" />
         </div>
       </div>
