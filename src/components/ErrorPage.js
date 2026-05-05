@@ -21,7 +21,7 @@ export default function ErrorPage({ code = "404", title = "Halaman Tidak Ditemuk
   }, []);
 
   if (!isMounted) {
-    return <div className="min-h-screen bg-white" />; // Prevent hydration mismatch
+    return <div className="min-h-screen bg-white" />;
   }
 
   const is404 = code === "404";

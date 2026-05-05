@@ -25,7 +25,6 @@ export async function POST(req) {
         );
       }
       
-      // Jika user ada tapi belum verifikasi, hapus data lama agar bisa daftar ulang
       await prisma.user.delete({
         where: { id: existingUser.id }
       });
@@ -48,7 +47,6 @@ export async function POST(req) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expires = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Bersihkan token verifikasi lama jika ada untuk email ini
     await prisma.verificationToken.deleteMany({
       where: { identifier: email }
     });

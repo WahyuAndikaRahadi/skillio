@@ -45,7 +45,6 @@ const Preloader = () => {
       document.body.style.overflow = '';
       setIsVisible(false);
       
-      // Notify other components (like AOS) that the layout is ready and scrollable
       window.dispatchEvent(new Event('preloader-finished'));
     };
 
