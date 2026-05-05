@@ -12,7 +12,7 @@ import AosInit from "@/components/layout/AosInit";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden">
+    <div className="flex flex-col min-h-screen">
       <AosInit />
       <Navbar />
       <main className="flex-grow">

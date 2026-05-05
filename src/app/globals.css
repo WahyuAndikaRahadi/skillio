@@ -65,6 +65,7 @@ html {
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top left, rgba(104, 185, 178, 0.18), transparent 28%),
     radial-gradient(circle at 82% 16%, rgba(43, 110, 166, 0.16), transparent 24%),
